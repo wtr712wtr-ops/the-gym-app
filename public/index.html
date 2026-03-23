@@ -1,255 +1,180 @@
-会員ログインアカウントでログインしてくださいでログイン？こんにちは！今日も頑張りましょうトレーニング実績トータルセッション今月のセッション最新のトレーニング公式へ連絡・予約トレーニング記録？——メニュー💬公式へ›ログアウトホーム記録マイページ——閉じるログアウトしますか？ゲストおはようございます！こんにちは！こんばんは！さん今日も頑張りましょう日月火水木金土年月日（）コメントありトレーニング🏋️記録がまだありませんトレーニング後に記録が追加されます📋記録がまだありませんトレーニング後に記録が追加されますトレーニング<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <meta name="theme-color" content="#0a0a0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="THE GYM">
 <title>THE GYM</title>
 <link rel="manifest" href="/manifest.json">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0a0a0a;--bg2:#141414;--bg3:#1e1e1e;--border:#2a2a2a;--text:#f0f0f0;--text2:#888;--green:#4ade80;--line:#06C755}
-body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
-#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;gap:40px}
-.logo-title{font-size:42px;font-weight:900;letter-spacing:-2px;text-align:center}
-.logo-sub{font-size:11px;letter-spacing:4px;color:var(--text2);margin-top:8px;text-align:center}
-.login-card{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px 24px;display:flex;flex-direction:column;gap:16px}
-.login-title{font-size:18px;font-weight:700}
-.login-desc{font-size:13px;color:var(--text2);line-height:1.6}
-.btn-line{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--line);color:white;border:none;border-radius:12px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;width:100%;transition:opacity .2s}
-.btn-line:active{opacity:.8}
-#app-screen{display:none;flex-direction:column;min-height:100vh}
+body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
+#login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;gap:40px}
+.logo{font-size:42px;font-weight:900;letter-spacing:-2px;text-align:center}
+.sub{font-size:11px;letter-spacing:4px;color:var(--text2);margin-top:8px;text-align:center}
+.card{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px 24px;display:flex;flex-direction:column;gap:16px}
+.card-title{font-size:18px;font-weight:700}
+.card-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.btn-line{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--line);color:white;border:none;border-radius:12px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
+#app{display:none;flex-direction:column;min-height:100vh}
 .header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
-.header-logo{font-size:20px;font-weight:900;letter-spacing:-1px}
-.avatar{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden}
-.avatar img{width:100%;height:100%;object-fit:cover}
+.hlogo{font-size:20px;font-weight:900;letter-spacing:-1px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
 .main{flex:1;padding:0 0 80px}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--bg);border-top:1px solid var(--border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;color:var(--text2);cursor:pointer;font-size:10px;font-weight:600;border:none;background:none;transition:color .2s}
-.nav-item.active{color:var(--text)}
-.nav-item svg{width:22px;height:22px}
-.page{display:none;padding:20px}
-.page.active{display:block}
-.greeting{margin-bottom:24px}
-.greeting-name{font-size:22px;font-weight:800}
-.greeting-sub{font-size:13px;color:var(--text2);margin-top:4px}
-.section-title{font-size:13px;font-weight:700;letter-spacing:1px;color:var(--text2);text-transform:uppercase;margin-bottom:12px}
-.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px}
-.stat-num{font-size:28px;font-weight:900}
-.stat-label{font-size:11px;color:var(--text2);margin-top:4px}
-.record-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;cursor:pointer;transition:border-color .2s}
-.record-card:active{border-color:#444}
-.record-date{font-size:11px;color:var(--text2);margin-bottom:8px;letter-spacing:.5px}
-.record-title{font-size:16px;font-weight:700;margin-bottom:8px}
-.record-tags{display:flex;gap:6px;flex-wrap:wrap}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--bg);border-top:1px solid var(--border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;color:var(--text2);cursor:pointer;font-size:10px;font-weight:600;border:none;background:none}
+.ni.on{color:var(--text)}
+.ni svg{width:22px;height:22px}
+.pg{display:none;padding:20px}
+.pg.on{display:block}
+.gname{font-size:22px;font-weight:800}
+.gsub{font-size:13px;color:var(--text2);margin-top:4px;margin-bottom:24px}
+.stitle{font-size:13px;font-weight:700;letter-spacing:1px;color:var(--text2);text-transform:uppercase;margin-bottom:12px}
+.srow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px}
+.snum{font-size:28px;font-weight:900}
+.slabel{font-size:11px;color:var(--text2);margin-top:4px}
+.rc{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;cursor:pointer}
+.rdate{font-size:11px;color:var(--text2);margin-bottom:8px}
+.rtitle{font-size:16px;font-weight:700;margin-bottom:8px}
+.rtags{display:flex;gap:6px;flex-wrap:wrap}
 .tag{font-size:11px;background:var(--bg3);color:var(--text2);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
-.tag.hl{color:var(--green);border-color:var(--green);background:rgba(74,222,128,.08)}
-.line-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--line);color:white;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:12px;transition:opacity .2s;text-decoration:none}
-.line-btn:active{opacity:.8}
-.empty-state{text-align:center;padding:60px 20px;color:var(--text2)}
-.empty-icon{font-size:48px;margin-bottom:16px}
-.empty-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px}
-.empty-desc{font-size:13px;line-height:1.6}
-.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:flex-end}
-.detail-overlay.open{display:flex}
-.detail-sheet{background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:20px;animation:slideUp .3s ease}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
-.sheet-title{font-size:20px;font-weight:800;margin-bottom:4px}
-.sheet-date{font-size:12px;color:var(--text2);margin-bottom:20px}
-.exercise-item{background:var(--bg3);border-radius:12px;padding:14px;margin-bottom:10px}
-.ex-name{font-size:14px;font-weight:700;margin-bottom:8px}
-.sets-row{display:flex;gap:8px;flex-wrap:wrap}
-.set-chip{font-size:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;color:var(--text2)}
-.comment-box{background:var(--bg3);border-radius:12px;padding:14px;margin-top:16px}
-.comment-label{font-size:11px;color:var(--text2);margin-bottom:6px;letter-spacing:1px}
-.comment-text{font-size:14px;line-height:1.7}
-.close-btn{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px}
-.loading{display:flex;align-items:center;justify-content:center;padding:40px}
-.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.profile-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
-.profile-avatar{width:64px;height:64px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden}
-.profile-avatar img{width:100%;height:100%;object-fit:cover}
-.profile-name{font-size:20px;font-weight:800}
-.profile-id{font-size:12px;color:var(--text2);margin-top:4px}
-.menu-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer}
-.menu-item-left{display:flex;align-items:center;gap:12px}
-.menu-icon{font-size:20px}
-.menu-label{font-size:15px;font-weight:600}
-.logout-btn{width:100%;background:none;border:1px solid #ff4444;color:#ff4444;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px}
+.tag.hl{color:var(--green);border-color:var(--green)}
+.lbtn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--line);color:white;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:12px}
+.empty{text-align:center;padding:60px 20px;color:var(--text2)}
+.ei{font-size:48px;margin-bottom:16px}
+.et{font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px}
+.ed{font-size:13px;line-height:1.6}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:flex-end}
+.ov.on{display:flex}
+.sh{background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:20px}
+.hd{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.stit{font-size:20px;font-weight:800;margin-bottom:4px}
+.sdat{font-size:12px;color:var(--text2);margin-bottom:20px}
+.ei2{background:var(--bg3);border-radius:12px;padding:14px;margin-bottom:10px}
+.en{font-size:14px;font-weight:700;margin-bottom:8px}
+.es{display:flex;gap:8px;flex-wrap:wrap}
+.ec{font-size:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;color:var(--text2)}
+.cb{background:var(--bg3);border-radius:12px;padding:14px;margin-top:16px}
+.cl{font-size:11px;color:var(--text2);margin-bottom:6px;letter-spacing:1px}
+.ct{font-size:14px;line-height:1.7}
+.cls{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px}
+.ph{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.pa{width:64px;height:64px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden}
+.pa img{width:100%;height:100%;object-fit:cover}
+.pn{font-size:20px;font-weight:800}
+.pi{font-size:12px;color:var(--text2);margin-top:4px}
+.mi{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer}
+.ml{display:flex;align-items:center;gap:12px}
+.lo{width:100%;background:none;border:1px solid #f44;color:#f44;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px}
+.spin{display:flex;align-items:center;justify-content:center;padding:40px}
+.sp{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-<div id="login-screen">
-  <div>
-    <div class="logo-title">THE GYM</div>
-    <div class="logo-sub">PERSONAL TRAINING</div>
-  </div>
-  <div class="login-card">
-    <div class="login-title">会員ログイン</div>
-    <div class="login-desc">LINEアカウントでログインしてください。トレーニング記録の確認ができます。</div>
-    <button class="btn-line" onclick="loginWithLine()">
+<div id="login">
+  <div><div class="logo">THE GYM</div><div class="sub">PERSONAL TRAINING</div></div>
+  <div class="card">
+    <div class="card-title">会員ログイン</div>
+    <div class="card-desc">LINEアカウントでログインしてください</div>
+    <button class="btn-line" id="loginBtn">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
       LINEでログイン
     </button>
   </div>
-  <div style="font-size:12px;color:var(--text2);text-align:center">会員の方のみご利用いただけます</div>
 </div>
-
-<div id="app-screen">
-  <div class="header">
-    <div class="header-logo">THE GYM</div>
-    <div id="header-avatar" class="avatar"><span id="avatar-initial">？</span></div>
-  </div>
+<div id="app">
+  <div class="header"><div class="hlogo">THE GYM</div><div class="av" id="av"><span id="avi">?</span></div></div>
   <div class="main">
-    <div class="page active" id="page-home">
-      <div class="greeting">
-        <div class="greeting-name" id="greeting-name">こんにちは！</div>
-        <div class="greeting-sub" id="greeting-sub">今日も頑張りましょう</div>
+    <div class="pg on" id="pg-home">
+      <div class="gname" id="gname">Hello!</div>
+      <div class="gsub" id="gsub">Today's training</div>
+      <div class="stitle">Training Stats</div>
+      <div class="srow">
+        <div class="sc"><div class="snum" id="tot">0</div><div class="slabel">Total Sessions</div></div>
+        <div class="sc"><div class="snum" id="mon">0</div><div class="slabel">This Month</div></div>
       </div>
-      <div class="section-title">トレーニング実績</div>
-      <div class="stats-row">
-        <div class="stat-card"><div class="stat-num" id="total-sessions">—</div><div class="stat-label">トータルセッション</div></div>
-        <div class="stat-card"><div class="stat-num" id="this-month">—</div><div class="stat-label">今月のセッション</div></div>
-      </div>
-      <div class="section-title">最新のトレーニング</div>
-      <div id="latest-record"><div class="loading"><div class="spinner"></div></div></div>
-      <button class="line-btn" onclick="openLine()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
-        公式LINEへ連絡・予約
-      </button>
+      <div class="stitle">Latest Training</div>
+      <div id="latest"><div class="spin"><div class="sp"></div></div></div>
+      <button class="lbtn" id="lineBtn">LINE Official Account</button>
     </div>
-    <div class="page" id="page-records">
-      <div class="section-title" style="margin-bottom:16px">トレーニング記録</div>
-      <div id="records-list"><div class="loading"><div class="spinner"></div></div></div>
+    <div class="pg" id="pg-records">
+      <div class="stitle" style="margin-bottom:16px">Training Records</div>
+      <div id="rlist"><div class="spin"><div class="sp"></div></div></div>
     </div>
-    <div class="page" id="page-profile">
-      <div class="profile-header">
-        <div class="profile-avatar" id="profile-avatar"><span id="profile-initial">？</span></div>
-        <div><div class="profile-name" id="profile-name">—</div><div class="profile-id" id="profile-id">—</div></div>
-      </div>
-      <div class="section-title" style="margin-bottom:12px">メニュー</div>
-      <div class="menu-item" onclick="openLine()">
-        <div class="menu-item-left"><span class="menu-icon">💬</span><span class="menu-label">公式LINEへ</span></div>
-        <span style="color:var(--text2)">›</span>
-      </div>
-      <button class="logout-btn" onclick="logout()">ログアウト</button>
+    <div class="pg" id="pg-profile">
+      <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
+      <div class="stitle" style="margin-bottom:12px">Menu</div>
+      <div class="mi" id="lineMenu"><div class="ml"><span style="font-size:20px">💬</span><span style="font-size:15px;font-weight:600">LINE Official</span></div><span style="color:var(--text2)">›</span></div>
+      <button class="lo" id="logoutBtn">Logout</button>
     </div>
   </div>
-  <nav class="bottom-nav">
-    <button class="nav-item active" id="nav-home" onclick="showPage('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>ホーム
-    </button>
-    <button class="nav-item" id="nav-records" onclick="showPage('records')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>記録
-    </button>
-    <button class="nav-item" id="nav-profile" onclick="showPage('profile')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>マイページ
-    </button>
+  <nav class="bnav">
+    <button class="ni on" id="ni-home" onclick="showPage('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>Home</button>
+    <button class="ni" id="ni-records" onclick="showPage('records')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Records</button>
+    <button class="ni" id="ni-profile" onclick="showPage('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</button>
   </nav>
 </div>
-
-<div class="detail-overlay" id="detail-overlay" onclick="closeDetail(event)">
-  <div class="detail-sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title" id="detail-title">—</div>
-    <div class="sheet-date" id="detail-date">—</div>
-    <div id="detail-exercises"></div>
-    <div id="detail-comment"></div>
-    <button class="close-btn" onclick="closeDetail()">閉じる</button>
-  </div>
+<div class="ov" id="ov" onclick="closeD(event)">
+  <div class="sh"><div class="hd"></div><div class="stit" id="dtit">-</div><div class="sdat" id="ddat">-</div><div id="dex"></div><div id="dcm"></div><button class="cls" onclick="closeD()">Close</button></div>
 </div>
-
 <script>
-const LINE_OFFICIAL_URL='https://line.me/R/ti/p/@your-line-id';
-let currentUser=null,records=[];
-window.addEventListener('load',()=>{
-  const saved=localStorage.getItem('gym_user');
-  if(saved){currentUser=JSON.parse(saved);showApp();loadRecords();}
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
-  const p=new URLSearchParams(location.search);
-  if(p.get('user')){try{currentUser=JSON.parse(decodeURIComponent(p.get('user')));localStorage.setItem('gym_user',JSON.stringify(currentUser));history.replaceState({},'','/');showApp();loadRecords();}catch(e){}}
-  if(p.get('error'))alert('ログインに失敗しました');
+var LINE_URL='https://line.me/R/ti/p/@your-line-id';
+var user=null,recs=[];
+document.getElementById('loginBtn').addEventListener('click',function(){
+  var s=Math.random().toString(36).substr(2);
+  location.href='https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2009567758&redirect_uri='+encodeURIComponent(location.origin+'/api/callback')+'&state='+s+'&scope=profile%20openid';
 });
-function loginWithLine(){
-  const s=Math.random().toString(36).substr(2);
-  const params=new URLSearchParams({response_type:'code',client_id:'2009567758',redirect_uri:location.origin+'/api/callback',state:s,scope:'profile openid'});
-  location.href='https://access.line.me/oauth2/v2.1/authorize?'+params;
+document.getElementById('lineBtn').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
+document.getElementById('lineMenu').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
+document.getElementById('logoutBtn').addEventListener('click',function(){if(confirm('Logout?')){localStorage.removeItem('gym_user');location.reload();}});
+function init(){
+  var p=new URLSearchParams(location.search);
+  if(p.get('user')){try{user=JSON.parse(decodeURIComponent(p.get('user')));localStorage.setItem('gym_user',JSON.stringify(user));history.replaceState({},'','/');}catch(e){}}
+  else{var s=localStorage.getItem('gym_user');if(s){try{user=JSON.parse(s);}catch(e){}}}
+  if(user){showApp();loadRecs();}
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
 }
 function showApp(){
-  document.getElementById('login-screen').style.display='none';
-  const a=document.getElementById('app-screen');a.style.display='flex';
-  const name=currentUser.displayName||'ゲスト';
-  document.getElementById('greeting-name').textContent=name+' さん';
-  document.getElementById('greeting-sub').textContent=getGreeting();
-  document.getElementById('avatar-initial').textContent=name.charAt(0);
-  document.getElementById('profile-initial').textContent=name.charAt(0);
-  document.getElementById('profile-name').textContent=name;
-  document.getElementById('profile-id').textContent='ID: '+(currentUser.userId||'').slice(0,12)+'...';
-  if(currentUser.pictureUrl){
-    document.getElementById('header-avatar').innerHTML='<img src="'+currentUser.pictureUrl+'">';
-    document.getElementById('profile-avatar').innerHTML='<img src="'+currentUser.pictureUrl+'">';
-  }
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='flex';
+  var n=user.displayName||'Guest';
+  var h=new Date().getHours();
+  var g=h<11?'Good morning! ':h<18?'Good afternoon! ':'Good evening! ';
+  document.getElementById('gname').textContent=n;
+  document.getElementById('gsub').textContent=g+'Let us train today';
+  document.getElementById('avi').textContent=n.charAt(0);
+  document.getElementById('pavi').textContent=n.charAt(0);
+  document.getElementById('pname').textContent=n;
+  document.getElementById('pid').textContent='ID: '+(user.userId||'').substring(0,10)+'...';
+  if(user.pictureUrl){document.getElementById('av').innerHTML='<img src="'+user.pictureUrl+'">';document.getElementById('pav').innerHTML='<img src="'+user.pictureUrl+'">';}
 }
-function getGreeting(){
-  const h=new Date().getHours();
-  if(h<11)return'おはようございます！今日も頑張りましょう';
-  if(h<18)return'こんにちは！トレーニングの準備はできてますか？';
-  return'こんばんは！今日もお疲れ様です';
+function loadRecs(){
+  fetch('/api/records?userId='+(user.userId||'demo')).then(function(r){return r.json();}).then(function(d){recs=d;renderHome();renderRecs();}).catch(function(){recs=[];renderHome();renderRecs();});
 }
-async function loadRecords(){
-  if(!currentUser)return;
-  try{
-    const r=await fetch('/api/records?userId='+currentUser.userId);
-    records=r.ok?await r.json():[];
-  }catch{records=[];}
-  renderHome();renderRecords();
-}
+function fmtDate(d){var dt=new Date(d);var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];return dt.getFullYear()+'/'+(dt.getMonth()+1)+'/'+dt.getDate()+' ('+days[dt.getDay()]+')';}
+function cardHTML(r){var tags=(r.exercises||[]).slice(0,3).map(function(e){return'<span class="tag">'+e.name+'</span>';}).join('');if(r.comment)tags+='<span class="tag hl">Comment</span>';return'<div class="rc" data-id="'+r.id+'"><div class="rdate">'+fmtDate(r.date)+'</div><div class="rtitle">'+(r.title||'Training')+'</div><div class="rtags">'+tags+'</div></div>';}
 function renderHome(){
-  const now=new Date();
-  const m=records.filter(r=>{const d=new Date(r.date);return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();});
-  document.getElementById('total-sessions').textContent=records.length;
-  document.getElementById('this-month').textContent=m.length;
-  const c=document.getElementById('latest-record');
-  if(!records.length){c.innerHTML='<div class="empty-state"><div class="empty-icon">🏋️</div><div class="empty-title">記録がまだありません</div><div class="empty-desc">トレーニング後にトレーナーが記録を追加します</div></div>';return;}
-  c.innerHTML=cardHTML(records[0]);
+  var now=new Date();var m=recs.filter(function(r){var d=new Date(r.date);return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();});
+  document.getElementById('tot').textContent=recs.length;document.getElementById('mon').textContent=m.length;
+  var c=document.getElementById('latest');
+  if(!recs.length){c.innerHTML='<div class="empty"><div class="ei">🏋️</div><div class="et">No records yet</div><div class="ed">Trainer will add records after session</div></div>';return;}
+  c.innerHTML=cardHTML(recs[0]);c.querySelector('.rc').addEventListener('click',function(){showD(recs[0].id);});
 }
-function renderRecords(){
-  const c=document.getElementById('records-list');
-  if(!records.length){c.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">記録がまだありません</div><div class="empty-desc">トレーニング後にトレーナーが記録を追加します</div></div>';return;}
-  c.innerHTML=records.map(r=>cardHTML(r)).join('');
+function renderRecs(){
+  var c=document.getElementById('rlist');
+  if(!recs.length){c.innerHTML='<div class="empty"><div class="ei">📋</div><div class="et">No records yet</div><div class="ed">Trainer will add records after session</div></div>';return;}
+  c.innerHTML=recs.map(cardHTML).join('');c.querySelectorAll('.rc').forEach(function(el){el.addEventListener('click',function(){showD(el.getAttribute('data-id'));});});
 }
-function cardHTML(r){
-  const tags=(r.exercises||[]).slice(0,3).map(e=>'<span class="tag">'+e.name+'</span>').join('');
-  return '<div class="record-card" onclick="showDetail(''+r.id+'')"><div class="record-date">'+fmtDate(r.date)+'</div><div class="record-title">'+(r.title||'トレーニング')+'</div><div class="record-tags">'+tags+(r.comment?'<span class="tag hl">コメントあり</span>':'')+'</div></div>';
-}
-function fmtDate(d){
-  const dt=new Date(d);
-  const days=['日','月','火','水','木','金','土'];
-  return dt.getFullYear()+'年'+(dt.getMonth()+1)+'月'+dt.getDate()+'日（'+days[dt.getDay()]+'）';
-}
-function showDetail(id){
-  const r=records.find(r=>r.id===id);if(!r)return;
-  document.getElementById('detail-title').textContent=r.title||'トレーニング';
-  document.getElementById('detail-date').textContent=fmtDate(r.date);
-  document.getElementById('detail-exercises').innerHTML=(r.exercises||[]).map(e=>'<div class="exercise-item"><div class="ex-name">'+e.name+'</div><div class="sets-row">'+(e.sets||[]).map(s=>'<span class="set-chip">'+s+'</span>').join('')+'</div></div>').join('');
-  document.getElementById('detail-comment').innerHTML=r.comment?'<div class="comment-box"><div class="comment-label">TRAINER COMMENT</div><div class="comment-text">'+r.comment+'</div></div>':'';
-  document.getElementById('detail-overlay').classList.add('open');
-}
-function closeDetail(e){if(!e||e.target===document.getElementById('detail-overlay'))document.getElementById('detail-overlay').classList.remove('open');}
-function showPage(n){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
-  document.getElementById('page-'+n).classList.add('active');
-  document.getElementById('nav-'+n).classList.add('active');
-}
-function openLine(){window.open(LINE_OFFICIAL_URL,'_blank');}
-function logout(){if(confirm('ログアウトしますか？')){localStorage.removeItem('gym_user');location.reload();}}
+function showD(id){var r=recs.find(function(x){return x.id===id;});if(!r)return;document.getElementById('dtit').textContent=r.title||'Training';document.getElementById('ddat').textContent=fmtDate(r.date);document.getElementById('dex').innerHTML=(r.exercises||[]).map(function(e){return'<div class="ei2"><div class="en">'+e.name+'</div><div class="es">'+(e.sets||[]).map(function(s){return'<span class="ec">'+s+'</span>';}).join('')+'</div></div>';}).join('');document.getElementById('dcm').innerHTML=r.comment?'<div class="cb"><div class="cl">TRAINER COMMENT</div><div class="ct">'+r.comment+'</div></div>':'';document.getElementById('ov').classList.add('on');}
+function closeD(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
+function showPage(n){document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});document.getElementById('pg-'+n).classList.add('on');document.getElementById('ni-'+n).classList.add('on');}
+init();
 </script>
 </body>
 </html>

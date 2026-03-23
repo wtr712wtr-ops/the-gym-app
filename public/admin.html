@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>THE GYM 管理者</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f5f7f5;--bg2:#fff;--border:#e0e0e0;--text:#1a1a1a;--text2:#888;--accent:#4CAF82}
+body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto}
+.header{background:var(--accent);color:#fff;padding:16px 20px;font-size:18px;font-weight:800;letter-spacing:-0.5px}
+.tabs{display:flex;border-bottom:2px solid var(--border);background:var(--bg2)}
+.tab{flex:1;padding:14px;text-align:center;font-size:14px;font-weight:600;cursor:pointer;color:var(--text2);border:none;background:none}
+.tab.on{color:var(--accent);border-bottom:2px solid var(--accent);margin-bottom:-2px}
+.content{padding:20px}
+.form-group{margin-bottom:16px}
+label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;letter-spacing:0.5px}
+input,textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:var(--bg2);color:var(--text)}
+input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{resize:vertical;min-height:80px}
+.btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer}
+.btn:active{opacity:0.85}
+.btn-outline{background:none;border:1px solid var(--accent);color:var(--accent)}
+.client-list{display:flex;flex-direction:column;gap:10px}
+.client-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.client-card:hover{border-color:var(--accent)}
+.client-card.active{border-color:var(--accent);background:#f0faf5}
+.client-name{font-size:16px;font-weight:700}
+.client-id{font-size:11px;color:var(--text2);margin-top:3px}
+.memo-section{margin-top:20px}
+.memo-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.memo-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.6}
+.empty{text-align:center;padding:40px 20px;color:var(--text2);font-size:14px}
+.spinner{display:flex;align-items:center;justify-content:center;padding:40px}
+.sp{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-top:10px}
+.msg.ok{background:#e8f5e9;color:#2e7d32}
+.msg.err{background:#fdecea;color:#c62828}
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="header">THE GYM 管理者ページ</div>
+<div class="tabs">
+  <button class="tab on" id="tab-clients" onclick="switchTab('clients')">クライアント一覧</button>
+  <button class="tab" id="tab-add" onclick="switchTab('add')">＋クライアント追加</button>
+</div>
+<div class="content">
+  <!-- クライアント一覧 -->
+  <div id="pane-clients">
+    <div id="client-view">
+      <div id="clist"><div class="spinner"><div class="sp"></div></div></div>
+    </div>
+    <div id="memo-view" style="display:none">
+      <button class="back-btn" onclick="backToList()">← 一覧に戻る</button>
+      <div id="selected-client-name" style="font-size:18px;font-weight:800;margin-bottom:4px"></div>
+      <div id="selected-client-id" style="font-size:11px;color:var(--text2);margin-bottom:20px"></div>
+      <div class="form-group">
+        <label>メモを追加</label>
+        <textarea id="memo-input" placeholder="メモを入力..."></textarea>
+      </div>
+      <button class="btn" onclick="addMemo()">追加</button>
+      <div id="memo-msg"></div>
+      <div class="memo-section">
+        <label style="margin-bottom:12px;display:block">メモ履歴</label>
+        <div id="mlist"><div class="spinner"><div class="sp"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <!-- クライアント追加 -->
+  <div id="pane-add" style="display:none">
+    <div class="form-group">
+      <label>LINE ユーザーID</label>
+      <input type="text" id="new-client-id" placeholder="U0000000000000000000000000000000">
+    </div>
+    <div class="form-group">
+      <label>クライアント名</label>
+      <input type="text" id="new-client-name" placeholder="山田 太郎">
+    </div>
+    <button class="btn" onclick="addClient()">追加する</button>
+    <div id="add-msg"></div>
+  </div>
+</div>
+<script>
+var ADMIN_ID = 'U0f4c1d79f182f727c49b0b1bfbace466';
+var adminId = null;
+var selectedClient = null;
+
+function init() {
+  var stored = localStorage.getItem('gym_user');
+  if (!stored) { location.href = '/'; return; }
+  try { var u = JSON.parse(stored); adminId = u.userId; } catch(e) { location.href = '/'; return; }
+  if (adminId !== ADMIN_ID) { location.href = '/'; return; }
+  loadClients();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
+  document.querySelectorAll('[id^="pane-"]').forEach(function(p){ p.style.display = 'none'; });
+  document.getElementById('tab-' + tab).classList.add('on');
+  document.getElementById('pane-' + tab).style.display = 'block';
+}
+
+function loadClients() {
+  fetch('/api/memo?adminId=' + adminId)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      var list = document.getElementById('clist');
+      if (!data.length) {
+        list.innerHTML = '<div class="empty">クライアントがいません<br>「＋クライアント追加」から追加してください</div>';
+        return;
+      }
+      list.innerHTML = '<div class="client-list">' + data.map(function(item) {
+        var c = typeof item === 'string' ? JSON.parse(item) : item;
+        return '<div class="client-card" onclick="selectClient(\'' + c.id + '\',\'' + escHtml(c.name) + '\')">'
+          + '<div><div class="client-name">' + escHtml(c.name) + '</div>'
+          + '<div class="client-id">' + c.id + '</div></div>'
+          + '<span style="color:var(--accent)">›</span></div>';
+      }).join('') + '</div>';
+    })
+    .catch(function(){ document.getElementById('clist').innerHTML = '<div class="empty">読み込みエラー</div>'; });
+}
+
+function selectClient(id, name) {
+  selectedClient = { id: id, name: name };
+  document.getElementById('client-view').style.display = 'none';
+  document.getElementById('memo-view').style.display = 'block';
+  document.getElementById('selected-client-name').textContent = name;
+  document.getElementById('selected-client-id').textContent = 'ID: ' + id;
+  document.getElementById('memo-input').value = '';
+  document.getElementById('memo-msg').innerHTML = '';
+  loadMemos();
+}
+
+function backToList() {
+  document.getElementById('memo-view').style.display = 'none';
+  document.getElementById('client-view').style.display = 'block';
+  selectedClient = null;
+}
+
+function loadMemos() {
+  var list = document.getElementById('mlist');
+  list.innerHTML = '<div class="spinner"><div class="sp"></div></div>';
+  fetch('/api/memo?adminId=' + adminId + '&clientId=' + selectedClient.id)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (!data.length) {
+        list.innerHTML = '<div class="empty">メモがまだありません</div>';
+        return;
+      }
+      list.innerHTML = '<div class="memo-list">' + data.map(function(m){
+        return '<div class="memo-item">' + escHtml(m) + '</div>';
+      }).join('') + '</div>';
+    })
+    .catch(function(){ list.innerHTML = '<div class="empty">読み込みエラー</div>'; });
+}
+
+function addMemo() {
+  var memo = document.getElementById('memo-input').value.trim();
+  if (!memo) return;
+  fetch('/api/memo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adminId: adminId, action: 'addMemo', clientId: selectedClient.id, memo: memo })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data.ok) {
+      document.getElementById('memo-input').value = '';
+      showMsg('memo-msg', 'ok', 'メモを追加しました');
+      loadMemos();
+    } else {
+      showMsg('memo-msg', 'err', data.error || 'エラーが発生しました');
+    }
+  })
+  .catch(function(){ showMsg('memo-msg', 'err', '通信エラー'); });
+}
+
+function addClient() {
+  var id = document.getElementById('new-client-id').value.trim();
+  var name = document.getElementById('new-client-name').value.trim();
+  if (!id || !name) { showMsg('add-msg', 'err', 'IDと名前を入力してください'); return; }
+  fetch('/api/memo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adminId: adminId, action: 'addClient', clientId: id, clientName: name })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data.ok) {
+      document.getElementById('new-client-id').value = '';
+      document.getElementById('new-client-name').value = '';
+      showMsg('add-msg', 'ok', 'クライアントを追加しました');
+    } else {
+      showMsg('add-msg', 'err', data.error || 'エラーが発生しました');
+    }
+  })
+  .catch(function(){ showMsg('add-msg', 'err', '通信エラー'); });
+}
+
+function showMsg(id, type, text) {
+  var el = document.getElementById(id);
+  el.innerHTML = '<div class="msg ' + type + '">' + escHtml(text) + '</div>';
+  setTimeout(function(){ el.innerHTML = ''; }, 3000);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+init();
+</script>
+</body>
+</html>

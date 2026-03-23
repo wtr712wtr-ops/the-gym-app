@@ -80,11 +80,11 @@ body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text)
 <div id="login">
   <div><div class="logo">THE GYM</div><div class="sub">PERSONAL TRAINING</div></div>
   <div class="card">
-    <div class="card-title">会員ログイン</div>
-    <div class="card-desc">LINEアカウントでログインしてください</div>
+    <div class="card-title">ä¼å¡ã­ã°ã¤ã³</div>
+    <div class="card-desc">LINEã¢ã«ã¦ã³ãã§ã­ã°ã¤ã³ãã¦ãã ãã</div>
     <button class="btn-line" id="loginBtn">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
-      LINEでログイン
+      LINEã§ã­ã°ã¤ã³
     </button>
   </div>
 </div>
@@ -110,7 +110,7 @@ body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text)
     <div class="pg" id="pg-profile">
       <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
       <div class="stitle" style="margin-bottom:12px">Menu</div>
-      <div class="mi" id="lineMenu"><div class="ml"><span style="font-size:20px">💬</span><span style="font-size:15px;font-weight:600">LINE Official</span></div><span style="color:var(--text2)">›</span></div>
+      <div class="mi" id="lineMenu"><div class="ml"><span style="font-size:20px">ð¬</span><span style="font-size:15px;font-weight:600">LINE Official</span></div><span style="color:var(--text2)">âº</span></div>
       <button class="lo" id="logoutBtn">Logout</button>
     </div>
   </div>
@@ -124,7 +124,7 @@ body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text)
   <div class="sh"><div class="hd"></div><div class="stit" id="dtit">-</div><div class="sdat" id="ddat">-</div><div id="dex"></div><div id="dcm"></div><button class="cls" onclick="closeD()">Close</button></div>
 </div>
 <script>
-var LINE_URL='https://line.me/R/ti/p/@your-line-id';
+var LINE_URL='https://line.me/R/ti/p/185xayqo';
 var user=null,recs=[];
 document.getElementById('loginBtn').addEventListener('click',function(){
   var s=Math.random().toString(36).substr(2);
@@ -163,12 +163,12 @@ function renderHome(){
   var now=new Date();var m=recs.filter(function(r){var d=new Date(r.date);return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();});
   document.getElementById('tot').textContent=recs.length;document.getElementById('mon').textContent=m.length;
   var c=document.getElementById('latest');
-  if(!recs.length){c.innerHTML='<div class="empty"><div class="ei">🏋️</div><div class="et">No records yet</div><div class="ed">Trainer will add records after session</div></div>';return;}
+  if(!recs.length){c.innerHTML='<div class="empty"><div class="ei">ðï¸</div><div class="et">No records yet</div><div class="ed">Trainer will add records after session</div></div>';return;}
   c.innerHTML=cardHTML(recs[0]);c.querySelector('.rc').addEventListener('click',function(){showD(recs[0].id);});
 }
 function renderRecs(){
   var c=document.getElementById('rlist');
-  if(!recs.length){c.innerHTML='<div class="empty"><div class="ei">📋</div><div class="et">No records yet</div><div class="ed">Trainer will add records after session</div></div>';return;}
+  if(!recs.length){c.innerHTML='<div class="empty"><div class="ei">ð</div><div class="et">No records yet</div><div class="ed">Trainer will add records after session</div></div>';return;}
   c.innerHTML=recs.map(cardHTML).join('');c.querySelectorAll('.rc').forEach(function(el){el.addEventListener('click',function(){showD(el.getAttribute('data-id'));});});
 }
 function showD(id){var r=recs.find(function(x){return x.id===id;});if(!r)return;document.getElementById('dtit').textContent=r.title||'Training';document.getElementById('ddat').textContent=fmtDate(r.date);document.getElementById('dex').innerHTML=(r.exercises||[]).map(function(e){return'<div class="ei2"><div class="en">'+e.name+'</div><div class="es">'+(e.sets||[]).map(function(s){return'<span class="ec">'+s+'</span>';}).join('')+'</div></div>';}).join('');document.getElementById('dcm').innerHTML=r.comment?'<div class="cb"><div class="cl">TRAINER COMMENT</div><div class="ct">'+r.comment+'</div></div>':'';document.getElementById('ov').classList.add('on');}

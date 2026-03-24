@@ -132,7 +132,7 @@ function init(){
   if(p.get('user')){try{user=JSON.parse(decodeURIComponent(p.get('user')));localStorage.setItem('gym_user',JSON.stringify(user));history.replaceState({},'','/');}catch(e){}}
   else{var s=localStorage.getItem('gym_user');if(s){try{user=JSON.parse(s);}catch(e){}}}
   if(user){
-    if(user.userId==='U0f4c1d79f182f727c49b0b1bfbace466'&&location.pathname.indexOf('admin')===-1){
+    if(user.userId==='U0f4c1d79f182f727c49b0b1bfbace466'&&location.pathname.indexOf('admin')===-1&&!location.search.includes('preview=client')){
       location.href='/admin.html';
       return;
     }

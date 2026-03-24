@@ -166,17 +166,19 @@ function showApp(){
 }
 function loadData(){
   var uid=user.userId||'';
+  console.log('[loadData] userId:', uid);
   if(!uid)return;
   fetch('/api/records?userId='+uid)
     .then(function(r){return r.json();})
     .then(function(d){
+      console.log('[loadData] response:', JSON.stringify(d));
       var tr=d.trainings||[];
       var me=d.memos||[];
       renderHome(tr);
       renderTrainings(tr);
       renderMemos(me);
     })
-    .catch(function(){renderHome([]);renderTrainings([]);renderMemos([]);});
+    .catch(function(e){console.error('[loadData] error:', e);renderHome([]);renderTrainings([]);renderMemos([]);});
 }
 function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function renderHome(trainings){

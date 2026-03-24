@@ -15,10 +15,15 @@ module.exports = async function handler(req, res) {
   const { userId } = req.query;
   if (!userId) return res.status(400).json({ error: 'userId required' });
 
+  console.log('[records] userId:', userId);
+
   const [trainings, memos] = await Promise.all([
     redis.lrange('training:' + userId, 0, -1),
     redis.lrange('memo:' + userId, 0, -1),
   ]);
+
+  console.log('[records] trainings:', JSON.stringify(trainings));
+  console.log('[records] memos:', JSON.stringify(memos));
 
   return res.json({ trainings: trainings || [], memos: memos || [] });
 };

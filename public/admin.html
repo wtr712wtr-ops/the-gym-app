@@ -38,10 +38,20 @@ textarea{resize:vertical;min-height:80px}
 .msg.ok{background:#e8f5e9;color:#2e7d32}
 .msg.err{background:#fdecea;color:#c62828}
 .back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:16px}
+.id-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.id-bar-label{font-size:11px;color:var(--text2);font-weight:600;white-space:nowrap}
+.id-bar-val{font-size:12px;color:var(--text);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.id-copy-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.id-copy-btn:active{opacity:0.8}
 </style>
 </head>
 <body>
 <div class="header">THE GYM 管理者ページ</div>
+<div class="id-bar">
+  <span class="id-bar-label">自分のLINE ID</span>
+  <span class="id-bar-val" id="my-line-id">—</span>
+  <button class="id-copy-btn" onclick="copyMyId()">コピー</button>
+</div>
 <div class="tabs">
   <button class="tab on" id="tab-clients" onclick="switchTab('clients')">クライアント一覧</button>
   <button class="tab" id="tab-add" onclick="switchTab('add')">＋クライアント追加</button>
@@ -92,7 +102,18 @@ function init() {
   if (!stored) { location.href = '/'; return; }
   try { var u = JSON.parse(stored); adminId = u.userId; } catch(e) { location.href = '/'; return; }
   if (adminId !== ADMIN_ID) { location.href = '/'; return; }
+  document.getElementById('my-line-id').textContent = adminId;
   loadClients();
+}
+
+function copyMyId() {
+  var id = document.getElementById('my-line-id').textContent;
+  if (!id || id === '—') return;
+  navigator.clipboard.writeText(id).then(function() {
+    var btn = document.querySelector('.id-copy-btn');
+    btn.textContent = 'コピー済';
+    setTimeout(function(){ btn.textContent = 'コピー'; }, 2000);
+  });
 }
 
 function switchTab(tab) {

@@ -6,33 +6,35 @@
 <title>THE GYM 管理者</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#f5f7f5;--bg2:#fff;--border:#e0e0e0;--text:#1a1a1a;--text2:#888;--accent:#4CAF82}
-body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto}
-.header{background:var(--accent);color:#fff;padding:16px 20px;font-size:18px;font-weight:800;letter-spacing:-0.5px}
-.tabs{display:flex;border-bottom:2px solid var(--border);background:var(--bg2)}
-.tab{flex:1;padding:14px;text-align:center;font-size:14px;font-weight:600;cursor:pointer;color:var(--text2);border:none;background:none}
-.tab.on{color:var(--accent);border-bottom:2px solid var(--accent);margin-bottom:-2px}
+:root{--bg:#f7f7f7;--bg2:#ffffff;--bg3:#f0f0f0;--border:#e5e5e5;--text:#111111;--text2:#888888;--accent:#1c1c1c;--line:#06C755}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto}
+.header{background:var(--accent);height:56px;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
+.header-title{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#fff}
+.header-sub{font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase}
+.id-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px}
+.id-bar-label{font-size:10px;color:var(--text2);font-weight:600;white-space:nowrap;letter-spacing:0.5px;text-transform:uppercase}
+.id-bar-val{font-size:11px;color:var(--text2);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.id-copy-btn{background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
+.id-copy-btn:active{background:var(--border)}
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg2)}
+.tab{flex:1;padding:14px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);border:none;background:none;border-bottom:2px solid transparent}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
 .content{padding:20px}
 .form-group{margin-bottom:16px}
-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;letter-spacing:0.5px}
-input,textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:var(--bg2);color:var(--text)}
+label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
+input,textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:var(--bg2);color:var(--text);-webkit-appearance:none}
 input:focus,textarea:focus{outline:none;border-color:var(--accent)}
 textarea{resize:vertical;min-height:80px}
-.btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer}
+.btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
 .btn:active{opacity:0.85}
-.btn-outline{background:none;border:1px solid var(--accent);color:var(--accent)}
-.client-list{display:flex;flex-direction:column;gap:10px}
-.client-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
-.client-card:hover{border-color:var(--accent)}
-.client-card.active{border-color:var(--accent);background:#f0faf5}
-.client-name{font-size:16px;font-weight:700}
-.client-id{font-size:11px;color:var(--text2);margin-top:3px}
-.memo-section{margin-top:20px}
-.memo-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
-.memo-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.6}
+.client-list{display:flex;flex-direction:column;gap:8px}
+.client-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.client-card:active{border-color:var(--accent)}
+.client-name{font-size:16px;font-weight:800;letter-spacing:-0.5px}
+.client-id{font-size:11px;color:var(--text2);margin-top:3px;font-family:monospace}
 .empty{text-align:center;padding:40px 20px;color:var(--text2);font-size:14px}
 .spinner{display:flex;align-items:center;justify-content:center;padding:40px}
-.sp{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite}
+.sp{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-top:10px}
 .msg.ok{background:#e8f5e9;color:#2e7d32}
@@ -41,34 +43,35 @@ textarea{resize:vertical;min-height:80px}
 .client-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
 .ctab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);border:none;background:none;border-bottom:2px solid transparent}
 .ctab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.memo-section{margin-top:20px}
+.memo-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.memo-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.6;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .input-row{display:flex;align-items:center;gap:8px}
 .input-row input{flex:1}
-.input-unit{font-size:14px;color:var(--text2);white-space:nowrap}
+.input-unit{font-size:14px;color:var(--text2);white-space:nowrap;font-weight:600}
 .tr-list{display:flex;flex-direction:column;gap:8px;margin-top:16px}
-.tr-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.tr-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .tr-date{font-size:11px;color:var(--text2);margin-bottom:4px}
-.tr-exercise{font-size:15px;font-weight:700;margin-bottom:8px}
+.tr-exercise{font-size:15px;font-weight:800;margin-bottom:8px;letter-spacing:-0.5px}
 .tr-stats{display:flex;gap:6px;flex-wrap:wrap}
-.tr-stat{font-size:12px;background:var(--bg);border-radius:6px;padding:4px 10px;color:var(--text2)}
+.tr-stat{font-size:11px;background:var(--bg3);border-radius:20px;padding:4px 10px;color:var(--text2);border:1px solid var(--border);font-weight:600}
 .tr-stat span{color:var(--text);font-weight:700}
 .tr-memo{font-size:13px;color:var(--text2);margin-top:8px;line-height:1.5}
-.id-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.id-bar-label{font-size:11px;color:var(--text2);font-weight:600;white-space:nowrap}
-.id-bar-val{font-size:12px;color:var(--text);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.id-copy-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
-.id-copy-btn:active{opacity:0.8}
 </style>
 </head>
 <body>
-<div class="header">THE GYM 管理者ページ</div>
+<div class="header">
+  <div><div class="header-title">THE GYM</div></div>
+  <div class="header-sub">ADMIN</div>
+</div>
 <div class="id-bar">
-  <span class="id-bar-label">自分のLINE ID</span>
+  <span class="id-bar-label">MY ID</span>
   <span class="id-bar-val" id="my-line-id">—</span>
   <button class="id-copy-btn" onclick="copyMyId()">コピー</button>
 </div>
 <div class="tabs">
   <button class="tab on" id="tab-clients" onclick="switchTab('clients')">クライアント一覧</button>
-  <button class="tab" id="tab-add" onclick="switchTab('add')">＋クライアント追加</button>
+  <button class="tab" id="tab-add" onclick="switchTab('add')">＋ 追加</button>
 </div>
 <div class="content">
   <!-- クライアント一覧 -->
@@ -78,8 +81,8 @@ textarea{resize:vertical;min-height:80px}
     </div>
     <div id="memo-view" style="display:none">
       <button class="back-btn" onclick="backToList()">← 一覧に戻る</button>
-      <div id="selected-client-name" style="font-size:18px;font-weight:800;margin-bottom:4px"></div>
-      <div id="selected-client-id" style="font-size:11px;color:var(--text2);margin-bottom:16px"></div>
+      <div id="selected-client-name" style="font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px"></div>
+      <div id="selected-client-id" style="font-size:11px;color:var(--text2);margin-bottom:20px;font-family:monospace"></div>
       <div class="client-tabs">
         <button class="ctab on" id="ctab-memo" onclick="switchClientTab('memo')">メモ</button>
         <button class="ctab" id="ctab-training" onclick="switchClientTab('training')">トレーニング記録</button>
@@ -186,14 +189,14 @@ function loadClients() {
       var list = document.getElementById('clist');
       var clients = data.clients || [];
       if (!clients.length) {
-        list.innerHTML = '<div class="empty">クライアントがいません<br>「＋クライアント追加」から追加してください</div>';
+        list.innerHTML = '<div class="empty">クライアントがいません<br>「＋ 追加」から追加してください</div>';
         return;
       }
       list.innerHTML = '<div class="client-list">' + clients.map(function(c) {
         return '<div class="client-card" onclick="selectClient(\'' + c.id + '\',\'' + escHtml(c.name) + '\')">'
           + '<div><div class="client-name">' + escHtml(c.name) + '</div>'
           + '<div class="client-id">' + c.id + '</div></div>'
-          + '<span style="color:var(--accent)">›</span></div>';
+          + '<span style="color:var(--text2);font-size:18px">›</span></div>';
       }).join('') + '</div>';
     })
     .catch(function(){ document.getElementById('clist').innerHTML = '<div class="empty">読み込みエラー</div>'; });

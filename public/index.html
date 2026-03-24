@@ -168,17 +168,19 @@ function loadData(){
   var uid=user.userId||'';
   console.log('[loadData] userId:', uid);
   if(!uid)return;
-  fetch('/api/records?userId='+uid)
-    .then(function(r){return r.json();})
-    .then(function(d){
-      console.log('[loadData] response:', JSON.stringify(d));
-      var tr=d.trainings||[];
-      var me=d.memos||[];
-      renderHome(tr);
-      renderTrainings(tr);
-      renderMemos(me);
-    })
-    .catch(function(e){console.error('[loadData] error:', e);renderHome([]);renderTrainings([]);renderMemos([]);});
+  var base='/api/memo?clientId='+uid+'&userId='+uid;
+  Promise.all([
+    fetch(base+'&trainings').then(function(r){return r.json();}),
+    fetch(base).then(function(r){return r.json();})
+  ]).then(function(results){
+    var tr=(results[0].trainings)||[];
+    var me=(results[1].memos)||[];
+    console.log('[loadData] trainings:', JSON.stringify(tr));
+    console.log('[loadData] memos:', JSON.stringify(me));
+    renderHome(tr);
+    renderTrainings(tr);
+    renderMemos(me);
+  }).catch(function(e){console.error('[loadData] error:', e);renderHome([]);renderTrainings([]);renderMemos([]);});
 }
 function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function renderHome(trainings){

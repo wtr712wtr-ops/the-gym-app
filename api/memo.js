@@ -1,8 +1,13 @@
-import { kv } from '@vercel/kv';
+const { Redis } = require('@upstash/redis');
 
 const ADMIN_ID = 'U0f4c1d79f182f727c49b0b1bfbace466';
 
-export default async function handler(req, res) {
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -14,10 +19,10 @@ export default async function handler(req, res) {
     if (adminId !== ADMIN_ID) return res.status(403).json({ error: 'Forbidden' });
 
     if (!clientId) {
-      const clients = await kv.smembers('clients');
+      const clients = await redis.smembers('clients');
       return res.status(200).json(clients || []);
     } else {
-      const memos = await kv.lrange(`memo:${clientId}`, 0, -1);
+      const memos = await redis.lrange('memo:' + clientId, 0, -1);
       return res.status(200).json(memos || []);
     }
   }
@@ -28,14 +33,14 @@ export default async function handler(req, res) {
 
     if (action === 'addClient') {
       if (!clientId || !clientName) return res.status(400).json({ error: 'clientId and clientName required' });
-      await kv.sadd('clients', JSON.stringify({ id: clientId, name: clientName }));
+      await redis.sadd('clients', JSON.stringify({ id: clientId, name: clientName }));
       return res.status(200).json({ ok: true });
     }
 
     if (action === 'addMemo') {
       if (!clientId || !memo) return res.status(400).json({ error: 'clientId and memo required' });
       const date = new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
-      await kv.lpush(`memo:${clientId}`, `[${date}] ${memo}`);
+      await redis.lpush('memo:' + clientId, '[' + date + '] ' + memo);
       return res.status(200).json({ ok: true });
     }
 
@@ -43,4 +48,4 @@ export default async function handler(req, res) {
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
-}
+};

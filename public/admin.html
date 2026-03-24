@@ -128,12 +128,12 @@ function loadClients() {
     .then(function(r){ return r.json(); })
     .then(function(data) {
       var list = document.getElementById('clist');
-      if (!data.length) {
+      var clients = data.clients || [];
+      if (!clients.length) {
         list.innerHTML = '<div class="empty">クライアントがいません<br>「＋クライアント追加」から追加してください</div>';
         return;
       }
-      list.innerHTML = '<div class="client-list">' + data.map(function(item) {
-        var c = typeof item === 'string' ? JSON.parse(item) : item;
+      list.innerHTML = '<div class="client-list">' + clients.map(function(c) {
         return '<div class="client-card" onclick="selectClient(\'' + c.id + '\',\'' + escHtml(c.name) + '\')">'
           + '<div><div class="client-name">' + escHtml(c.name) + '</div>'
           + '<div class="client-id">' + c.id + '</div></div>'
@@ -166,11 +166,12 @@ function loadMemos() {
   fetch('/api/memo?adminId=' + adminId + '&clientId=' + selectedClient.id)
     .then(function(r){ return r.json(); })
     .then(function(data) {
-      if (!data.length) {
+      var memos = data.memos || [];
+      if (!memos.length) {
         list.innerHTML = '<div class="empty">メモがまだありません</div>';
         return;
       }
-      list.innerHTML = '<div class="memo-list">' + data.map(function(m){
+      list.innerHTML = '<div class="memo-list">' + memos.map(function(m){
         return '<div class="memo-item">' + escHtml(m) + '</div>';
       }).join('') + '</div>';
     })

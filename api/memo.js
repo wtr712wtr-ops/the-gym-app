@@ -19,8 +19,15 @@ module.exports = async function handler(req, res) {
     if (adminId !== ADMIN_ID) return res.status(403).json({ error: 'Forbidden' });
 
     if (!clientId) {
-      const clients = await redis.smembers('clients');
-      return res.status(200).json(clients || []);
+      const raw = await redis.smembers('clients');
+      console.log('smembers raw:', JSON.stringify(raw));
+      const clients = (raw || []).map(function(item) {
+        if (typeof item === 'string') {
+          try { return JSON.parse(item); } catch(e) { return item; }
+        }
+        return item;
+      });
+      return res.status(200).json(clients);
     } else {
       const memos = await redis.lrange('memo:' + clientId, 0, -1);
       return res.status(200).json(memos || []);

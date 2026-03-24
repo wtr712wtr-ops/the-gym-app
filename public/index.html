@@ -135,7 +135,7 @@ body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text)
 </div>
 <script>
 var LINE_URL='https://line.me/R/ti/p/185xayqo';
-var user=null,recs=[];
+var user=null;
 document.getElementById('loginBtn').addEventListener('click',function(){
   var s=Math.random().toString(36).substr(2);
   location.href='https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2009567758&redirect_uri='+encodeURIComponent(location.origin+'/api/callback')+'&state='+s+'&scope=profile%20openid';
@@ -147,7 +147,7 @@ function init(){
   var p=new URLSearchParams(location.search);
   if(p.get('user')){try{user=JSON.parse(decodeURIComponent(p.get('user')));localStorage.setItem('gym_user',JSON.stringify(user));history.replaceState({},'','/');}catch(e){}}
   else{var s=localStorage.getItem('gym_user');if(s){try{user=JSON.parse(s);}catch(e){}}}
-  if(user){showApp();loadRecs();}
+  if(user){showApp();loadData();}
   if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
 }
 function showApp(){
@@ -164,27 +164,35 @@ function showApp(){
   document.getElementById('pid').textContent='ID: '+(user.userId||'').substring(0,10)+'...';
   if(user.pictureUrl){document.getElementById('av').innerHTML='<img src="'+user.pictureUrl+'">';document.getElementById('pav').innerHTML='<img src="'+user.pictureUrl+'">';}
 }
-function loadRecs(){
-  fetch('/api/records?userId='+(user.userId||'demo')).then(function(r){return r.json();}).then(function(d){recs=d;renderHome();renderRecs();}).catch(function(){recs=[];renderHome();renderRecs();});
-  loadClientData();
-}
-function loadClientData(){
+function loadData(){
   var uid=user.userId||'';
   if(!uid)return;
-  var base='/api/memo?userId='+uid+'&clientId='+uid;
-  fetch(base+'&trainings=1')
+  fetch('/api/records?userId='+uid)
     .then(function(r){return r.json();})
-    .then(function(d){renderTrainings(d.trainings||[]);})
-    .catch(function(){renderTrainings([]);});
-  fetch(base)
-    .then(function(r){return r.json();})
-    .then(function(d){renderMemos(d.memos||[]);})
-    .catch(function(){renderMemos([]);});
+    .then(function(d){
+      var tr=d.trainings||[];
+      var me=d.memos||[];
+      renderHome(tr);
+      renderTrainings(tr);
+      renderMemos(me);
+    })
+    .catch(function(){renderHome([]);renderTrainings([]);renderMemos([]);});
 }
 function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function renderHome(trainings){
+  document.getElementById('tot').textContent=trainings.length;
+  var c=document.getElementById('latest');
+  if(!trainings.length){c.innerHTML='<div class="empty"><div class="ei">&#x1F3CB;&#xFE0F;</div><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
+  var t=trainings[0];
+  var stats=[];
+  if(t.weight)stats.push('<span class="tag">'+escH(String(t.weight))+'kg</span>');
+  if(t.reps)stats.push('<span class="tag">'+escH(String(t.reps))+'回</span>');
+  if(t.sets)stats.push('<span class="tag">'+escH(String(t.sets))+'セット</span>');
+  c.innerHTML='<div class="rc"><div class="rdate">'+escH(t.date||'')+'</div><div class="rtitle">'+escH(t.exercise||'トレーニング')+'</div><div class="rtags">'+stats.join('')+'</div></div>';
+}
 function renderTrainings(list){
   var c=document.getElementById('rlist');
-  if(!list.length){c.innerHTML='<div class="empty"><div class="ei">🏋️</div><div class="et">記録がまだありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
+  if(!list.length){c.innerHTML='<div class="empty"><div class="ei">&#x1F3CB;&#xFE0F;</div><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
   c.innerHTML=list.map(function(t){
     var stats=[];
     if(t.weight)stats.push('<div class="tr-stat"><span>'+escH(String(t.weight))+'</span> kg</div>');
@@ -200,24 +208,9 @@ function renderTrainings(list){
 }
 function renderMemos(list){
   var c=document.getElementById('memo-list');
-  if(!list.length){c.innerHTML='<div class="empty" style="padding:20px 0;font-size:13px">メモはまだありません</div>';return;}
+  if(!list.length){c.innerHTML='<div class="empty" style="padding:20px 0;font-size:13px">まだ記録がありません</div>';return;}
   c.innerHTML=list.map(function(m){return'<div class="memo-card">'+escH(m)+'</div>';}).join('');
 }
-function fmtDate(d){var dt=new Date(d);var days=['日','月','火','水','木','金','土'];return dt.getFullYear()+'/'+(dt.get月th()+1)+'/'+dt.getDate()+' ('+days[dt.getDay()]+')';}
-function cardHTML(r){var tags=(r.exercises||[]).slice(0,3).map(function(e){return'<span class="tag">'+e.name+'</span>';}).join('');if(r.comment)tags+='<span class="tag hl">Comment</span>';return'<div class="rc" data-id="'+r.id+'"><div class="rdate">'+fmtDate(r.date)+'</div><div class="rtitle">'+(r.title||'トレーニング')+'</div><div class="rtags">'+tags+'</div></div>';}
-function renderHome(){
-  var now=new Date();var m=recs.filter(function(r){var d=new Date(r.date);return d.getFullYear()===now.getFullYear()&&d.get月th()===now.get月th();});
-  document.getElementById('tot').textContent=recs.length;document.getElementById('mon').textContent=m.length;
-  var c=document.getElementById('latest');
-  if(!recs.length){c.innerHTML='<div class="empty"><div class="ei">Ã°ÂÂÂÃ¯Â¸Â</div><div class="et">記録がまだありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
-  c.innerHTML=cardHTML(recs[0]);c.querySelector('.rc').addEventListener('click',function(){showD(recs[0].id);});
-}
-function renderRecs(){
-  var c=document.getElementById('rlist');
-  if(!recs.length){c.innerHTML='<div class="empty"><div class="ei">Ã°ÂÂÂ</div><div class="et">記録がまだありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
-  c.innerHTML=recs.map(cardHTML).join('');c.querySelectorAll('.rc').forEach(function(el){el.addEventListener('click',function(){showD(el.getAttribute('data-id'));});});
-}
-function showD(id){var r=recs.find(function(x){return x.id===id;});if(!r)return;document.getElementById('dtit').textContent=r.title||'トレーニング';document.getElementById('ddat').textContent=fmtDate(r.date);document.getElementById('dex').innerHTML=(r.exercises||[]).map(function(e){return'<div class="ei2"><div class="en">'+e.name+'</div><div class="es">'+(e.sets||[]).map(function(s){return'<span class="ec">'+s+'</span>';}).join('')+'</div></div>';}).join('');document.getElementById('dcm').innerHTML=r.comment?'<div class="cb"><div class="cl">トレーナーコメント</div><div class="ct">'+r.comment+'</div></div>':'';document.getElementById('ov').classList.add('on');}
 function closeD(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
 function showPage(n){document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});document.getElementById('pg-'+n).classList.add('on');document.getElementById('ni-'+n).classList.add('on');}
 init();

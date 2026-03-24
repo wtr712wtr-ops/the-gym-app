@@ -1,7 +1,24 @@
-export default async function handler(req, res) {
+const { Redis } = require('@upstash/redis');
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
+
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
   const { userId } = req.query;
   if (!userId) return res.status(400).json({ error: 'userId required' });
-  const records = [{ id: 'rec001', userId, date: new Date().toISOString(), title: '上半身トレーニング', exercises: [{ name: 'ベンチプレス', sets: ['60kg x10回', '60kg x10回', '60kg x8回'] }, { name: 'ダンベルフライ', sets: ['12kg x12回', '12kg x10回'] }, { name: 'ケーブルロウ', sets: ['40kg x12回', '40kg x12回'] }], comment: '上半身全体をバランスよく鍛えました。ベンチプレスのフォームが改善されていてとても良かったです！次回は重量を少し上げてみましょう。' }];
-  res.status(200).json(records);
-}
+
+  const [trainings, memos] = await Promise.all([
+    redis.lrange('training:' + userId, 0, -1),
+    redis.lrange('memo:' + userId, 0, -1),
+  ]);
+
+  return res.json({ trainings: trainings || [], memos: memos || [] });
+};

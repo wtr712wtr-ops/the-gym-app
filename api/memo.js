@@ -15,10 +15,15 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   if (req.method === 'GET') {
-    const { adminId, clientId } = req.query;
-    if (adminId !== ADMIN_ID) return res.status(403).json({ error: 'Forbidden' });
+    const { adminId, clientId, userId } = req.query;
+    const isAdmin = adminId === ADMIN_ID;
+    const isSelf = userId && clientId && userId === clientId;
+
+    if (!isAdmin && !isSelf) return res.status(403).json({ error: 'Forbidden' });
 
     if (!clientId) {
+      // admin only: list all clients
+      if (!isAdmin) return res.status(403).json({ error: 'Forbidden' });
       const clients = await redis.smembers('clients') || [];
       console.log('clients:', JSON.stringify(clients));
       return res.json({ clients });

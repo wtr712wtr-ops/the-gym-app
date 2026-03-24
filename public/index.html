@@ -74,6 +74,14 @@ body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text)
 .spin{display:flex;align-items:center;justify-content:center;padding:40px}
 .sp{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
+.tr-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px}
+.tr-date{font-size:11px;color:var(--text2);margin-bottom:6px}
+.tr-ex{font-size:16px;font-weight:700;margin-bottom:10px}
+.tr-stats{display:flex;gap:6px;flex-wrap:wrap}
+.tr-stat{font-size:12px;background:var(--bg3);border-radius:8px;padding:4px 10px;color:var(--text2)}
+.tr-stat span{color:var(--green);font-weight:700}
+.tr-note{font-size:13px;color:var(--text2);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);line-height:1.5}
+.memo-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;font-size:14px;line-height:1.7;color:var(--text)}
 </style>
 </head>
 <body>
@@ -106,6 +114,8 @@ body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text)
     <div class="pg" id="pg-records">
       <div class="stitle" style="margin-bottom:16px">トレーニング記録</div>
       <div id="rlist"><div class="spin"><div class="sp"></div></div></div>
+      <div class="stitle" style="margin:24px 0 16px">トレーナーメモ</div>
+      <div id="memo-list"><div class="spin"><div class="sp"></div></div></div>
     </div>
     <div class="pg" id="pg-profile">
       <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
@@ -156,6 +166,42 @@ function showApp(){
 }
 function loadRecs(){
   fetch('/api/records?userId='+(user.userId||'demo')).then(function(r){return r.json();}).then(function(d){recs=d;renderHome();renderRecs();}).catch(function(){recs=[];renderHome();renderRecs();});
+  loadClientData();
+}
+function loadClientData(){
+  var uid=user.userId||'';
+  if(!uid)return;
+  var base='/api/memo?userId='+uid+'&clientId='+uid;
+  fetch(base+'&trainings=1')
+    .then(function(r){return r.json();})
+    .then(function(d){renderTrainings(d.trainings||[]);})
+    .catch(function(){renderTrainings([]);});
+  fetch(base)
+    .then(function(r){return r.json();})
+    .then(function(d){renderMemos(d.memos||[]);})
+    .catch(function(){renderMemos([]);});
+}
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function renderTrainings(list){
+  var c=document.getElementById('rlist');
+  if(!list.length){c.innerHTML='<div class="empty"><div class="ei">🏋️</div><div class="et">記録がまだありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
+  c.innerHTML=list.map(function(t){
+    var stats=[];
+    if(t.weight)stats.push('<div class="tr-stat"><span>'+escH(String(t.weight))+'</span> kg</div>');
+    if(t.reps)stats.push('<div class="tr-stat"><span>'+escH(String(t.reps))+'</span> 回</div>');
+    if(t.sets)stats.push('<div class="tr-stat"><span>'+escH(String(t.sets))+'</span> セット</div>');
+    return '<div class="tr-card">'
+      +'<div class="tr-date">'+escH(t.date||'')+'</div>'
+      +'<div class="tr-ex">'+escH(t.exercise||'')+'</div>'
+      +(stats.length?'<div class="tr-stats">'+stats.join('')+'</div>':'')
+      +(t.memo?'<div class="tr-note">'+escH(t.memo)+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+function renderMemos(list){
+  var c=document.getElementById('memo-list');
+  if(!list.length){c.innerHTML='<div class="empty" style="padding:20px 0;font-size:13px">メモはまだありません</div>';return;}
+  c.innerHTML=list.map(function(m){return'<div class="memo-card">'+escH(m)+'</div>';}).join('');
 }
 function fmtDate(d){var dt=new Date(d);var days=['日','月','火','水','木','金','土'];return dt.getFullYear()+'/'+(dt.get月th()+1)+'/'+dt.getDate()+' ('+days[dt.getDay()]+')';}
 function cardHTML(r){var tags=(r.exercises||[]).slice(0,3).map(function(e){return'<span class="tag">'+e.name+'</span>';}).join('');if(r.comment)tags+='<span class="tag hl">Comment</span>';return'<div class="rc" data-id="'+r.id+'"><div class="rdate">'+fmtDate(r.date)+'</div><div class="rtitle">'+(r.title||'トレーニング')+'</div><div class="rtags">'+tags+'</div></div>';}

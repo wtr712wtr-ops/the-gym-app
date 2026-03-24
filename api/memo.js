@@ -3,8 +3,8 @@ const { Redis } = require('@upstash/redis');
 const ADMIN_ID = 'U0f4c1d79f182f727c49b0b1bfbace466';
 
 const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
 });
 
 module.exports = async function handler(req, res) {

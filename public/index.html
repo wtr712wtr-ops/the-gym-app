@@ -147,7 +147,14 @@ function init(){
   var p=new URLSearchParams(location.search);
   if(p.get('user')){try{user=JSON.parse(decodeURIComponent(p.get('user')));localStorage.setItem('gym_user',JSON.stringify(user));history.replaceState({},'','/');}catch(e){}}
   else{var s=localStorage.getItem('gym_user');if(s){try{user=JSON.parse(s);}catch(e){}}}
-  if(user){showApp();loadData();}
+  if(user){
+    if(user.userId==='U0f4c1d79f182f727c49b0b1bfbace466'&&location.pathname.indexOf('admin')===-1){
+      location.href='/admin.html';
+      return;
+    }
+    showApp();
+    loadData();
+  }
   if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
 }
 function showApp(){

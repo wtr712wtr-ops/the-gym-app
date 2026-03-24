@@ -22,6 +22,9 @@ module.exports = async function handler(req, res) {
       const clients = await redis.smembers('clients') || [];
       console.log('clients:', JSON.stringify(clients));
       return res.json({ clients });
+    } else if (req.query.trainings !== undefined) {
+      const trainings = await redis.lrange('training:' + clientId, 0, -1);
+      return res.json({ trainings });
     } else {
       const memos = await redis.lrange('memo:' + clientId, 0, -1);
       return res.json({ memos });
@@ -35,6 +38,15 @@ module.exports = async function handler(req, res) {
     if (action === 'addClient') {
       if (!clientId || !clientName) return res.status(400).json({ error: 'clientId and clientName required' });
       await redis.sadd('clients', { id: clientId, name: clientName });
+      return res.status(200).json({ ok: true });
+    }
+
+    if (action === 'addTraining') {
+      if (!clientId) return res.status(400).json({ error: 'clientId required' });
+      const { date, exercise, weight, reps, sets, memo: tmemo } = req.body;
+      if (!exercise) return res.status(400).json({ error: 'exercise required' });
+      const entry = { date: date || new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }), exercise, weight, reps, sets, memo: tmemo || '' };
+      await redis.lpush('training:' + clientId, entry);
       return res.status(200).json({ ok: true });
     }
 

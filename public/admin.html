@@ -38,6 +38,20 @@ textarea{resize:vertical;min-height:80px}
 .msg.ok{background:#e8f5e9;color:#2e7d32}
 .msg.err{background:#fdecea;color:#c62828}
 .back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:16px}
+.client-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.ctab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);border:none;background:none;border-bottom:2px solid transparent}
+.ctab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.input-row{display:flex;align-items:center;gap:8px}
+.input-row input{flex:1}
+.input-unit{font-size:14px;color:var(--text2);white-space:nowrap}
+.tr-list{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.tr-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.tr-date{font-size:11px;color:var(--text2);margin-bottom:4px}
+.tr-exercise{font-size:15px;font-weight:700;margin-bottom:8px}
+.tr-stats{display:flex;gap:6px;flex-wrap:wrap}
+.tr-stat{font-size:12px;background:var(--bg);border-radius:6px;padding:4px 10px;color:var(--text2)}
+.tr-stat span{color:var(--text);font-weight:700}
+.tr-memo{font-size:13px;color:var(--text2);margin-top:8px;line-height:1.5}
 .id-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .id-bar-label{font-size:11px;color:var(--text2);font-weight:600;white-space:nowrap}
 .id-bar-val{font-size:12px;color:var(--text);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
@@ -65,16 +79,58 @@ textarea{resize:vertical;min-height:80px}
     <div id="memo-view" style="display:none">
       <button class="back-btn" onclick="backToList()">← 一覧に戻る</button>
       <div id="selected-client-name" style="font-size:18px;font-weight:800;margin-bottom:4px"></div>
-      <div id="selected-client-id" style="font-size:11px;color:var(--text2);margin-bottom:20px"></div>
-      <div class="form-group">
-        <label>メモを追加</label>
-        <textarea id="memo-input" placeholder="メモを入力..."></textarea>
+      <div id="selected-client-id" style="font-size:11px;color:var(--text2);margin-bottom:16px"></div>
+      <div class="client-tabs">
+        <button class="ctab on" id="ctab-memo" onclick="switchClientTab('memo')">メモ</button>
+        <button class="ctab" id="ctab-training" onclick="switchClientTab('training')">トレーニング記録</button>
       </div>
-      <button class="btn" onclick="addMemo()">追加</button>
-      <div id="memo-msg"></div>
-      <div class="memo-section">
-        <label style="margin-bottom:12px;display:block">メモ履歴</label>
-        <div id="mlist"><div class="spinner"><div class="sp"></div></div></div>
+      <!-- メモペイン -->
+      <div id="cpane-memo">
+        <div class="form-group">
+          <label>メモを追加</label>
+          <textarea id="memo-input" placeholder="メモを入力..."></textarea>
+        </div>
+        <button class="btn" onclick="addMemo()">追加</button>
+        <div id="memo-msg"></div>
+        <div class="memo-section">
+          <label style="margin-bottom:12px;display:block">メモ履歴</label>
+          <div id="mlist"><div class="spinner"><div class="sp"></div></div></div>
+        </div>
+      </div>
+      <!-- トレーニング記録ペイン -->
+      <div id="cpane-training" style="display:none">
+        <div class="form-group">
+          <label>種目</label>
+          <input type="text" id="tr-exercise" placeholder="例: スクワット">
+        </div>
+        <div class="form-group">
+          <label>重量</label>
+          <div class="input-row">
+            <input type="number" id="tr-weight" placeholder="0" min="0" step="0.5">
+            <span class="input-unit">kg</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>回数</label>
+          <div class="input-row">
+            <input type="number" id="tr-reps" placeholder="0" min="0">
+            <span class="input-unit">回</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>セット数</label>
+          <div class="input-row">
+            <input type="number" id="tr-sets" placeholder="0" min="0">
+            <span class="input-unit">セット</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>メモ（任意）</label>
+          <textarea id="tr-memo" placeholder="フォームの注意点など..."></textarea>
+        </div>
+        <button class="btn" onclick="addTraining()">記録する</button>
+        <div id="tr-msg"></div>
+        <div class="tr-list" id="trlist"></div>
       </div>
     </div>
   </div>
@@ -151,7 +207,16 @@ function selectClient(id, name) {
   document.getElementById('selected-client-id').textContent = 'ID: ' + id;
   document.getElementById('memo-input').value = '';
   document.getElementById('memo-msg').innerHTML = '';
-  loadMemos();
+  switchClientTab('memo');
+}
+
+function switchClientTab(tab) {
+  document.querySelectorAll('.ctab').forEach(function(t){ t.classList.remove('on'); });
+  document.getElementById('cpane-memo').style.display = tab === 'memo' ? 'block' : 'none';
+  document.getElementById('cpane-training').style.display = tab === 'training' ? 'block' : 'none';
+  document.getElementById('ctab-' + tab).classList.add('on');
+  if (tab === 'memo') loadMemos();
+  if (tab === 'training') loadTrainings();
 }
 
 function backToList() {
@@ -219,6 +284,62 @@ function addClient() {
     }
   })
   .catch(function(){ showMsg('add-msg', 'err', '通信エラー'); });
+}
+
+function loadTrainings() {
+  var list = document.getElementById('trlist');
+  list.innerHTML = '<div class="spinner"><div class="sp"></div></div>';
+  fetch('/api/memo?adminId=' + adminId + '&clientId=' + selectedClient.id + '&trainings=1')
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      var trainings = data.trainings || [];
+      if (!trainings.length) {
+        list.innerHTML = '<div class="empty">記録がまだありません</div>';
+        return;
+      }
+      list.innerHTML = trainings.map(function(t) {
+        var stats = [];
+        if (t.weight) stats.push('<div class="tr-stat"><span>' + escHtml(String(t.weight)) + '</span> kg</div>');
+        if (t.reps)   stats.push('<div class="tr-stat"><span>' + escHtml(String(t.reps)) + '</span> 回</div>');
+        if (t.sets)   stats.push('<div class="tr-stat"><span>' + escHtml(String(t.sets)) + '</span> セット</div>');
+        return '<div class="tr-card">'
+          + '<div class="tr-date">' + escHtml(t.date || '') + '</div>'
+          + '<div class="tr-exercise">' + escHtml(t.exercise || '') + '</div>'
+          + (stats.length ? '<div class="tr-stats">' + stats.join('') + '</div>' : '')
+          + (t.memo ? '<div class="tr-memo">' + escHtml(t.memo) + '</div>' : '')
+          + '</div>';
+      }).join('');
+    })
+    .catch(function(){ list.innerHTML = '<div class="empty">読み込みエラー</div>'; });
+}
+
+function addTraining() {
+  var exercise = document.getElementById('tr-exercise').value.trim();
+  if (!exercise) { showMsg('tr-msg', 'err', '種目を入力してください'); return; }
+  var entry = {
+    date: new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }),
+    exercise: exercise,
+    weight: document.getElementById('tr-weight').value || '',
+    reps: document.getElementById('tr-reps').value || '',
+    sets: document.getElementById('tr-sets').value || '',
+    memo: document.getElementById('tr-memo').value.trim()
+  };
+  fetch('/api/memo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adminId: adminId, action: 'addTraining', clientId: selectedClient.id, exercise: entry.exercise, weight: entry.weight, reps: entry.reps, sets: entry.sets, date: entry.date, memo: entry.memo })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data.ok) {
+      ['tr-exercise','tr-weight','tr-reps','tr-sets','tr-memo'].forEach(function(id){ document.getElementById(id).value = ''; });
+      showMsg('tr-msg', 'ok', '記録しました');
+      loadTrainings();
+    } else {
+      showMsg('tr-msg', 'err', data.error || 'エラーが発生しました');
+    }
+  })
+  .catch(function(){ showMsg('tr-msg', 'err', '通信エラー'); });
 }
 
 function showMsg(id, type, text) {

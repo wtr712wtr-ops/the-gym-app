@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <meta name="theme-color" content="#f7f7f7">
+<meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="THE GYM">
 <title>THE GYM</title>
@@ -69,6 +70,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .mi{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .ml{display:flex;align-items:center;gap:12px}
 .lo{width:100%;background:none;border:1px solid #e44;color:#e44;border-radius:8px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px}
+@media (prefers-color-scheme: dark) {
+  :root{--bg:#f7f7f7 !important;--bg2:#ffffff !important;--bg3:#eeeeee !important;--text:#111111 !important;--text2:#888888 !important;--border:#e5e5e5 !important}
+  body{background:#f7f7f7 !important;color:#111111 !important}
+}
 </style>
 </head>
 <body>
@@ -107,7 +112,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <div class="pg" id="pg-profile">
       <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
       <div class="stitle" style="margin-bottom:12px">メニュー</div>
-      <div class="mi" id="lineメニュー"><div class="ml"><span style="font-size:15px;font-weight:600">公式LINEへ</span></div><span style="color:var(--text2)">›</span></div>
+      <div class="mi" id="line-menu"><div class="ml"><span style="font-size:15px;font-weight:600">公式LINEへ</span></div><span style="color:var(--text2)">&rsaquo;</span></div>
       <button class="lo" id="logoutBtn">ログアウト</button>
     </div>
   </div>
@@ -125,7 +130,7 @@ document.getElementById('loginBtn').addEventListener('click',function(){
   location.href='https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2009567758&redirect_uri='+encodeURIComponent(location.origin+'/api/callback')+'&state='+s+'&scope=profile%20openid';
 });
 document.getElementById('lineBtn').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
-document.getElementById('lineメニュー').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
+document.getElementById('line-menu').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
 document.getElementById('logoutBtn').addEventListener('click',function(){if(confirm('ログアウトしますか？')){localStorage.removeItem('gym_user');location.reload();}});
 function init(){
   var p=new URLSearchParams(location.search);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<meta name="theme-color" content="#1c1c1c">
+<meta name="theme-color" content="#f7f7f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="THE GYM">
 <title>THE GYM</title>
@@ -107,7 +107,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <div class="pg" id="pg-profile">
       <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
       <div class="stitle" style="margin-bottom:12px">メニュー</div>
-      <div class="mi" id="lineメニュー"><div class="ml"><span style="font-size:18px">💬</span><span style="font-size:15px;font-weight:600">公式LINEへ</span></div><span style="color:var(--text2)">›</span></div>
+      <div class="mi" id="lineメニュー"><div class="ml"><span style="font-size:15px;font-weight:600">公式LINEへ</span></div><span style="color:var(--text2)">›</span></div>
       <button class="lo" id="logoutBtn">ログアウト</button>
     </div>
   </div>
@@ -189,7 +189,7 @@ function renderHome(trainings){
   var monDays=new Set(trainings.filter(function(t){return t.date&&String(t.date).indexOf(ym)===0;}).map(function(t){return String(t.date).substring(0,10);})).size;
   document.getElementById('mon').textContent=monDays;
   var c=document.getElementById('latest');
-  if(!trainings.length){c.innerHTML='<div class="empty"><div class="ei">&#x1F3CB;&#xFE0F;</div><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
+  if(!trainings.length){c.innerHTML='<div class="empty"><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
   var t=trainings[0];
   var stats=[];
   if(t.weight)stats.push('<span class="tag">'+escH(String(t.weight))+'kg</span>');
@@ -199,7 +199,7 @@ function renderHome(trainings){
 }
 function renderTrainings(list){
   var c=document.getElementById('rlist');
-  if(!list.length){c.innerHTML='<div class="empty"><div class="ei">&#x1F3CB;&#xFE0F;</div><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
+  if(!list.length){c.innerHTML='<div class="empty"><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
   c.innerHTML=list.map(function(t){
     var stats=[];
     if(t.weight)stats.push('<div class="tr-stat"><span>'+escH(String(t.weight))+'</span> kg</div>');

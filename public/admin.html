@@ -8,9 +8,9 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#f7f7f7;--bg2:#ffffff;--bg3:#f0f0f0;--border:#e5e5e5;--text:#111111;--text2:#888888;--accent:#1c1c1c;--line:#06C755}
 body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto}
-.header{background:var(--accent);height:56px;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
-.header-title{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#fff}
-.header-sub{font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase}
+.header{background:#e5e5e5;height:56px;padding:0 20px;display:flex;align-items:center;justify-content:center;position:relative}
+.header-title{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#111111}
+.header-sub{font-size:11px;color:#888888;letter-spacing:1px;text-transform:uppercase;position:absolute;right:20px}
 .id-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px}
 .id-bar-label{font-size:10px;color:var(--text2);font-weight:600;white-space:nowrap;letter-spacing:0.5px;text-transform:uppercase}
 .id-bar-val{font-size:11px;color:var(--text2);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
@@ -70,7 +70,7 @@ textarea{resize:vertical;min-height:80px}
 <body>
 <div class="header">
   <div><div class="header-title">THE GYM</div></div>
-  <a href="/?preview=client" target="_blank" style="font-size:11px;color:rgba(255,255,255,0.6);text-decoration:none;font-weight:600;letter-spacing:0.5px">クライアント画面を確認 ›</a>
+  <a href="/?preview=client" target="_blank" style="font-size:11px;color:#888888;text-decoration:none;font-weight:600;letter-spacing:0.5px;position:absolute;right:20px">クライアント画面を確認 &rsaquo;</a>
 </div>
 <div class="id-bar">
   <span class="id-bar-label">MY ID</span>

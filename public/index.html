@@ -22,9 +22,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .btn-line{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--line);color:#fff;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .btn-line:active{opacity:0.85}
 #app{display:none;flex-direction:column;min-height:100vh}
-.header{position:sticky;top:0;z-index:100;background:var(--accent);height:56px;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
-.hlogo{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#fff}
-.av{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;overflow:hidden}
+.header{position:sticky;top:0;z-index:100;background:#e5e5e5;height:56px;padding:0 20px;display:flex;align-items:center;justify-content:center;position:relative}
+.hlogo{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#111111}
+.av{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;color:#111111;overflow:hidden;position:absolute;right:20px}
 .av img{width:100%;height:100%;object-fit:cover}
 .main{flex:1;padding:0 0 72px}
 .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}

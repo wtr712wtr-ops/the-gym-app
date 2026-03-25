@@ -57,6 +57,14 @@ textarea{resize:vertical;min-height:80px}
 .tr-stat{font-size:11px;background:var(--bg3);border-radius:20px;padding:4px 10px;color:var(--text2);border:1px solid var(--border);font-weight:600}
 .tr-stat span{color:var(--text);font-weight:700}
 .tr-memo{font-size:13px;color:var(--text2);margin-top:8px;line-height:1.5}
+.ex-row{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.ex-row-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ex-row-num{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase}
+.del-row-btn{background:none;border:1px solid #e0a0a0;color:#c62828;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:600;cursor:pointer}
+.ex-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ex-grid .form-group{margin-bottom:0}
+.btn-add-row{width:100%;padding:12px;background:var(--bg2);color:var(--accent);border:1px dashed var(--border);border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px}
+.btn-add-row:active{background:var(--bg3)}
 </style>
 </head>
 <body>
@@ -102,36 +110,9 @@ textarea{resize:vertical;min-height:80px}
       </div>
       <!-- トレーニング記録ペイン -->
       <div id="cpane-training" style="display:none">
-        <div class="form-group">
-          <label>種目</label>
-          <input type="text" id="tr-exercise" placeholder="例: スクワット">
-        </div>
-        <div class="form-group">
-          <label>重量</label>
-          <div class="input-row">
-            <input type="number" id="tr-weight" placeholder="0" min="0" step="0.5">
-            <span class="input-unit">kg</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>回数</label>
-          <div class="input-row">
-            <input type="number" id="tr-reps" placeholder="0" min="0">
-            <span class="input-unit">回</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>セット数</label>
-          <div class="input-row">
-            <input type="number" id="tr-sets" placeholder="0" min="0">
-            <span class="input-unit">セット</span>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>メモ（任意）</label>
-          <textarea id="tr-memo" placeholder="フォームの注意点など..."></textarea>
-        </div>
-        <button class="btn" onclick="addTraining()">記録する</button>
+        <div id="tr-rows"></div>
+        <button class="btn-add-row" onclick="addExRow()">＋ 種目を追加</button>
+        <button class="btn" onclick="saveTrainings()">まとめて記録する</button>
         <div id="tr-msg"></div>
         <div class="tr-list" id="trlist"></div>
       </div>
@@ -219,7 +200,7 @@ function switchClientTab(tab) {
   document.getElementById('cpane-training').style.display = tab === 'training' ? 'block' : 'none';
   document.getElementById('ctab-' + tab).classList.add('on');
   if (tab === 'memo') loadMemos();
-  if (tab === 'training') loadTrainings();
+  if (tab === 'training') { initTrainingPane(); loadTrainings(); }
 }
 
 function backToList() {
@@ -316,33 +297,76 @@ function loadTrainings() {
     .catch(function(){ list.innerHTML = '<div class="empty">読み込みエラー</div>'; });
 }
 
-function addTraining() {
-  var exercise = document.getElementById('tr-exercise').value.trim();
-  if (!exercise) { showMsg('tr-msg', 'err', '種目を入力してください'); return; }
-  var entry = {
-    date: new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }),
-    exercise: exercise,
-    weight: document.getElementById('tr-weight').value || '',
-    reps: document.getElementById('tr-reps').value || '',
-    sets: document.getElementById('tr-sets').value || '',
-    memo: document.getElementById('tr-memo').value.trim()
-  };
-  fetch('/api/memo', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ adminId: adminId, action: 'addTraining', clientId: selectedClient.id, exercise: entry.exercise, weight: entry.weight, reps: entry.reps, sets: entry.sets, date: entry.date, memo: entry.memo })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data) {
-    if (data.ok) {
-      ['tr-exercise','tr-weight','tr-reps','tr-sets','tr-memo'].forEach(function(id){ document.getElementById(id).value = ''; });
-      showMsg('tr-msg', 'ok', '記録しました');
-      loadTrainings();
-    } else {
-      showMsg('tr-msg', 'err', data.error || 'エラーが発生しました');
-    }
-  })
-  .catch(function(){ showMsg('tr-msg', 'err', '通信エラー'); });
+var exRowCounter = 0;
+
+function initTrainingPane() {
+  exRowCounter = 0;
+  document.getElementById('tr-rows').innerHTML = '';
+  addExRow();
+}
+
+function addExRow() {
+  if (exRowCounter >= 10) return;
+  exRowCounter++;
+  var i = exRowCounter;
+  var div = document.createElement('div');
+  div.className = 'ex-row';
+  div.id = 'ex-row-' + i;
+  div.innerHTML =
+    '<div class="ex-row-header">'
+    + '<span class="ex-row-num">種目 ' + i + '</span>'
+    + (i > 1 ? '<button class="del-row-btn" onclick="removeExRow(' + i + ')">削除</button>' : '')
+    + '</div>'
+    + '<div class="form-group"><label>種目名</label><input type="text" id="ex-exercise-' + i + '" placeholder="例: スクワット"></div>'
+    + '<div class="ex-grid">'
+    + '<div class="form-group"><label>重量</label><div class="input-row"><input type="number" id="ex-weight-' + i + '" placeholder="0" min="0" step="0.5"><span class="input-unit">kg</span></div></div>'
+    + '<div class="form-group"><label>回数</label><div class="input-row"><input type="number" id="ex-reps-' + i + '" placeholder="0" min="0"><span class="input-unit">回</span></div></div>'
+    + '<div class="form-group"><label>セット</label><div class="input-row"><input type="number" id="ex-sets-' + i + '" placeholder="0" min="0"><span class="input-unit">セット</span></div></div>'
+    + '</div>';
+  document.getElementById('tr-rows').appendChild(div);
+}
+
+function removeExRow(i) {
+  var row = document.getElementById('ex-row-' + i);
+  if (row) row.parentNode.removeChild(row);
+}
+
+function saveTrainings() {
+  var rows = document.querySelectorAll('#tr-rows .ex-row');
+  var date = new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
+  var entries = [];
+  for (var r = 0; r < rows.length; r++) {
+    var rowId = rows[r].id.replace('ex-row-', '');
+    var exercise = document.getElementById('ex-exercise-' + rowId).value.trim();
+    if (!exercise) { showMsg('tr-msg', 'err', '種目名が空の行があります'); return; }
+    entries.push({
+      exercise: exercise,
+      weight: document.getElementById('ex-weight-' + rowId).value || '',
+      reps: document.getElementById('ex-reps-' + rowId).value || '',
+      sets: document.getElementById('ex-sets-' + rowId).value || '',
+      date: date
+    });
+  }
+  if (!entries.length) { showMsg('tr-msg', 'err', '種目を1つ以上入力してください'); return; }
+  var promises = entries.map(function(entry) {
+    return fetch('/api/memo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminId: adminId, action: 'addTraining', clientId: selectedClient.id, exercise: entry.exercise, weight: entry.weight, reps: entry.reps, sets: entry.sets, date: entry.date, memo: '' })
+    }).then(function(r){ return r.json(); });
+  });
+  Promise.all(promises)
+    .then(function(results) {
+      var allOk = results.every(function(d){ return d.ok; });
+      if (allOk) {
+        showMsg('tr-msg', 'ok', entries.length + '種目を記録しました');
+        initTrainingPane();
+        loadTrainings();
+      } else {
+        showMsg('tr-msg', 'err', '一部の記録に失敗しました');
+      }
+    })
+    .catch(function(){ showMsg('tr-msg', 'err', '通信エラー'); });
 }
 
 function showMsg(id, type, text) {

@@ -182,11 +182,12 @@ function loadData(){
 }
 function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function renderHome(trainings){
-  document.getElementById('tot').textContent=trainings.length;
+  var uniqueDays=new Set(trainings.map(function(t){return String(t.date).substring(0,10);})).size;
+  document.getElementById('tot').textContent=uniqueDays;
   var now=new Date();
   var ym=now.getFullYear()+'/'+(now.getMonth()+1)+'/';
-  var mon=trainings.filter(function(t){return t.date&&String(t.date).indexOf(ym)===0;}).length;
-  document.getElementById('mon').textContent=mon;
+  var monDays=new Set(trainings.filter(function(t){return t.date&&String(t.date).indexOf(ym)===0;}).map(function(t){return String(t.date).substring(0,10);})).size;
+  document.getElementById('mon').textContent=monDays;
   var c=document.getElementById('latest');
   if(!trainings.length){c.innerHTML='<div class="empty"><div class="ei">&#x1F3CB;&#xFE0F;</div><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
   var t=trainings[0];

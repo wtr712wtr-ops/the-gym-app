@@ -154,6 +154,13 @@ function showApp(){
   document.getElementById('pname').textContent=n;
   document.getElementById('pid').textContent='ID: '+(user.userId||'').substring(0,10)+'...';
   if(user.pictureUrl){document.getElementById('av').innerHTML='<img src="'+user.pictureUrl+'">';document.getElementById('pav').innerHTML='<img src="'+user.pictureUrl+'">';}
+  if(location.search.includes('preview=client')){
+    var bar=document.createElement('div');
+    bar.style.cssText='background:#1c1c1c;color:#fff;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;';
+    bar.textContent='← 管理者画面に戻る';
+    bar.onclick=function(){location.href='/admin.html';};
+    document.body.insertBefore(bar,document.body.firstChild);
+  }
 }
 function loadData(){
   var uid=user.userId||'';

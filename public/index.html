@@ -22,7 +22,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .btn-line{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--line);color:#fff;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .btn-line:active{opacity:0.85}
 #app{display:none;flex-direction:column;min-height:100vh}
-.header{position:sticky;top:0;z-index:100;background:#e5e5e5;height:56px;display:flex;align-items:center;justify-content:center}
+.header{position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:14px}
 .hlogo{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#111111}
 .av{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;color:#111111;overflow:hidden;position:absolute;right:20px}
 .av img{width:100%;height:100%;object-fit:cover}
@@ -91,34 +91,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
   body{background:#ffffff !important;color:#111111 !important}
 }
 </style>
-<script>
-(function(){
-  // ChromeでもSafariでも確実にsafe-areaを取得する方法
-  function applySafeArea(){
-    var probe=document.createElement('div');
-    probe.style.cssText='position:fixed;top:env(safe-area-inset-top,0px);height:1px;width:1px;visibility:hidden;pointer-events:none;';
-    document.body.appendChild(probe);
-    var sat=probe.getBoundingClientRect().top;
-    document.body.removeChild(probe);
-    if(sat>0){
-      var h=document.querySelector('.header');
-      if(h){
-        h.style.paddingTop=sat+'px';
-        h.style.minHeight=(56+sat)+'px';
-        h.style.alignItems='flex-end';
-        h.style.paddingBottom='10px';
-      }
-    }
-  }
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',applySafeArea);
-  } else {
-    applySafeArea();
-  }
-  // リサイズ時も再計算
-  window.addEventListener('resize',applySafeArea);
-})();
-</script>
 </head>
 <body>
 <div id="login">
@@ -138,7 +110,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <div class="pg on" id="pg-home">
       <div class="gname" id="gname">Hello!</div>
       <div class="gsub" id="gsub">Today's training</div>
-      <div class="stitle">Training Stats</div>
+      <div id="login-streak-card" style="background:#111;border-radius:12px;padding:16px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;">
+  <div>
+    <div style="font-size:11px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-bottom:4px">LOGIN STREAK</div>
+    <div style="font-size:28px;font-weight:800;color:#fff;letter-spacing:-0.5px"><span id="streak-num">-</span><span style="font-size:14px;font-weight:600;margin-left:4px">日連続</span></div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:32px" id="streak-emoji">💪</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px"><span id="streak-total">-</span>日累計</div>
+  </div>
+</div>
+<div class="stitle">Training Stats</div>
       <div class="srow">
         <div class="sc"><div class="snum" id="tot">0</div><div class="slabel">Total Sessions</div></div>
         <div class="sc"><div class="snum" id="mon">0</div><div class="slabel">This Month</div></div>
@@ -247,6 +229,23 @@ function showApp(){
   var g=h<11?'おはようございます！':h<18?'こんにちは！':'こんばんは！';
   document.getElementById('gname').textContent=n;
   document.getElementById('gsub').textContent=g+'今日も頑張りましょう';
+  // ログインストリーク表示
+  var bonusRaw=localStorage.getItem('gym_bonus');
+  if(bonusRaw){
+    try{
+      var bonusData=JSON.parse(bonusRaw);
+      var streak=bonusData.streak||1;
+      var total=(bonusData.history||[]).length;
+      document.getElementById('streak-num').textContent=streak;
+      document.getElementById('streak-total').textContent=total;
+      var e='💪';
+      if(streak>=30)e='👑';
+      else if(streak>=14)e='🏆';
+      else if(streak>=7)e='🔥';
+      else if(streak>=3)e='⚡️';
+      document.getElementById('streak-emoji').textContent=e;
+    }catch(ex){}
+  }
   document.getElementById('avi').textContent=n.charAt(0);
   document.getElementById('pavi').textContent=n.charAt(0);
   document.getElementById('pname').textContent=n;

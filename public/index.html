@@ -94,7 +94,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 </head>
 <body>
 <div id="login">
-  <div style="text-align:center"><img src="/icon-192.png" style="width:200px;height:200px;border-radius:28px;margin-bottom:8px;background:#ffffff;"><div style="font-size:13px;letter-spacing:4px;color:#888;margin-top:4px;">PERSONAL TRAINING</div></div>
+  <div style="text-align:center"><img src="/icon-192.png" style="width:200px;height:200px;border-radius:28px;margin-bottom:8px;mix-blend-mode:multiply;"><div style="font-size:13px;letter-spacing:4px;color:#888;margin-top:4px;">PERSONAL TRAINING</div></div>
   <div class="login-card">
     <div class="card-title">メンバーログイン</div>
     <div class="card-desc">LINEアカウントでログインしてください</div>
@@ -284,9 +284,12 @@ function renderTrainings(list){
   }).join('');
 }
 function renderMemos(list){
-  var c=document.getElementById('memo-list');
-  if(!list.length){c.innerHTML='<div class="empty" style="padding:20px 0;font-size:13px">まだ記録がありません</div>';return;}
-  c.innerHTML=list.map(function(m){return'<div class="memo-card">'+escH(m)+'</div>';}).join('');
+  if(!list.length)return;
+  var c=document.getElementById('rlist');
+  var existing=c.innerHTML;
+  var header='<div class="stitle" style="margin:24px 0 12px">トレーナーコメント</div>';
+  var cards=list.map(function(m){return'<div class="memo-card" style="border-left:3px solid #06C755;">'+escH(m)+'</div>';}).join('');
+  c.innerHTML=existing+header+cards;
 }
 function closeD(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
 function showPage(n){document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});document.getElementById('pg-'+n).classList.add('on');document.getElementById('ni-'+n).classList.add('on');}

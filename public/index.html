@@ -126,7 +126,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
         <div class="sc"><div class="snum" id="mon">0</div><div class="slabel">This Month</div></div>
       </div>
       <div class="stitle">最新のトレーニング</div>
-      <div id="latest"><div class="spin"><div class="sp"></div></div></div>
+      <div id="latest" onclick="showPage('records')" style="cursor:pointer"><div class="spin"><div class="sp"></div></div></div>
       <button class="lbtn" id="lineBtn">公式LINEへ連絡・予約</button>
     </div>
     <div class="pg" id="pg-records">
@@ -292,7 +292,7 @@ function renderHome(trainings){
   if(t.weight)stats.push('<span class="tag">'+escH(String(t.weight))+'kg</span>');
   if(t.reps)stats.push('<span class="tag">'+escH(String(t.reps))+'回</span>');
   if(t.sets)stats.push('<span class="tag">'+escH(String(t.sets))+'セット</span>');
-  c.innerHTML='<div class="rc"><div class="rdate">'+escH(t.date||'')+'</div><div class="rtitle">'+escH(t.exercise||'トレーニング')+'</div><div class="rtags">'+stats.join('')+'</div></div>';
+  c.innerHTML='<div class="rc"><div class="rdate">'+escH(t.date||'')+'</div><div class="rtitle">'+escH(t.exercise||'トレーニング')+'</div><div class="rtags">'+stats.join('')+'</div><div style="font-size:11px;color:#aaa;margin-top:8px;font-weight:600">詳細・他の記録を見る ›</div></div>';
 }
 function renderTrainings(list){
   var c=document.getElementById('rlist');

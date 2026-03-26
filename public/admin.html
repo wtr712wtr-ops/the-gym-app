@@ -14,7 +14,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#f7f7f7;--bg2:#ffffff;--bg3:#f0f0f0;--border:#e5e5e5;--text:#111111;--text2:#888888;--accent:#1c1c1c;--line:#06C755}
 body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto}
-.header{position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:14px}
+.header{position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:grid;grid-template-columns:1fr auto 1fr;align-items:flex-end;padding:0 16px 12px}
 .header-title{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#111111}
 .header-sub{font-size:11px;color:#888888;letter-spacing:1px;text-transform:uppercase;position:absolute;right:20px}
 .id-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px}
@@ -75,68 +75,9 @@ textarea{resize:vertical;min-height:80px}
 </head>
 <body>
 <div class="header">
-  <div><div class="header-title">THE GYM</div></div>
-  <a href="/?preview=client" target="_blank" style="font-size:11px;color:#888888;text-decoration:none;font-weight:600;letter-spacing:0.5px;position:absolute;right:20px">クライアント画面を確認 &rsaquo;</a>
-</div>
-<div class="id-bar">
-  <span class="id-bar-label">MY ID</span>
-  <span class="id-bar-val" id="my-line-id">—</span>
-  <button class="id-copy-btn" onclick="copyMyId()">コピー</button>
-</div>
-<div class="tabs">
-  <button class="tab on" id="tab-clients" onclick="switchTab('clients')">クライアント一覧</button>
-  <button class="tab" id="tab-add" onclick="switchTab('add')">＋ 追加</button>
-</div>
-<div class="content">
-  <!-- クライアント一覧 -->
-  <div id="pane-clients">
-    <div id="client-view">
-      <div id="clist"><div class="spinner"><div class="sp"></div></div></div>
-    </div>
-    <div id="memo-view" style="display:none">
-      <button class="back-btn" onclick="backToList()">← 一覧に戻る</button>
-      <div id="selected-client-name" style="font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px"></div>
-      <div id="selected-client-id" style="font-size:11px;color:var(--text2);margin-bottom:20px;font-family:monospace"></div>
-      <div class="client-tabs">
-        <button class="ctab on" id="ctab-memo" onclick="switchClientTab('memo')">メモ</button>
-        <button class="ctab" id="ctab-training" onclick="switchClientTab('training')">トレーニング記録</button>
-      </div>
-      <!-- メモペイン -->
-      <div id="cpane-memo">
-        <div class="form-group">
-          <label>メモを追加</label>
-          <textarea id="memo-input" placeholder="メモを入力..."></textarea>
-        </div>
-        <button class="btn" onclick="addMemo()">追加</button>
-        <div id="memo-msg"></div>
-        <div class="memo-section">
-          <label style="margin-bottom:12px;display:block">メモ履歴</label>
-          <div id="mlist"><div class="spinner"><div class="sp"></div></div></div>
-        </div>
-      </div>
-      <!-- トレーニング記録ペイン -->
-      <div id="cpane-training" style="display:none">
-        <div id="tr-rows"></div>
-        <button class="btn-add-row" onclick="addExRow()">＋ 種目を追加</button>
-        <button class="btn" onclick="saveTrainings()">まとめて記録する</button>
-        <div id="tr-msg"></div>
-        <div class="tr-list" id="trlist"></div>
-      </div>
-    </div>
-  </div>
-  <!-- クライアント追加 -->
-  <div id="pane-add" style="display:none">
-    <div class="form-group">
-      <label>LINE ユーザーID</label>
-      <input type="text" id="new-client-id" placeholder="U0000000000000000000000000000000">
-    </div>
-    <div class="form-group">
-      <label>クライアント名</label>
-      <input type="text" id="new-client-name" placeholder="山田 太郎">
-    </div>
-    <button class="btn" onclick="addClient()">追加する</button>
-    <div id="add-msg"></div>
-  </div>
+  <div></div>
+  <div class="header-title">THE GYM</div>
+  <div style="display:flex;justify-content:flex-end;align-items:center"><a href="/?preview=client" target="_blank" style="font-size:11px;color:#888;text-decoration:none;font-weight:600;letter-spacing:0.5px;white-space:nowrap">クライアント画面を確認 &rsaquo;</a></div>
 </div>
 <script>
 var ADMIN_ID = 'U0f4c1d79f182f727c49b0b1bfbace466';

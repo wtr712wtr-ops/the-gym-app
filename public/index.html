@@ -70,6 +70,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .mi{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .ml{display:flex;align-items:center;gap:12px}
 .lo{width:100%;background:none;border:1px solid #e44;color:#e44;border-radius:8px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px}
+/* ログインボーナスモーダル */
+#bonus-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999;align-items:center;justify-content:center;padding:24px}
+#bonus-overlay.on{display:flex}
+#bonus-card{background:#fff;border-radius:24px;padding:32px 24px;width:100%;max-width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:bonusPop .4s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes bonusPop{from{opacity:0;transform:scale(0.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.bonus-emoji{font-size:56px;margin-bottom:8px;display:block}
+.bonus-streak{font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:4px;color:#111}
+.bonus-streak span{color:#FF6B00}
+.bonus-msg{font-size:14px;color:#888;margin-bottom:24px;line-height:1.5}
+.bonus-stamps{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
+.stamp{width:36px;height:36px;border-radius:50%;border:2px solid #e5e5e5;display:flex;align-items:center;justify-content:center;font-size:16px;background:#f7f7f7}
+.stamp.filled{background:#FF6B00;border-color:#FF6B00;font-size:14px;color:#fff}
+.stamp.today{background:#111;border-color:#111;font-size:14px;color:#fff;box-shadow:0 0 0 3px rgba(17,17,17,0.2)}
+.stamp-label{font-size:9px;color:#aaa;margin-top:2px;font-weight:600;text-align:center}
+.bonus-close{background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
+.bonus-close:active{opacity:0.85}
 @media (prefers-color-scheme: dark) {
   :root{--bg:#f7f7f7 !important;--bg2:#ffffff !important;--bg3:#eeeeee !important;--text:#111111 !important;--text2:#888888 !important;--border:#e5e5e5 !important}
   body{background:#f7f7f7 !important;color:#111111 !important}
@@ -112,7 +128,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <div class="pg" id="pg-profile">
       <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
       <div class="stitle" style="margin-bottom:12px">メニュー</div>
-      <div class="mi" id="line-menu"><div class="ml"><span style="font-size:15px;font-weight:600">公式LINEへ</span></div><span style="color:var(--text2)">&rsaquo;</span></div>
+      <div class="mi" id="line-menu" style="background:#06C755;border:none"><div class="ml"><span style="font-size:15px;font-weight:600;color:#fff">公式LINEへ</span></div><span style="color:rgba(255,255,255,0.8)">&rsaquo;</span></div>
       <button class="lo" id="logoutBtn">ログアウト</button>
     </div>
   </div>
@@ -121,6 +137,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <button class="ni" id="ni-records" onclick="showPage('records')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>記録</button>
     <button class="ni" id="ni-profile" onclick="showPage('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>マイページ</button>
   </nav>
+</div>
+
+<!-- ログインボーナスモーダル -->
+<div id="bonus-overlay">
+  <div id="bonus-card">
+    <span class="bonus-emoji" id="bonus-emoji">💪</span>
+    <div class="bonus-streak"><span id="bonus-num">1</span>日連続ログイン！</div>
+    <div class="bonus-msg" id="bonus-msg">今日も来てくれてありがとう！</div>
+    <div class="bonus-stamps" id="bonus-stamps"></div>
+    <button class="bonus-close" onclick="document.getElementById('bonus-overlay').classList.remove('on')">よし、始めよう！</button>
+  </div>
 </div>
 <script>
 var LINE_URL='https://lin.ee/X2yQksR';
@@ -132,6 +159,43 @@ document.getElementById('loginBtn').addEventListener('click',function(){
 document.getElementById('lineBtn').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
 document.getElementById('line-menu').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
 document.getElementById('logoutBtn').addEventListener('click',function(){if(confirm('ログアウトしますか？')){localStorage.removeItem('gym_user');location.reload();}});
+
+function checkLoginBonus(){
+  var today=new Date().toISOString().split('T')[0];
+  var raw=localStorage.getItem('gym_bonus');
+  var data=raw?JSON.parse(raw):{streak:0,lastDate:'',history:[]};
+  if(data.lastDate===today)return;
+  var yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  var yd=yesterday.toISOString().split('T')[0];
+  data.streak=(data.lastDate===yd)?(data.streak||0)+1:1;
+  data.lastDate=today;
+  if(!data.history)data.history=[];
+  data.history.push(today);
+  if(data.history.length>30)data.history=data.history.slice(-30);
+  localStorage.setItem('gym_bonus',JSON.stringify(data));
+  var streak=data.streak;
+  var emoji='💪',msg='今日も来てくれてありがとう！';
+  if(streak>=30){emoji='👑';msg='30日以上連続！圧巻の継続力です！';}
+  else if(streak>=14){emoji='🏆';msg='2週間以上連続！もう習慣になってますね！';}
+  else if(streak>=7){emoji='🔥';msg='1週間連続達成！最高のペースです！';}
+  else if(streak>=3){emoji='⚡️';msg='いい流れが来てます！この調子で！';}
+  document.getElementById('bonus-emoji').textContent=emoji;
+  document.getElementById('bonus-num').textContent=streak;
+  document.getElementById('bonus-msg').textContent=msg;
+  var days=['月','火','水','木','金','土','日'];
+  var stamps=document.getElementById('bonus-stamps');stamps.innerHTML='';
+  var now2=new Date();var dow=now2.getDay();
+  var monday=new Date(now2);monday.setDate(now2.getDate()-(dow===0?6:dow-1));
+  for(var i=0;i<7;i++){
+    var d=new Date(monday);d.setDate(monday.getDate()+i);
+    var ds=d.toISOString().split('T')[0];
+    var isToday=ds===today;var visited=data.history.indexOf(ds)>-1;
+    var cls='stamp'+(isToday?' today':visited?' filled':'');
+    stamps.innerHTML+='<div style="text-align:center"><div class="'+cls+'">'+(visited||isToday?'✓':'')+'</div><div class="stamp-label">'+days[i]+'</div></div>';
+  }
+  setTimeout(function(){document.getElementById('bonus-overlay').classList.add('on');},500);
+}
+
 function init(){
   var p=new URLSearchParams(location.search);
   if(p.get('user')){try{user=JSON.parse(decodeURIComponent(p.get('user')));localStorage.setItem('gym_user',JSON.stringify(user));history.replaceState({},'','/');}catch(e){}}
@@ -142,6 +206,7 @@ function init(){
       return;
     }
     showApp();
+    checkLoginBonus();
     loadData();
   }
   if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});

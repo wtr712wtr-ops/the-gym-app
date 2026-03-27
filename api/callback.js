@@ -1,4 +1,4 @@
-import { Redis } from '@upstash/redis';
+const { Redis } = require('@upstash/redis');
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
@@ -7,7 +7,7 @@ const redis = new Redis({
 
 const ADMIN_ID = 'U0f4c1d79f182f727c49b0b1bfbace466';
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   const code = req.query.code;
   if (!code) return res.redirect('/?error=no_code');
   try {
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     });
     const profile = await profileRes.json();
 
-    // 管理者以外は自動でクライアント一覧に登録（memo.jsと同じ sadd('clients', ...) を使用）
+    // 管理者以外は自動でクライアント一覧に登録
     if (profile.userId && profile.userId !== ADMIN_ID) {
       try {
         const existing = await redis.smembers('clients');
@@ -56,4 +56,4 @@ export default async function handler(req, res) {
   } catch (e) {
     res.redirect('/?error=' + encodeURIComponent(e.message));
   }
-}
+};

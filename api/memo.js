@@ -27,7 +27,10 @@ module.exports = async function handler(req, res) {
       const clients = await redis.smembers('clients') || [];
       console.log('clients:', JSON.stringify(clients));
       return res.json({ clients });
-    } else if (req.query.trainings !== undefined) {
+    } else if (req.query.nextDate !== undefined) {
+    const nextDate = await redis.get('nextDate:' + clientId);
+    return res.json({ nextDate: nextDate || null });
+  } else if (req.query.trainings !== undefined) {
       const trainings = await redis.lrange('training:' + clientId, 0, -1);
       return res.json({ trainings });
     } else {
@@ -62,7 +65,17 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    return res.status(400).json({ error: 'Unknown action' });
+    if (action === 'setNextDate') {
+    if (!clientId) return res.status(400).json({ error: 'clientId required' });
+    const { nextDate } = req.body;
+    if (nextDate) {
+      await redis.set('nextDate:' + clientId, nextDate);
+    } else {
+      await redis.del('nextDate:' + clientId);
+    }
+    return res.status(200).json({ ok: true });
+  }
+  return res.status(400).json({ error: 'Unknown action' });
   }
 
   return res.status(405).json({ error: 'Method not allowed' });

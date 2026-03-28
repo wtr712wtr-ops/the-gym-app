@@ -615,12 +615,11 @@ function hideCaloriePage(){
   document.getElementById('calorie-overlay').style.display='none';
 }
 function renderProfile(){
-  var now=new Date();
-  var uniqueDays=new Set(_trainings.map(function(t){return String(t.date).substring(0,10);})).size;
-  document.getElementById('prof-total').textContent=uniqueDays;
-  var ym=now.getFullYear()+'/'+(now.getMonth()+1)+'/';
-  var monDays=new Set(_trainings.filter(function(t){return t.date&&String(t.date).indexOf(ym)===0;}).map(function(t){return String(t.date).substring(0,10);})).size;
-  document.getElementById('prof-month').textContent=monDays;
+  // ホームの数値をそのまま同期（常に同じデータソース）
+  var tot=document.getElementById('tot');
+  var mon=document.getElementById('mon');
+  if(tot) document.getElementById('prof-total').textContent=tot.textContent;
+  if(mon) document.getElementById('prof-month').textContent=mon.textContent;
   var uid=user?user.userId:'';
   if(!uid)return;
   fetch('/api/memo?clientId='+uid+'&userId='+uid+'&profile')

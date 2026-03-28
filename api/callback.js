@@ -37,10 +37,11 @@ module.exports = async function handler(req, res) {
     if (profile.userId && profile.userId !== ADMIN_ID) {
       try {
         const existing = await redis.smembers('clients');
-        const alreadyExists = existing.some(c => c && c.id === profile.userId);
+        const alreadyExists = existing.some(function(c) {
+          return c && c.id === profile.userId;
+        });
         if (!alreadyExists) {
           await redis.sadd('clients', { id: profile.userId, name: profile.displayName || '名無し' });
-          console.log('auto-registered client:', profile.userId, profile.displayName);
         }
       } catch (e) {
         console.error('auto-register error:', e);

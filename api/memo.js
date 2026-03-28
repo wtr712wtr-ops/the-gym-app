@@ -32,7 +32,8 @@ module.exports = async function handler(req, res) {
     return res.json({ profile: prof ? JSON.parse(prof) : null });
   } else if (req.query.nextDate !== undefined) {
     const nextDate = await redis.get('nextDate:' + clientId);
-    return res.json({ nextDate: nextDate || null });
+    const nextTime = await redis.get('nextTime:' + clientId);
+    return res.json({ nextDate: nextDate || null, nextTime: nextTime || null });
   } else if (req.query.trainings !== undefined) {
       const trainings = await redis.lrange('training:' + clientId, 0, -1);
       return res.json({ trainings });
@@ -76,11 +77,16 @@ module.exports = async function handler(req, res) {
   }
   if (action === 'setNextDate') {
     if (!clientId) return res.status(400).json({ error: 'clientId required' });
-    const { nextDate } = req.body;
+    const { nextDate, nextTime } = req.body;
     if (nextDate) {
       await redis.set('nextDate:' + clientId, nextDate);
     } else {
       await redis.del('nextDate:' + clientId);
+    }
+    if (nextTime) {
+      await redis.set('nextTime:' + clientId, nextTime);
+    } else {
+      await redis.del('nextTime:' + clientId);
     }
     return res.status(200).json({ ok: true });
   }

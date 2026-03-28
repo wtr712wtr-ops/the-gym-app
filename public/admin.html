@@ -99,8 +99,9 @@ textarea{resize:vertical;min-height:80px}
       <div id="selected-client-id" style="font-size:11px;color:var(--text2);margin-bottom:20px;font-family:monospace"></div>
       <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px">
         <div style="font-size:11px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">次回予約日</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="date" id="next-date-input" style="flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:#fff;color:var(--text)">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="date" id="next-date-input" style="flex:2;min-width:140px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:#fff;color:var(--text)">
+          <input type="time" id="next-time-input" style="flex:1;min-width:100px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:#fff;color:var(--text)">
           <button onclick="saveNextDate()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">保存</button>
           <button onclick="clearNextDate()" style="background:none;color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:600;cursor:pointer">クリア</button>
         </div>
@@ -393,16 +394,19 @@ function showMsg(id, type, text) {
 
 function loadNextDate(){
   document.getElementById('next-date-input').value='';
+  document.getElementById('next-time-input').value='';
   fetch('/api/memo?adminId='+adminId+'&clientId='+selectedClient.id+'&nextDate')
     .then(function(r){return r.json();})
     .then(function(data){
       if(data.nextDate) document.getElementById('next-date-input').value=data.nextDate;
+      if(data.nextTime) document.getElementById('next-time-input').value=data.nextTime;
     }).catch(function(){});
 }
 function saveNextDate(){
   var val=document.getElementById('next-date-input').value;
+  var timeVal=document.getElementById('next-time-input').value;
   fetch('/api/memo',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({adminId:adminId,action:'setNextDate',clientId:selectedClient.id,nextDate:val||null})})
+    body:JSON.stringify({adminId:adminId,action:'setNextDate',clientId:selectedClient.id,nextDate:val||null,nextTime:timeVal||null})})
     .then(function(r){return r.json();})
     .then(function(data){
       var msg=document.getElementById('next-date-msg');
@@ -413,8 +417,9 @@ function saveNextDate(){
 }
 function clearNextDate(){
   document.getElementById('next-date-input').value='';
+  document.getElementById('next-time-input').value='';
   fetch('/api/memo',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({adminId:adminId,action:'setNextDate',clientId:selectedClient.id,nextDate:null})})
+    body:JSON.stringify({adminId:adminId,action:'setNextDate',clientId:selectedClient.id,nextDate:null,nextTime:null})})
     .then(function(r){return r.json();})
     .then(function(){
       var msg=document.getElementById('next-date-msg');

@@ -125,8 +125,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
           </div>
         </div>
         <div class="home-stat-grid">
-          <div class="home-stat"><div class="home-stat-num" id="tot">0</div><div class="home-stat-label">累計来店</div></div>
-          <div class="home-stat"><div class="home-stat-num" id="mon">0</div><div class="home-stat-label">今月の来店</div></div>
+          <div class="home-stat"><div class="home-stat-num" id="tot">0</div><div class="home-stat-label">累計来店数</div></div>
+          <div class="home-stat"><div class="home-stat-num" id="mon">0</div><div class="home-stat-label">今月の来店数</div></div>
         </div>
         <div class="home-card">
           <div class="home-card-label">最終来店日</div>
@@ -153,11 +153,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div style="text-align:center">
             <div style="font-size:28px;font-weight:800;color:var(--text);letter-spacing:-1px" id="prof-total">-</div>
-            <div style="font-size:11px;color:var(--text2);margin-top:4px;font-weight:500">累計来店日数</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:4px;font-weight:500">累計来店数</div>
           </div>
           <div style="text-align:center">
             <div style="font-size:28px;font-weight:800;color:var(--text);letter-spacing:-1px" id="prof-month">-</div>
-            <div style="font-size:11px;color:var(--text2);margin-top:4px;font-weight:500">今月の来店</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:4px;font-weight:500">今月の来店数</div>
           </div>
         </div>
       </div>
@@ -416,6 +416,9 @@ function renderHome(trainings){
   var ym=now.getFullYear()+'/'+(now.getMonth()+1)+'/';
   var monDays=new Set(trainings.filter(function(t){return t.date&&String(t.date).indexOf(ym)===0;}).map(function(t){return String(t.date).substring(0,10);})).size;
   document.getElementById('mon').textContent=monDays;
+  // マイページの数値も同期
+  var pt=document.getElementById('prof-total');if(pt)pt.textContent=uniqueDays;
+  var pm=document.getElementById('prof-month');if(pm)pm.textContent=monDays;
   if(trainings.length){
     var lastStr=String(trainings[0].date||'').substring(0,10);
     var lastD=new Date(lastStr);
@@ -442,7 +445,7 @@ function loadData(){
     if(data.nextDate){
       var nd=new Date(data.nextDate+'T00:00:00');
       var days=['日','月','火','水','木','金','土'];
-      disp.textContent=nd.getFullYear()+'年'+(nd.getMonth()+1)+'月'+nd.getDate()+'日（'+days[nd.getDay()]+'）';
+      var timeStr=data.nextTime?(' '+data.nextTime):''; disp.textContent=nd.getFullYear()+'年'+(nd.getMonth()+1)+'月'+nd.getDate()+'日（'+days[nd.getDay()]+'）'+timeStr;
       disp.style.color='var(--text)';
       var diff=Math.ceil((nd-new Date())/(1000*60*60*24));
       if(diff>0){badge.innerHTML='<span style="background:#f0f9f4;color:#0a7a3e;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700">あと'+diff+'日</span>';}

@@ -137,7 +137,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
         </div>
         <div class="home-card-label" style="margin-bottom:8px">最新のトレーニング</div>
         <div id="latest" onclick="showPage('records')" style="cursor:pointer;margin-bottom:12px"><div class="spin"><div class="sp"></div></div></div>
-        <button class="lbtn" id="lineBtn">公式LINEへ連絡・予約</button>
+        <a class="lbtn" id="lineBtn" href="https://lin.ee/X2yQksR" target="_blank" rel="noopener" style="text-decoration:none">公式LINEへ連絡・予約</a>
       </div>
     </div>
     <div class="pg" id="pg-records">
@@ -149,7 +149,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <div class="pg" id="pg-profile">
       <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
       <div class="stitle" style="margin-bottom:12px">メニュー</div>
-      <div class="mi" id="line-menu" style="background:#06C755;border:none"><div class="ml"><span style="font-size:15px;font-weight:600;color:#fff">公式LINEへ</span></div><span style="color:rgba(255,255,255,0.8)">&rsaquo;</span></div>
+      <a class="mi" id="line-menu" href="https://lin.ee/X2yQksR" target="_blank" rel="noopener" style="background:#06C755;border:none;text-decoration:none"><div class="ml"><span style="font-size:15px;font-weight:600;color:#fff">公式LINEへ</span></div><span style="color:rgba(255,255,255,0.8)">&rsaquo;</span></a>
       <button class="lo" id="logoutBtn">ログアウト</button>
     </div>
   </div>
@@ -178,8 +178,8 @@ document.getElementById('loginBtn').addEventListener('click',function(){
   var s=Math.random().toString(36).substr(2);
   location.href='https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2009567758&redirect_uri='+encodeURIComponent(location.origin+'/api/callback')+'&state='+s+'&scope=profile%20openid';
 });
-document.getElementById('lineBtn').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
-document.getElementById('line-menu').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
+
+
 document.getElementById('logoutBtn').addEventListener('click',function(){if(confirm('ログアウトしますか？')){localStorage.removeItem('gym_user');location.reload();}});
 
 function checkLoginBonus(){

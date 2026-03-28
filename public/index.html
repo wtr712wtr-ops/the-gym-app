@@ -474,3 +474,37 @@ function saveAndCalcProfile(){
   }).catch(function(){});
 }
 
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function renderTrainings(list){
+  var c=document.getElementById('rlist');
+  if(!list.length){c.innerHTML='<div class="empty"><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
+  c.innerHTML=list.map(function(t){
+    var stats=[];
+    if(t.weight)stats.push('<div class="tr-stat"><span>'+escH(String(t.weight))+'</span> kg</div>');
+    if(t.reps)stats.push('<div class="tr-stat"><span>'+escH(String(t.reps))+'</span> 回</div>');
+    if(t.sets)stats.push('<div class="tr-stat"><span>'+escH(String(t.sets))+'</span> セット</div>');
+    return '<div class="tr-card">'
+      +'<div class="tr-date">'+escH(t.date||'')+'</div>'
+      +'<div class="tr-ex">'+escH(t.exercise||'')+'</div>'
+      +(stats.length?'<div class="tr-stats">'+stats.join('')+'</div>':'')
+      +(t.memo?'<div class="tr-note">'+escH(t.memo)+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+function renderMemos(list){
+  var c=document.getElementById('memo-list');
+  if(!list.length){c.innerHTML='<div class="empty" style="padding:20px 0;font-size:13px">まだ記録がありません</div>';return;}
+  c.innerHTML=list.map(function(m){return'<div class="memo-card">'+escH(m)+'</div>';}).join('');
+}
+function closeD(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
+function showPage(n){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});
+  document.getElementById('pg-'+n).classList.add('on');
+  document.getElementById('ni-'+n).classList.add('on');
+  if(n==='profile') renderProfile();
+}
+init();
+</script>
+</body>
+</html>

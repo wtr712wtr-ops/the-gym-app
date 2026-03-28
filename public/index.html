@@ -295,7 +295,7 @@ function loadData(){
       else{disp.textContent='未設定';disp.style.color='var(--text2)';badge.innerHTML='';}
     }else{
       disp.textContent='未設定';disp.style.color='var(--text2)';
-      badge.innerHTML='<span style="background:#f5f5f5;color:#bbb;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600">LINEで予約</span>';
+      badge.innerHTML='<a href="'+LINE_URL+'" target="_blank" style="background:#f0faf4;color:#06C755;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;text-decoration:none">LINEで予約</a>';
     }
   }).catch(function(){document.getElementById('next-date-display').textContent='未設定';});
   Promise.all([

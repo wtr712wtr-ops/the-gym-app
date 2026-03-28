@@ -452,7 +452,7 @@ function calcCalories(p){
   document.getElementById('cal-bulk').textContent=tdee+500;
   var idealWeight = Math.round(parseFloat(p.height)/100 * parseFloat(p.height)/100 * 22 * 10) / 10;
   var diff = Math.round((parseFloat(p.weight) - idealWeight) * 10) / 10;
-  var diffStr = diff > 0 ? '+' + diff + 'kg（減量目安）' : diff < 0 ? diff + 'kg（増量目安）' : 'ぴったり！';
+  var absDiff = Math.abs(diff); var diffStr = diff > 0 ? 'あと' + absDiff + 'kg減量で適正' : diff < 0 ? 'あと' + absDiff + 'kg増量で適正' : 'ぴったり！';
   document.getElementById('ideal-weight').textContent = idealWeight + 'kg';
   document.getElementById('ideal-diff').textContent = diffStr;
   document.getElementById('ideal-diff').style.color = diff > 0 ? '#c0392b' : diff < 0 ? '#1a237e' : '#0a7a3e';

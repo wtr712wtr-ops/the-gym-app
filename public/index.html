@@ -31,8 +31,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;color:var(--text2);cursor:pointer;font-size:10px;font-weight:600;border:none;background:none}
 .ni.on{color:var(--accent)}
 .ni svg{width:22px;height:22px}
-.pg{display:none;padding:20px}
-.pg.on{display:block}
+.pg{display:block;height:0;overflow:hidden;padding:0;margin:0}
+.pg.on{height:auto;overflow:visible;padding:20px}
 .gname{font-size:24px;font-weight:800;letter-spacing:-0.5px}
 .gsub{font-size:13px;color:var(--text2);margin-top:4px;margin-bottom:24px}
 .stitle{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text2);text-transform:uppercase;margin-bottom:12px}
@@ -137,7 +137,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
         </div>
         <div class="home-card-label" style="margin-bottom:8px">最新のトレーニング</div>
         <div id="latest" onclick="showPage('records')" style="cursor:pointer;margin-bottom:12px"><div class="spin"><div class="sp"></div></div></div>
-        <a class="lbtn" id="lineBtn" href="https://lin.ee/X2yQksR" target="_blank" rel="noopener" style="text-decoration:none">公式LINEへ連絡・予約</a>
+        <a class="lbtn" id="lineBtn" href="https://lin.ee/X2yQksR" rel="noopener" style="text-decoration:none">公式LINEへ連絡・予約</a>
       </div>
     </div>
     <div class="pg" id="pg-records">
@@ -334,16 +334,8 @@ function closeD(e){if(!e||e.target===document.getElementById('ov'))document.getE
 function showPage(n){
   document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
   document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});
-  var next=document.getElementById('pg-'+n);
-  next.classList.add('on');
+  document.getElementById('pg-'+n).classList.add('on');
   document.getElementById('ni-'+n).classList.add('on');
-  next.style.opacity='0';
-  requestAnimationFrame(function(){
-    requestAnimationFrame(function(){
-      next.style.transition='opacity 0.15s ease';
-      next.style.opacity='1';
-    });
-  });
 }
 
 init();

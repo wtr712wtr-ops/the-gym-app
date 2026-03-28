@@ -23,7 +23,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .btn-line:active{opacity:0.85}
 #app{display:none;flex-direction:column;min-height:100vh;background:#f7f7f7}
 .header{position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:14px}
-.hlogo{font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111111}
+.hlogo{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#111111}
 .av{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;color:#111111;overflow:hidden;position:absolute;right:20px}
 .av img{width:100%;height:100%;object-fit:cover}
 .main{flex:1;padding:0 0 72px}
@@ -163,12 +163,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
         </div>
       </div>
 
-      <div class="stitle" style="margin-bottom:12px">メニュー</div>
-      <a class="mi" id="line-menu" href="https://lin.ee/X2yQksR" target="_blank" rel="noopener" style="background:#06C755;border:none;text-decoration:none"><div class="ml"><span style="font-size:15px;font-weight:600;color:#fff">公式LINEへ</span></div><span style="color:rgba(255,255,255,0.8)">&rsaquo;</span></a>
-      <button class="lo" id="logoutBtn" type="button">ログアウト</button>
-    </div>
-    <div class="pg" id="pg-calorie">
-      <div class="stitle" style="margin-bottom:16px">基本情報</div>
+      <div class="stitle" style="margin-bottom:12px">基本情報</div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
           <div>
@@ -202,7 +197,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
             <option value="1.725">高い（週6〜7回ハードに運動）</option>
           </select>
         </div>
-        <button onclick="saveAndCalcProfile()" type="button" style="width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">保存してカロリーを計算</button>
+        <button onclick="saveAndCalcProfile()" style="width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">保存してカロリーを計算</button>
         <div id="prof-save-msg" style="font-size:12px;color:#2e7d32;margin-top:6px;text-align:center"></div>
       </div>
 
@@ -226,19 +221,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
           </div>
         </div>
         <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px;display:flex;align-items:center;justify-content:space-between">
-          <div>
-            <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">適正体重 (BMI22)</div>
-            <div style="font-size:20px;font-weight:800;color:var(--text)" id="ideal-weight">-</div>
+            <div>
+              <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">適正体重 (BMI22)</div>
+              <div style="font-size:20px;font-weight:800;color:var(--text)" id="ideal-weight">-</div>
+            </div>
+            <div style="font-size:12px;font-weight:600;text-align:right" id="ideal-diff"></div>
           </div>
-          <div style="font-size:12px;font-weight:600;text-align:right" id="ideal-diff"></div>
-        </div>
-        <div style="font-size:10px;color:var(--text2);margin-top:10px;line-height:1.6;text-align:center">基礎代謝 × 生活強度で算出。あくまで目安です。</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:10px;line-height:1.6;text-align:center">基礎代謝 × 生活強度で算出。あくまで目安です。</div>
       </div>
-    </div>
-<nav class="bnav">
+
+      <div class="stitle" style="margin-bottom:12px">メニュー</div>
+      <a class="mi" id="line-menu" href="https://lin.ee/X2yQksR" target="_blank" rel="noopener" style="background:#06C755;border:none;text-decoration:none"><div class="ml"><span style="font-size:15px;font-weight:600;color:#fff">公式LINEへ</span></div><span style="color:rgba(255,255,255,0.8)">&rsaquo;</span></a>
+      <button class="lo" id="logoutBtn" type="button">ログアウト</button>
+    </div>  <nav class="bnav">
     <button class="ni on" id="ni-home" onclick="showPage('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>ホーム</button>
     <button class="ni" id="ni-records" onclick="showPage('records')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>記録</button>
-    <button class="ni" id="ni-calorie" onclick="showPage('calorie')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>カロリー</button>
     <button class="ni" id="ni-profile" onclick="showPage('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>マイページ</button>
   </nav>
 </div>
@@ -421,7 +418,6 @@ function showPage(n){
   document.getElementById('pg-'+n).classList.add('on');
   document.getElementById('ni-'+n).classList.add('on');
   if(n==='profile') renderProfile();
-  if(n==='calorie') renderCalorie();
 }
 function renderProfile(){
   var now=new Date();
@@ -430,8 +426,6 @@ function renderProfile(){
   var ym=now.getFullYear()+'/'+(now.getMonth()+1)+'/';
   var monDays=new Set(_trainings.filter(function(t){return t.date&&String(t.date).indexOf(ym)===0;}).map(function(t){return String(t.date).substring(0,10);})).size;
   document.getElementById('prof-month').textContent=monDays;
-}
-function renderCalorie(){
   var uid=user?user.userId:'';
   if(!uid)return;
   fetch('/api/memo?clientId='+uid+'&userId='+uid+'&profile')
@@ -448,7 +442,6 @@ function renderCalorie(){
       }
     }).catch(function(){});
 }
-
 function calcCalories(p){
   var h=parseFloat(p.height),w=parseFloat(p.weight),a=parseInt(p.age),act=parseFloat(p.activity);
   if(!h||!w||!a||!act)return;
@@ -523,7 +516,6 @@ function showPage(n){
   document.getElementById('pg-'+n).classList.add('on');
   document.getElementById('ni-'+n).classList.add('on');
   if(n==='profile') renderProfile();
-  if(n==='calorie') renderCalorie();
 }
 init();
 </script>

@@ -366,6 +366,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 var LINE_URL='https://lin.ee/X2yQksR';
 var user=null;
 var _trainings=[];
+var _renderedGroups={order:[],groups:{}};
 document.getElementById('loginBtn').addEventListener('click',function(){
   var s=Math.random().toString(36).substr(2);
   location.href='https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2009567758&redirect_uri='+encodeURIComponent(location.origin+'/api/callback')+'&state='+s+'&scope=profile%20openid';
@@ -694,8 +695,9 @@ function renderTrainings(list){
     c.innerHTML='<div class="empty"><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';
     return;
   }
-  var groups={};
-  var order=[];
+  _renderedGroups={order:[],groups:{}};
+  var groups=_renderedGroups.groups;
+  var order=_renderedGroups.order;
   list.forEach(function(t){
     var dateKey=String(t.date||'').substring(0,10);
     var d=new Date(dateKey);
@@ -737,14 +739,11 @@ function toggleDay(id){
 function showDetailPage(key){
   var parts=key.split('-');
   var gi=parseInt(parts[0]),ti=parseInt(parts[1]);
-  var groups={},order=[];
-  _trainings.forEach(function(t){
-    var dk=String(t.date||'').substring(0,10);
-    if(!groups[dk]){groups[dk]=[];order.push(dk);}
-    groups[dk].push(t);
-  });
+  var groups=_renderedGroups.groups;
+  var order=_renderedGroups.order;
   var dk=order[gi];
-  var t=groups[dk][ti];
+  if(!dk||!groups[dk])return;
+  var t=groups[dk].items[ti];
   if(!t)return;
   var d=new Date(dk);
   var dayStr=isNaN(d.getTime())?dk:d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+['日','月','火','水','木','金','土'][d.getDay()]+'）';

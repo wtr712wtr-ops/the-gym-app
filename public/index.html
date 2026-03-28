@@ -220,7 +220,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
             <div style="font-size:9px;color:#7986cb;margin-top:2px">kcal</div>
           </div>
         </div>
-        <div style="font-size:10px;color:var(--text2);margin-top:10px;line-height:1.6;text-align:center">基礎代謝 × 生活強度で算出。あくまで目安です。</div>
+        <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">適正体重 (BMI22)</div>
+              <div style="font-size:20px;font-weight:800;color:var(--text)" id="ideal-weight">-</div>
+            </div>
+            <div style="font-size:12px;font-weight:600;text-align:right" id="ideal-diff"></div>
+          </div>
+          <div style="font-size:10px;color:var(--text2);margin-top:10px;line-height:1.6;text-align:center">基礎代謝 × 生活強度で算出。あくまで目安です。</div>
       </div>
 
       <div class="stitle" style="margin-bottom:12px">メニュー</div>
@@ -443,6 +450,12 @@ function calcCalories(p){
   document.getElementById('cal-cut').textContent=tdee-500;
   document.getElementById('cal-maintain').textContent=tdee;
   document.getElementById('cal-bulk').textContent=tdee+500;
+  var idealWeight = Math.round(parseFloat(p.height)/100 * parseFloat(p.height)/100 * 22 * 10) / 10;
+  var diff = Math.round((parseFloat(p.weight) - idealWeight) * 10) / 10;
+  var diffStr = diff > 0 ? '+' + diff + 'kg（減量目安）' : diff < 0 ? diff + 'kg（増量目安）' : 'ぴったり！';
+  document.getElementById('ideal-weight').textContent = idealWeight + 'kg';
+  document.getElementById('ideal-diff').textContent = diffStr;
+  document.getElementById('ideal-diff').style.color = diff > 0 ? '#c0392b' : diff < 0 ? '#1a237e' : '#0a7a3e';
   document.getElementById('calorie-result').style.display='block';
 }
 function saveAndCalcProfile(){

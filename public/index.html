@@ -26,13 +26,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .hlogo{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#111111}
 .av{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;color:#111111;overflow:hidden;position:absolute;right:20px}
 .av img{width:100%;height:100%;object-fit:cover}
-.main{flex:1;overflow:hidden;position:relative}
+.main{flex:1;padding:0 0 72px}
 .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;color:var(--text2);cursor:pointer;font-size:10px;font-weight:600;border:none;background:none}
 .ni.on{color:var(--accent)}
 .ni svg{width:22px;height:22px}
-.pg{position:absolute;top:0;left:0;width:100%;min-height:100%;padding:20px 20px 72px;transform:translateX(100%);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);will-change:transform;background:#f7f7f7}
-.pg.on{transform:translateX(0)}
+.pg{display:none;padding:20px}
+.pg.on{display:block}
 .gname{font-size:24px;font-weight:800;letter-spacing:-0.5px}
 .gsub{font-size:13px;color:var(--text2);margin-top:4px;margin-bottom:24px}
 .stitle{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text2);text-transform:uppercase;margin-bottom:12px}
@@ -332,36 +332,9 @@ function renderMemos(list){
 }
 function closeD(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
 function showPage(n){
-  var pages=['home','records','profile'];
-  var current=document.querySelector('.pg.on');
-  var currentId=current?current.id.replace('pg-',''):'home';
-  var ci=pages.indexOf(currentId);
-  var ni=pages.indexOf(n);
-  if(ci===ni)return;
-  var dir=ni>ci?1:-1;
-  var next=document.getElementById('pg-'+n);
-  // 次ページを進入方向にセット（transitionなし）
-  next.style.transition='none';
-  next.style.transform='translateX('+(dir*100)+'%)';
-  next.classList.add('on');
-  // 1フレーム待ってtransitionを有効化
-  requestAnimationFrame(function(){
-    requestAnimationFrame(function(){
-      next.style.transition='';
-      next.style.transform='translateX(0)';
-      if(current){
-        current.style.transition='transform 0.25s cubic-bezier(0.4,0,0.2,1)';
-        current.style.transform='translateX('+(-dir*100)+'%)';
-        current.addEventListener('transitionend',function done(){
-          current.removeEventListener('transitionend',done);
-          current.classList.remove('on');
-          current.style.transition='';
-          current.style.transform='';
-        });
-      }
-    });
-  });
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
   document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});
+  document.getElementById('pg-'+n).classList.add('on');
   document.getElementById('ni-'+n).classList.add('on');
 }
 

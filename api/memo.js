@@ -27,7 +27,10 @@ module.exports = async function handler(req, res) {
       const clients = await redis.smembers('clients') || [];
       console.log('clients:', JSON.stringify(clients));
       return res.json({ clients });
-    } else if (req.query.nextDate !== undefined) {
+    } else if (req.query.profile !== undefined) {
+    const prof = await redis.get('profile:' + clientId);
+    return res.json({ profile: prof ? JSON.parse(prof) : null });
+  } else if (req.query.nextDate !== undefined) {
     const nextDate = await redis.get('nextDate:' + clientId);
     return res.json({ nextDate: nextDate || null });
   } else if (req.query.trainings !== undefined) {
@@ -41,7 +44,7 @@ module.exports = async function handler(req, res) {
 
   if (req.method === 'POST') {
     const { adminId, action, clientId, clientName, memo } = req.body;
-    if (adminId !== ADMIN_ID) return res.status(403).json({ error: 'Forbidden' });
+    if (adminId !== ADMIN_ID && action !== 'saveProfile') return res.status(403).json({ error: 'Forbidden' });
 
     if (action === 'addClient') {
       if (!clientId || !clientName) return res.status(400).json({ error: 'clientId and clientName required' });
@@ -65,7 +68,13 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    if (action === 'setNextDate') {
+    if (action === 'saveProfile') {
+    if (!clientId) return res.status(400).json({ error: 'clientId required' });
+    const { height, weight, age, gender, activity } = req.body;
+    await redis.set('profile:' + clientId, JSON.stringify({ height, weight, age, gender, activity }));
+    return res.status(200).json({ ok: true });
+  }
+  if (action === 'setNextDate') {
     if (!clientId) return res.status(400).json({ error: 'clientId required' });
     const { nextDate } = req.body;
     if (nextDate) {

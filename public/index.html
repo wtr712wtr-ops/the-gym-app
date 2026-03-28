@@ -31,8 +31,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;color:var(--text2);cursor:pointer;font-size:10px;font-weight:600;border:none;background:none}
 .ni.on{color:var(--accent)}
 .ni svg{width:22px;height:22px}
-.pg{display:none;padding:20px}
-.pg.on{display:block}
+.pg{display:none;padding:20px;opacity:0;transform:translateY(8px);transition:opacity 0.2s ease,transform 0.2s ease}
+.pg.on{display:block;opacity:1;transform:translateY(0)}
 .gname{font-size:24px;font-weight:800;letter-spacing:-0.5px}
 .gsub{font-size:13px;color:var(--text2);margin-top:4px;margin-bottom:24px}
 .stitle{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text2);text-transform:uppercase;margin-bottom:12px}
@@ -331,7 +331,25 @@ function renderMemos(list){
   c.innerHTML=list.map(function(m){return'<div class="memo-card">'+escH(m)+'</div>';}).join('');
 }
 function closeD(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
-function showPage(n){document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});document.getElementById('pg-'+n).classList.add('on');document.getElementById('ni-'+n).classList.add('on');}
+function showPage(n){
+  var current=document.querySelector('.pg.on');
+  var next=document.getElementById('pg-'+n);
+  if(current&&current!==next){
+    current.style.opacity='0';
+    current.style.transform='translateY(8px)';
+    setTimeout(function(){
+      document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');p.style.opacity='';p.style.transform='';});
+      document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});
+      next.classList.add('on');
+      document.getElementById('ni-'+n).classList.add('on');
+    },150);
+  } else {
+    document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+    document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});
+    next.classList.add('on');
+    document.getElementById('ni-'+n).classList.add('on');
+  }
+}
 init();
 </script>
 </body>

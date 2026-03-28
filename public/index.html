@@ -156,8 +156,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <div class="pg" id="pg-records">
       <div class="stitle" style="margin-bottom:16px">トレーニング記録</div>
       <div id="rlist"><div class="spin"><div class="sp"></div></div></div>
-      <div class="stitle" style="margin:24px 0 16px">トレーナーメモ</div>
-      <div id="memo-list"><div class="spin"><div class="sp"></div></div></div>
     </div>
     <div class="pg" id="pg-profile">
       <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
@@ -494,14 +492,13 @@ function loadData(){
       badge.innerHTML='<a href="'+LINE_URL+'" target="_blank" style="background:#f0faf4;color:#06C755;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;text-decoration:none">LINEで予約</a>';
     }
   }).catch(function(){document.getElementById('next-date-display').textContent='未設定';});
-  Promise.all([
-    fetch(base+'&trainings').then(function(r){return r.json();}),
-    fetch(base).then(function(r){return r.json();})
-  ]).then(function(results){
-    renderHome(results[0].trainings||[]);
-    renderTrainings(results[0].trainings||[]);
-    renderMemos(results[1].memos||[]);
-  }).catch(function(){renderHome([]);renderTrainings([]);renderMemos([]);});
+  fetch(base+'&trainings').then(function(r){return r.json();})
+  .then(function(data){
+    _trainings=data.trainings||[];
+    renderHome(_trainings);
+    renderTrainings(_trainings);
+    updateCalendarMenuSub();
+  }).catch(function(){renderHome([]);renderTrainings([]);});
 }
 
 var MILESTONES=[
@@ -831,11 +828,6 @@ function generateAIComment(t,history,el){
   }).catch(function(){
     el.textContent='よく頑張りました！次回も継続しましょう。';
   });
-}
-function renderMemos(list){
-  var c=document.getElementById('memo-list');
-  if(!list.length){c.innerHTML='<div class="empty" style="padding:20px 0;font-size:13px">まだ記録がありません</div>';return;}
-  c.innerHTML=list.map(function(m){return'<div class="memo-card">'+escH(m)+'</div>';}).join('');
 }
 function closeD(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
 function showPage(n){

@@ -163,6 +163,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
       </div>
 
       <div class="stitle" style="margin-bottom:12px">メニュー</div>
+      <div class="mi" onclick="showCalendarPage()" style="cursor:pointer">
+        <div class="ml"><span style="font-size:15px;font-weight:600;color:var(--text)">来店カレンダー・特典</span><div id="calendar-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">来店記録・マイルストーン確認</div></div>
+        <span style="color:var(--text2)">&rsaquo;</span>
+      </div>
       <div class="mi" onclick="showCaloriePage()" style="cursor:pointer">
         <div class="ml"><span style="font-size:15px;font-weight:600;color:var(--text)">カロリー計算</span><div style="font-size:11px;color:var(--text2);margin-top:2px">基本情報・目安カロリー確認</div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
@@ -176,6 +180,64 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <button class="ni" id="ni-records" onclick="showPage('records')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>記録</button>
     <button class="ni" id="ni-profile" onclick="showPage('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>マイページ</button>
   </nav>
+</div>
+
+<!-- 来店カレンダー・特典オーバーレイ -->
+<div id="calendar-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <button onclick="hideCalendarPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
+    <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">来店カレンダー</div>
+  </div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:15px;font-weight:800;color:var(--text)" id="cal-month-title">-</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px">
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">月</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">火</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">水</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">木</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">金</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">土</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">日</div>
+      </div>
+      <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="background:var(--bg3);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:22px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1" id="cal-stat-month">-</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:4px">今月来店</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:22px;font-weight:800;color:#FF6B00;letter-spacing:-1px;line-height:1" id="cal-stat-streak">-</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:4px">継続中🔥</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:22px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1" id="cal-stat-total">-</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:4px">累計来店</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:14px">来店特典</div>
+      <div id="milestone-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- マイルストーン達成ポップアップ -->
+<div id="milestone-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center;padding:24px">
+  <div style="background:#fff;border-radius:24px;padding:32px 24px;width:100%;max-width:340px;text-align:center;animation:bonusPop .4s cubic-bezier(0.34,1.56,0.64,1)">
+    <div style="font-size:52px;margin-bottom:8px" id="ms-emoji">🎉</div>
+    <div style="font-size:26px;font-weight:800;color:#111;margin-bottom:6px" id="ms-title">達成！</div>
+    <div style="font-size:13px;color:#888;margin-bottom:20px;line-height:1.7" id="ms-msg"></div>
+    <div style="background:#fff8f0;border:1px solid #ffe0b2;border-radius:12px;padding:14px;margin-bottom:20px">
+      <div style="font-size:10px;font-weight:700;color:#FF6B00;letter-spacing:1px;margin-bottom:6px">MILESTONE UNLOCKED</div>
+      <div style="font-size:15px;font-weight:800;color:#111" id="ms-reward"></div>
+    </div>
+    <div style="font-size:11px;color:#aaa;margin-bottom:16px" id="ms-next"></div>
+    <button onclick="document.getElementById('milestone-overlay').style.display='none'" type="button" style="background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%">やった！続けるぞ！</button>
+  </div>
 </div>
 
 <!-- カロリー計算オーバーレイ -->
@@ -431,6 +493,101 @@ function showPage(n){
   document.getElementById('ni-'+n).classList.add('on');
   var main=document.querySelector('.main');if(main)main.scrollTop=0;
   if(n==='profile') renderProfile();
+}
+var MILESTONES=[
+  {count:10,reward:'栄養アドバイスシートプレゼント',emoji:'📋'},
+  {count:30,reward:'オリジナルメニュー作成',emoji:'📝'},
+  {count:50,reward:'セッション5分延長',emoji:'⏱️'},
+  {count:100,reward:'???（お楽しみ）',emoji:'🎁'}
+];
+function showCalendarPage(){
+  document.getElementById('calendar-overlay').style.display='block';
+  renderCalendar();
+}
+function hideCalendarPage(){
+  document.getElementById('calendar-overlay').style.display='none';
+}
+function renderCalendar(){
+  var now=new Date();
+  var y=now.getFullYear(),m=now.getMonth();
+  document.getElementById('cal-month-title').textContent=y+'年'+(m+1)+'月';
+  var visitSet=new Set(_trainings.map(function(t){return String(t.date).substring(0,10);}));
+  var today=now.toISOString().split('T')[0];
+  var ymPrefix=y+'/'+(m+1)+'/';
+  var monCount=new Set(_trainings.filter(function(t){return t.date&&String(t.date).indexOf(ymPrefix)===0;}).map(function(t){return String(t.date).substring(0,10);})).size;
+  var totalCount=visitSet.size;
+  var streak=0;var d=new Date(today);
+  while(true){var ds=d.toISOString().split('T')[0];if(visitSet.has(ds)){streak++;d.setDate(d.getDate()-1);}else{break;}}
+  document.getElementById('cal-stat-month').textContent=monCount;
+  document.getElementById('cal-stat-streak').textContent=streak;
+  document.getElementById('cal-stat-total').textContent=totalCount;
+  var sub=document.getElementById('calendar-menu-sub');
+  if(sub)sub.textContent='継続中🔥'+streak+' / 累計'+totalCount+'回';
+  var firstDay=new Date(y,m,1).getDay();
+  var daysInMonth=new Date(y,m+1,0).getDate();
+  var startOffset=(firstDay===0)?6:(firstDay-1);
+  var grid=document.getElementById('cal-grid');
+  grid.innerHTML='';
+  for(var i=0;i<startOffset;i++){grid.innerHTML+='<div></div>';}
+  for(var day=1;day<=daysInMonth;day++){
+    var mm=String(m+1).padStart(2,'0');
+    var dd2=String(day).padStart(2,'0');
+    var dateSlash=y+'/'+(m+1)+'/'+day;
+    var dateISO=y+'-'+mm+'-'+dd2;
+    var isToday=(dateISO===today);
+    var isVisit=visitSet.has(dateSlash)||visitSet.has(dateISO);
+    var bg=isToday?'#FF6B00':(isVisit?'#111':'transparent');
+    var color=isToday||isVisit?'#fff':'var(--text2)';
+    var fw=isToday||isVisit?'800':'400';
+    grid.innerHTML+='<div style="aspect-ratio:1;border-radius:50%;background:'+bg+';display:flex;align-items:center;justify-content:center;font-size:11px;color:'+color+';font-weight:'+fw+'">'+day+'</div>';
+  }
+  var ml=document.getElementById('milestone-list');
+  ml.innerHTML='';
+  var nextShown=false;
+  MILESTONES.forEach(function(ms){
+    var done=totalCount>=ms.count;
+    var isNext=!done&&!nextShown;
+    if(isNext)nextShown=true;
+    var remaining=ms.count-totalCount;
+    if(done){
+      ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0">✓</div><div style="flex:1;font-size:13px;color:#bbb;text-decoration:line-through">'+ms.count+'回 '+ms.reward+'</div><div style="font-size:11px;color:#bbb;font-weight:600">達成！</div></div>';
+    } else if(isNext){
+      ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px;background:#fff8f0;border-radius:10px;padding:10px;border:1px solid #ffe0b2"><div style="width:32px;height:32px;border-radius:50%;background:#f0f0f0;border:2px dashed #FF6B00;display:flex;align-items:center;justify-content:center;font-size:11px;color:#FF6B00;font-weight:800;flex-shrink:0">'+ms.count+'</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:#111">'+ms.reward+'</div><div style="font-size:11px;color:#FF6B00;margin-top:2px;font-weight:600">あと'+remaining+'回！</div></div></div>';
+    } else {
+      ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px;opacity:0.35"><div style="width:32px;height:32px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb;flex-shrink:0">'+ms.count+'</div><div style="font-size:13px;color:#bbb">'+ms.count+'回 '+ms.reward+'</div></div>';
+    }
+  });
+  checkMilestoneAchievement(totalCount);
+}
+function checkMilestoneAchievement(total){
+  var key='gym_ms_shown';
+  var raw=localStorage.getItem(key);
+  var shown=raw?JSON.parse(raw):[];
+  for(var i=0;i<MILESTONES.length;i++){
+    var ms=MILESTONES[i];
+    if(total>=ms.count&&shown.indexOf(ms.count)===-1){
+      shown.push(ms.count);
+      localStorage.setItem(key,JSON.stringify(shown));
+      var next=MILESTONES[i+1];
+      document.getElementById('ms-emoji').textContent=ms.emoji;
+      document.getElementById('ms-title').textContent=ms.count+'回来店達成！';
+      document.getElementById('ms-msg').textContent='おめでとうございます！\nトレーナーにお声がけください。';
+      document.getElementById('ms-reward').textContent=ms.reward;
+      document.getElementById('ms-next').textContent=next?'次は'+next.count+'回！お楽しみに 👀':'';
+      document.getElementById('milestone-overlay').style.display='flex';
+      break;
+    }
+  }
+}
+function updateCalendarMenuSub(){
+  var visitSet=new Set(_trainings.map(function(t){return String(t.date).substring(0,10);}));
+  var total=visitSet.size;
+  var today=new Date().toISOString().split('T')[0];
+  var streak=0;var d=new Date(today);
+  while(true){var ds=d.toISOString().split('T')[0];if(visitSet.has(ds)){streak++;d.setDate(d.getDate()-1);}else{break;}}
+  var sub=document.getElementById('calendar-menu-sub');
+  if(sub)sub.textContent='継続中🔥'+streak+' / 累計'+total+'回';
+  checkMilestoneAchievement(total);
 }
 function showCaloriePage(){
   var el=document.getElementById('calorie-overlay');

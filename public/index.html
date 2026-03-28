@@ -138,7 +138,123 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
         <div class="home-card-label" style="margin-bottom:8px">最新のトレーニング</div>
         <div id="latest" onclick="showPage('records')" style="cursor:pointer;margin-bottom:12px"><div class="spin"><div class="sp"></div></div></div>
         <button class="lbtn" id="lineBtn">公式LINEへ連絡・予約</button>
-      </div>function renderHome(trainings){
+      </div>
+    </div>
+    <div class="pg" id="pg-records">
+      <div class="stitle" style="margin-bottom:16px">トレーニング記録</div>
+      <div id="rlist"><div class="spin"><div class="sp"></div></div></div>
+      <div class="stitle" style="margin:24px 0 16px">トレーナーメモ</div>
+      <div id="memo-list"><div class="spin"><div class="sp"></div></div></div>
+    </div>
+    <div class="pg" id="pg-profile">
+      <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
+      <div class="stitle" style="margin-bottom:12px">メニュー</div>
+      <div class="mi" id="line-menu" style="background:#06C755;border:none"><div class="ml"><span style="font-size:15px;font-weight:600;color:#fff">公式LINEへ</span></div><span style="color:rgba(255,255,255,0.8)">&rsaquo;</span></div>
+      <button class="lo" id="logoutBtn">ログアウト</button>
+    </div>
+  </div>
+  <nav class="bnav">
+    <button class="ni on" id="ni-home" onclick="showPage('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>ホーム</button>
+    <button class="ni" id="ni-records" onclick="showPage('records')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>記録</button>
+    <button class="ni" id="ni-profile" onclick="showPage('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>マイページ</button>
+  </nav>
+</div>
+
+<!-- ログインボーナスモーダル -->
+<div id="bonus-overlay">
+  <div id="bonus-card">
+    <span class="bonus-emoji" id="bonus-emoji">💪</span>
+    <div class="bonus-streak"><span id="bonus-num">1</span>日連続ログイン！</div>
+    <div class="bonus-msg" id="bonus-msg">今日も来てくれてありがとう！</div>
+    <div class="bonus-stamps" id="bonus-stamps"></div>
+    <button class="bonus-close" onclick="document.getElementById('bonus-overlay').classList.remove('on')">よし、始めよう！</button>
+  </div>
+</div>
+
+<script>
+var LINE_URL='https://lin.ee/X2yQksR';
+var user=null;
+document.getElementById('loginBtn').addEventListener('click',function(){
+  var s=Math.random().toString(36).substr(2);
+  location.href='https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2009567758&redirect_uri='+encodeURIComponent(location.origin+'/api/callback')+'&state='+s+'&scope=profile%20openid';
+});
+document.getElementById('lineBtn').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
+document.getElementById('line-menu').addEventListener('click',function(){window.open(LINE_URL,'_blank');});
+document.getElementById('logoutBtn').addEventListener('click',function(){if(confirm('ログアウトしますか？')){localStorage.removeItem('gym_user');location.reload();}});
+
+function checkLoginBonus(){
+  var today=new Date().toISOString().split('T')[0];
+  var raw=localStorage.getItem('gym_bonus');
+  var data=raw?JSON.parse(raw):{streak:0,lastDate:'',history:[]};
+  if(data.lastDate===today)return;
+  var yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  var yd=yesterday.toISOString().split('T')[0];
+  data.streak=(data.lastDate===yd)?(data.streak||0)+1:1;
+  data.lastDate=today;
+  if(!data.history)data.history=[];
+  data.history.push(today);
+  if(data.history.length>30)data.history=data.history.slice(-30);
+  localStorage.setItem('gym_bonus',JSON.stringify(data));
+  var streak=data.streak;
+  var emoji='💪',msg='今日も来てくれてありがとう！';
+  if(streak>=30){emoji='👑';msg='30日以上連続！圧巻の継続力です！';}
+  else if(streak>=14){emoji='🏆';msg='2週間以上連続！もう習慣になってますね！';}
+  else if(streak>=7){emoji='🔥';msg='1週間連続達成！最高のペースです！';}
+  else if(streak>=3){emoji='⚡️';msg='いい流れが来てます！この調子で！';}
+  document.getElementById('bonus-emoji').textContent=emoji;
+  document.getElementById('bonus-num').textContent=streak;
+  document.getElementById('bonus-msg').textContent=msg;
+  var days=['月','火','水','木','金','土','日'];
+  var stamps=document.getElementById('bonus-stamps');stamps.innerHTML='';
+  var now2=new Date();var dow=now2.getDay();
+  var monday=new Date(now2);monday.setDate(now2.getDate()-(dow===0?6:dow-1));
+  for(var i=0;i<7;i++){
+    var d=new Date(monday);d.setDate(monday.getDate()+i);
+    var ds=d.toISOString().split('T')[0];
+    var isToday=ds===today;var visited=data.history.indexOf(ds)>-1;
+    var cls='stamp'+(isToday?' today':visited?' filled':'');
+    stamps.innerHTML+='<div style="text-align:center"><div class="'+cls+'">'+(visited||isToday?'✓':'')+'</div><div class="stamp-label">'+days[i]+'</div></div>';
+  }
+  setTimeout(function(){document.getElementById('bonus-overlay').classList.add('on');},500);
+}
+
+function init(){
+  var p=new URLSearchParams(location.search);
+  if(p.get('user')){try{user=JSON.parse(decodeURIComponent(p.get('user')));localStorage.setItem('gym_user',JSON.stringify(user));history.replaceState({},'','/');}catch(e){}}
+  else{var s=localStorage.getItem('gym_user');if(s){try{user=JSON.parse(s);}catch(e){}}}
+  if(user){
+    if(user.userId==='U0f4c1d79f182f727c49b0b1bfbace466'&&location.pathname.indexOf('admin')===-1&&!location.search.includes('preview=client')){
+      location.href='/admin.html';
+      return;
+    }
+    showApp();
+    checkLoginBonus();
+    loadData();
+  }
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
+}
+function showApp(){
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='flex';
+  var n=user.displayName||'Guest';
+  var h=new Date().getHours();
+  var g=h<11?'おはようございます！':h<18?'こんにちは！':'こんばんは！';
+  document.getElementById('gname').textContent=n;
+  document.getElementById('gsub').textContent=g+'今日も頑張りましょう';
+  document.getElementById('avi').textContent=n.charAt(0);
+  document.getElementById('pavi').textContent=n.charAt(0);
+  document.getElementById('pname').textContent=n;
+  document.getElementById('pid').textContent='ID: '+(user.userId||'').substring(0,10)+'...';
+  if(user.pictureUrl){document.getElementById('av').innerHTML='<img src="'+user.pictureUrl+'">';document.getElementById('pav').innerHTML='<img src="'+user.pictureUrl+'">';}
+  if(location.search.includes('preview=client')){
+    var bar=document.createElement('div');
+    bar.style.cssText='background:#1c1c1c;color:#fff;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;';
+    bar.textContent='← 管理者画面に戻る';
+    bar.onclick=function(){location.href='/admin.html';};
+    document.body.insertBefore(bar,document.body.firstChild);
+  }
+}
+function renderHome(trainings){
   var uniqueDays=new Set(trainings.map(function(t){return String(t.date).substring(0,10);})).size;
   document.getElementById('tot').textContent=uniqueDays;
   var now=new Date();
@@ -192,3 +308,31 @@ function loadData(){
   }).catch(function(){renderHome([]);renderTrainings([]);renderMemos([]);});
 }
 
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function renderTrainings(list){
+  var c=document.getElementById('rlist');
+  if(!list.length){c.innerHTML='<div class="empty"><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
+  c.innerHTML=list.map(function(t){
+    var stats=[];
+    if(t.weight)stats.push('<div class="tr-stat"><span>'+escH(String(t.weight))+'</span> kg</div>');
+    if(t.reps)stats.push('<div class="tr-stat"><span>'+escH(String(t.reps))+'</span> 回</div>');
+    if(t.sets)stats.push('<div class="tr-stat"><span>'+escH(String(t.sets))+'</span> セット</div>');
+    return '<div class="tr-card">'
+      +'<div class="tr-date">'+escH(t.date||'')+'</div>'
+      +'<div class="tr-ex">'+escH(t.exercise||'')+'</div>'
+      +(stats.length?'<div class="tr-stats">'+stats.join('')+'</div>':'')
+      +(t.memo?'<div class="tr-note">'+escH(t.memo)+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+function renderMemos(list){
+  var c=document.getElementById('memo-list');
+  if(!list.length){c.innerHTML='<div class="empty" style="padding:20px 0;font-size:13px">まだ記録がありません</div>';return;}
+  c.innerHTML=list.map(function(m){return'<div class="memo-card">'+escH(m)+'</div>';}).join('');
+}
+function closeD(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
+function showPage(n){document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});document.getElementById('pg-'+n).classList.add('on');document.getElementById('ni-'+n).classList.add('on');}
+init();
+</script>
+</body>
+</html>

@@ -62,7 +62,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .tr-stat span{color:var(--text);font-weight:700}
 .tr-note{font-size:13px;color:var(--text2);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);line-height:1.5}
 .memo-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;font-size:14px;line-height:1.7;color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-.ph{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.ph{display:flex;align-items:center;gap:16px;margin-bottom:8px}
 .pa{width:60px;height:60px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;color:var(--text)}
 .pa img{width:100%;height:100%;object-fit:cover}
 .pn{font-size:20px;font-weight:800;letter-spacing:-0.5px}
@@ -146,7 +146,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
       <div class="stitle" style="margin:24px 0 16px">トレーナーメモ</div>
       <div id="memo-list"><div class="spin"><div class="sp"></div></div></div>
     </div>
-    <div c<div class="pg" id="pg-profile">
+    <div c<div class="pg" id="pg-profile" style="padding-top:12px">
       <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
 
       <div class="stitle" style="margin-bottom:12px">来店実績</div>
@@ -178,7 +178,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 </div>
 
 <!-- カロリー計算オーバーレイ -->
-<div id="calorie-overlay" style="display:none;position:fixed;inset:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;left:50%;transform:translateX(-50%)">
+<div id="calorie-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;">
   <div style="height:64px;background:#fff;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;padding:0 16px;gap:12px;position:sticky;top:0;z-index:1">
     <button onclick="hideCaloriePage()" type="button" style="width:32px;height:32px;border-radius:50%;background:#f0f0f0;border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div style="font-size:18px;font-weight:800;color:#111;letter-spacing:-0.5px">カロリー計算</div>

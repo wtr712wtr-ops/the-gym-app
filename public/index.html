@@ -93,6 +93,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .home-stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
 .home-stat-num{font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--text);line-height:1}
 .home-stat-label{font-size:11px;color:var(--text2);margin-top:6px;font-weight:500}
+.day-group{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.day-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.day-header-left{display:flex;flex-direction:column;gap:2px}
+.day-title{font-size:13px;font-weight:800;color:var(--text);letter-spacing:-0.3px}
+.day-count{font-size:10px;color:var(--text2)}
+.day-arrow{font-size:11px;color:var(--text2);transition:transform 0.2s}
+.day-arrow.open{transform:rotate(180deg)}
+.day-body{display:none;border-top:1px solid var(--border)}
+.day-body.open{display:block}
+.ex-row-item{padding:10px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-bottom:1px solid var(--bg3)}
+.ex-row-item:last-child{border-bottom:none}
+.ex-row-item:active{background:var(--bg3)}
+.ex-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.ex-tags{display:flex;gap:4px;flex-wrap:wrap}
 @media (prefers-color-scheme: dark) {
   :root{--bg:#f7f7f7 !important;--bg2:#ffffff !important;--bg3:#eeeeee !important;--text:#111111 !important;--text2:#888888 !important;--border:#e5e5e5 !important}
   body{background:#ffffff !important;color:#111111 !important}
@@ -237,6 +251,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     </div>
     <div style="font-size:11px;color:#aaa;margin-bottom:16px" id="ms-next"></div>
     <button onclick="document.getElementById('milestone-overlay').style.display='none'" type="button" style="background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%">やった！続けるぞ！</button>
+  </div>
+</div>
+
+<!-- 種目詳細オーバーレイ -->
+<div id="detail-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <button onclick="hideDetailPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
+    <div style="font-size:20px;font-weight:800;letter-spacing:-0.5px;color:#111" id="detail-title">種目名</div>
+  </div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
+    <div style="font-size:11px;color:var(--text2);font-weight:600" id="detail-date"></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">今回の記録</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center" id="detail-stats"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px" id="detail-history-card">
+      <div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">重量の推移</div>
+      <div id="detail-history"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px" id="detail-comment-card">
+      <div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">トレーナーメモ</div>
+      <div id="detail-comment" style="font-size:13px;color:var(--text);line-height:1.7"><div class="spin"><div class="sp"></div></div></div>
+    </div>
   </div>
 </div>
 
@@ -466,37 +503,6 @@ function loadData(){
   }).catch(function(){renderHome([]);renderTrainings([]);renderMemos([]);});
 }
 
-function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function renderTrainings(list){
-  var c=document.getElementById('rlist');
-  if(!list.length){c.innerHTML='<div class="empty"><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
-  c.innerHTML=list.map(function(t){
-    var stats=[];
-    if(t.weight)stats.push('<div class="tr-stat"><span>'+escH(String(t.weight))+'</span> kg</div>');
-    if(t.reps)stats.push('<div class="tr-stat"><span>'+escH(String(t.reps))+'</span> 回</div>');
-    if(t.sets)stats.push('<div class="tr-stat"><span>'+escH(String(t.sets))+'</span> セット</div>');
-    return '<div class="tr-card">'
-      +'<div class="tr-date">'+escH(t.date||'')+'</div>'
-      +'<div class="tr-ex">'+escH(t.exercise||'')+'</div>'
-      +(stats.length?'<div class="tr-stats">'+stats.join('')+'</div>':'')
-      +(t.memo?'<div class="tr-note">'+escH(t.memo)+'</div>':'')
-      +'</div>';
-  }).join('');
-}
-function renderMemos(list){
-  var c=document.getElementById('memo-list');
-  if(!list.length){c.innerHTML='<div class="empty" style="padding:20px 0;font-size:13px">まだ記録がありません</div>';return;}
-  c.innerHTML=list.map(function(m){return'<div class="memo-card">'+escH(m)+'</div>';}).join('');
-}
-function closeD(e){if(!e||e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('on');}
-function showPage(n){
-  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
-  document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});
-  document.getElementById('pg-'+n).classList.add('on');
-  document.getElementById('ni-'+n).classList.add('on');
-  var main=document.querySelector('.main');if(main)main.scrollTop=0;
-  if(n==='profile') renderProfile();
-}
 var MILESTONES=[
   {count:10,reward:'栄養アドバイスシートプレゼント',emoji:'📋'},
   {count:30,reward:'オリジナルメニュー作成',emoji:'📝'},
@@ -684,19 +690,148 @@ function saveAndCalcProfile(){
 function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function renderTrainings(list){
   var c=document.getElementById('rlist');
-  if(!list.length){c.innerHTML='<div class="empty"><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';return;}
-  c.innerHTML=list.map(function(t){
-    var stats=[];
-    if(t.weight)stats.push('<div class="tr-stat"><span>'+escH(String(t.weight))+'</span> kg</div>');
-    if(t.reps)stats.push('<div class="tr-stat"><span>'+escH(String(t.reps))+'</span> 回</div>');
-    if(t.sets)stats.push('<div class="tr-stat"><span>'+escH(String(t.sets))+'</span> セット</div>');
-    return '<div class="tr-card">'
-      +'<div class="tr-date">'+escH(t.date||'')+'</div>'
-      +'<div class="tr-ex">'+escH(t.exercise||'')+'</div>'
-      +(stats.length?'<div class="tr-stats">'+stats.join('')+'</div>':'')
-      +(t.memo?'<div class="tr-note">'+escH(t.memo)+'</div>':'')
+  if(!list.length){
+    c.innerHTML='<div class="empty"><div class="et">まだ記録がありません</div><div class="ed">トレーニング後に記録が追加されます</div></div>';
+    return;
+  }
+  var groups={};
+  var order=[];
+  list.forEach(function(t){
+    var dateKey=String(t.date||'').substring(0,10);
+    var d=new Date(dateKey);
+    var dayStr=isNaN(d.getTime())?dateKey:d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+['日','月','火','水','木','金','土'][d.getDay()]+'）';
+    if(!groups[dateKey]){groups[dateKey]={label:dayStr,items:[]};order.push(dateKey);}
+    groups[dateKey].items.push(t);
+  });
+  c.innerHTML=order.map(function(dk,gi){
+    var g=groups[dk];
+    var rowsHtml=g.items.map(function(t,ti){
+      var tags=[];
+      if(t.weight)tags.push('<span class="tag">'+escH(String(t.weight))+'kg</span>');
+      if(t.reps)tags.push('<span class="tag">'+escH(String(t.reps))+'回</span>');
+      if(t.sets)tags.push('<span class="tag">'+escH(String(t.sets))+'セット</span>');
+      return '<div class="ex-row-item" onclick="showDetailPage(\''+gi+'-'+ti+'\')">'
+        +'<div><div class="ex-name">'+escH(t.exercise||'トレーニング')+'</div>'
+        +(tags.length?'<div class="ex-tags">'+tags.join('')+'</div>':'')
+        +'</div><span style="color:var(--text2);font-size:16px">›</span></div>';
+    }).join('');
+    return '<div class="day-group">'
+      +'<div class="day-header" onclick="toggleDay(\'dg-'+gi+'\')">'
+      +'<div class="day-header-left"><div class="day-title">'+g.label+'</div>'
+      +'<div class="day-count">'+g.items.length+'種目</div></div>'
+      +'<div class="day-arrow" id="da-'+gi+'">▼</div></div>'
+      +'<div class="day-body" id="dg-'+gi+'">'+rowsHtml+'</div>'
       +'</div>';
   }).join('');
+  if(order.length){toggleDay('dg-0');}
+}
+function toggleDay(id){
+  var body=document.getElementById(id);
+  var gi=id.replace('dg-','');
+  var arrow=document.getElementById('da-'+gi);
+  if(!body)return;
+  var isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  if(arrow)arrow.classList.toggle('open',!isOpen);
+}
+function showDetailPage(key){
+  var parts=key.split('-');
+  var gi=parseInt(parts[0]),ti=parseInt(parts[1]);
+  var groups={},order=[];
+  _trainings.forEach(function(t){
+    var dk=String(t.date||'').substring(0,10);
+    if(!groups[dk]){groups[dk]=[];order.push(dk);}
+    groups[dk].push(t);
+  });
+  var dk=order[gi];
+  var t=groups[dk][ti];
+  if(!t)return;
+  var d=new Date(dk);
+  var dayStr=isNaN(d.getTime())?dk:d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+['日','月','火','水','木','金','土'][d.getDay()]+'）';
+  document.getElementById('detail-title').textContent=t.exercise||'トレーニング';
+  document.getElementById('detail-date').textContent=dayStr;
+  var statsHtml='';
+  if(t.weight)statsHtml+='<div><div style="font-size:26px;font-weight:800;color:var(--text);line-height:1">'+escH(String(t.weight))+'</div><div style="font-size:10px;color:var(--text2);margin-top:3px">kg</div></div>';
+  if(t.reps)statsHtml+='<div><div style="font-size:26px;font-weight:800;color:var(--text);line-height:1">'+escH(String(t.reps))+'</div><div style="font-size:10px;color:var(--text2);margin-top:3px">回</div></div>';
+  if(t.sets)statsHtml+='<div><div style="font-size:26px;font-weight:800;color:var(--text);line-height:1">'+escH(String(t.sets))+'</div><div style="font-size:10px;color:var(--text2);margin-top:3px">セット</div></div>';
+  if(!statsHtml)statsHtml='<div style="grid-column:span 3;font-size:12px;color:var(--text2);text-align:center">数値の記録なし</div>';
+  document.getElementById('detail-stats').innerHTML=statsHtml;
+  var history=_trainings.filter(function(x){return x.exercise===t.exercise&&x.weight;});
+  var hCard=document.getElementById('detail-history-card');
+  if(history.length>1){
+    hCard.style.display='block';
+    var maxW=Math.max.apply(null,history.map(function(x){return parseFloat(x.weight)||0;}));
+    var shown=history.slice(0,5);
+    var hHtml=shown.map(function(x,i){
+      var w=parseFloat(x.weight)||0;
+      var pct=maxW>0?Math.round(w/maxW*100):0;
+      var isLatest=(i===0);
+      var barColor=isLatest?'#111':'#bbb';
+      var txtColor=isLatest?'var(--text)':'var(--text2)';
+      var xdk=String(x.date||'').substring(0,10);
+      var xd=new Date(xdk);
+      var ml=isNaN(xd.getTime())?xdk:((xd.getMonth()+1)+'/'+xd.getDate());
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+        +'<div style="font-size:10px;color:var(--text2);width:32px">'+ml+'</div>'
+        +'<div style="flex:1;background:var(--bg3);border-radius:4px;height:10px;overflow:hidden">'
+        +'<div style="width:'+pct+'%;height:100%;background:'+barColor+';border-radius:4px"></div></div>'
+        +'<div style="font-size:10px;font-weight:700;color:'+txtColor+';width:36px;text-align:right">'+w+'kg</div>'
+        +'</div>';
+    }).join('');
+    var autoMsg='';
+    if(history.length>=2){
+      var cur=parseFloat(history[0].weight)||0;
+      var prev=parseFloat(history[1].weight)||0;
+      var diff=Math.round((cur-prev)*10)/10;
+      if(diff>0)autoMsg='<div style="background:#f0f9f4;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:11px;color:#0a7a3e;font-weight:700">前回より +'+diff+'kg！成長してます 💪</div>';
+      else if(diff<0)autoMsg='<div style="background:#fff8f0;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:11px;color:#e65100;font-weight:700">前回より '+diff+'kg。次回また挑戦！</div>';
+      else autoMsg='<div style="background:#f7f7f7;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:11px;color:var(--text2);font-weight:600">前回と同じ重量。安定しています。</div>';
+    }
+    document.getElementById('detail-history').innerHTML=hHtml+autoMsg;
+  } else {
+    hCard.style.display='none';
+  }
+  var commentCard=document.getElementById('detail-comment-card');
+  var commentEl=document.getElementById('detail-comment');
+  if(t.memo){
+    commentCard.style.display='block';
+    commentEl.textContent=t.memo;
+  } else {
+    commentCard.style.display='block';
+    commentEl.innerHTML='<div class="spin"><div class="sp"></div></div>';
+    generateAIComment(t,history,commentEl);
+  }
+  document.getElementById('detail-overlay').style.display='block';
+}
+function hideDetailPage(){
+  document.getElementById('detail-overlay').style.display='none';
+}
+function generateAIComment(t,history,el){
+  var prevW=history.length>=2?parseFloat(history[1].weight)||0:0;
+  var curW=parseFloat(t.weight)||0;
+  var diff=curW&&prevW?Math.round((curW-prevW)*10)/10:null;
+  var prompt='パーソナルトレーナーとして、クライアントのトレーニング記録に対して短いコメントを日本語で1〜2文で書いてください。励ます内容にしてください。\n'
+    +'種目: '+t.exercise+'\n'
+    +(curW?'重量: '+curW+'kg\n':'')
+    +(t.reps?'回数: '+t.reps+'回\n':'')
+    +(t.sets?'セット数: '+t.sets+'\n':'')
+    +(diff!==null?'前回比: '+(diff>0?'+':'')+diff+'kg\n':'初回記録\n')
+    +'コメントのみ出力してください。';
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:200,
+      messages:[{role:'user',content:prompt}]
+    })
+  }).then(function(r){return r.json();})
+  .then(function(data){
+    var text=data.content&&data.content[0]?data.content[0].text:'';
+    el.textContent=text||'よく頑張りました！次回も継続しましょう。';
+  }).catch(function(){
+    el.textContent='よく頑張りました！次回も継続しましょう。';
+  });
 }
 function renderMemos(list){
   var c=document.getElementById('memo-list');

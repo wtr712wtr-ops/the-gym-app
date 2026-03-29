@@ -426,7 +426,7 @@ function showApp(){
   var n=user.displayName||'Guest';
   var h=new Date().getHours();
   var g=h<11?'おはようございます！':h<18?'こんにちは！':'こんばんは！';
-  document.getElementById('gname').textContent=n;
+  document.getElementById('gname').textContent=n+'様';
   document.getElementById('gsub').textContent=g+'今日も頑張りましょう';
   document.getElementById('avi').textContent=n.charAt(0);
   document.getElementById('pavi').textContent=n.charAt(0);

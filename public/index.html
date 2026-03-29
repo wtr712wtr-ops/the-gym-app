@@ -430,7 +430,7 @@ function showApp(){
   document.getElementById('gsub').textContent=g+'今日も頑張りましょう';
   document.getElementById('avi').textContent=n.charAt(0);
   document.getElementById('pavi').textContent=n.charAt(0);
-  document.getElementById('pname').textContent=n;
+  document.getElementById('pname').textContent=n+'様';
   document.getElementById('pid').textContent='ID: '+(user.userId||'').substring(0,10)+'...';
   if(user.pictureUrl){document.getElementById('av').innerHTML='<img src="'+user.pictureUrl+'">';document.getElementById('pav').innerHTML='<img src="'+user.pictureUrl+'">';}
   if(location.search.includes('preview=client')){

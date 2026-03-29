@@ -348,9 +348,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 <!-- ログインボーナスモーダル -->
 <div id="bonus-overlay">
   <div id="bonus-card">
-    <span class="bonus-emoji" id="bonus-emoji">💪</span>
-    <div class="bonus-streak"><span id="bonus-num">1</span>日連続ログイン！</div>
-    <div class="bonus-msg" id="bonus-msg">今日も来てくれてありがとう！</div>
+    <span class="bonus-emoji">💪</span>
+    <div class="bonus-streak">今日もお疲れ様でした！</div>
+    <div class="bonus-msg" id="bonus-msg">トレーニング記録が追加されました</div>
     <div class="bonus-stamps" id="bonus-stamps"></div>
     <button class="bonus-close" onclick="document.getElementById('bonus-overlay').classList.remove('on')">よし、始めよう！</button>
   </div>
@@ -369,40 +369,32 @@ document.getElementById('loginBtn').addEventListener('click',function(){
 
 document.getElementById('logoutBtn').addEventListener('click',function(){if(confirm('ログアウトしますか？')){localStorage.removeItem('gym_user');location.reload();}});
 
-function checkLoginBonus(){
+function checkNewRecord(){
+  if(!_trainings.length)return;
   var today=new Date().toISOString().split('T')[0];
-  var raw=localStorage.getItem('gym_bonus');
-  var data=raw?JSON.parse(raw):{streak:0,lastDate:'',history:[]};
-  if(data.lastDate===today)return;
-  var yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
-  var yd=yesterday.toISOString().split('T')[0];
-  data.streak=(data.lastDate===yd)?(data.streak||0)+1:1;
-  data.lastDate=today;
-  if(!data.history)data.history=[];
-  data.history.push(today);
-  if(data.history.length>30)data.history=data.history.slice(-30);
-  localStorage.setItem('gym_bonus',JSON.stringify(data));
-  var streak=data.streak;
-  var emoji='💪',msg='今日も来てくれてありがとう！';
-  if(streak>=30){emoji='👑';msg='30日以上連続！圧巻の継続力です！';}
-  else if(streak>=14){emoji='🏆';msg='2週間以上連続！もう習慣になってますね！';}
-  else if(streak>=7){emoji='🔥';msg='1週間連続達成！最高のペースです！';}
-  else if(streak>=3){emoji='⚡️';msg='いい流れが来てます！この調子で！';}
-  document.getElementById('bonus-emoji').textContent=emoji;
-  document.getElementById('bonus-num').textContent=streak;
-  document.getElementById('bonus-msg').textContent=msg;
+  var todayTrainings=_trainings.filter(function(t){
+    return String(t.date||'').substring(0,10)===today;
+  });
+  if(!todayTrainings.length)return;
+  var lastCount=parseInt(localStorage.getItem('gym_last_tr_count')||'0');
+  var currentCount=_trainings.length;
+  if(currentCount<=lastCount)return;
+  localStorage.setItem('gym_last_tr_count',String(currentCount));
+  var visitSet=new Set(_trainings.map(function(t){return String(t.date||'').substring(0,10);}));
   var days=['月','火','水','木','金','土','日'];
-  var stamps=document.getElementById('bonus-stamps');stamps.innerHTML='';
+  var stamps=document.getElementById('bonus-stamps');
+  stamps.innerHTML='';
   var now2=new Date();var dow=now2.getDay();
   var monday=new Date(now2);monday.setDate(now2.getDate()-(dow===0?6:dow-1));
   for(var i=0;i<7;i++){
-    var d=new Date(monday);d.setDate(monday.getDate()+i);
-    var ds=d.toISOString().split('T')[0];
-    var isToday=ds===today;var visited=data.history.indexOf(ds)>-1;
-    var cls='stamp'+(isToday?' today':visited?' filled':'');
-    stamps.innerHTML+='<div style="text-align:center"><div class="'+cls+'">'+(visited||isToday?'✓':'')+'</div><div class="stamp-label">'+days[i]+'</div></div>';
+    var wd=new Date(monday);wd.setDate(monday.getDate()+i);
+    var wds=wd.toISOString().split('T')[0];
+    var isToday=wds===today;
+    var visited=visitSet.has(wds);
+    var cls='stamp'+(isToday&&visited?' today':visited?' filled':'');
+    stamps.innerHTML+='<div style="text-align:center"><div class="'+cls+'">'+(visited?'✓':'')+'</div><div class="stamp-label">'+days[i]+'</div></div>';
   }
-  setTimeout(function(){document.getElementById('bonus-overlay').classList.add('on');},500);
+  setTimeout(function(){document.getElementById('bonus-overlay').classList.add('on');},800);
 }
 
 function init(){
@@ -415,7 +407,6 @@ function init(){
       return;
     }
     showApp();
-    checkLoginBonus();
     loadData();
   }
   if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
@@ -494,6 +485,7 @@ function loadData(){
     renderHome(_trainings);
     renderTrainings(_trainings);
     updateCalendarMenuSub();
+    checkNewRecord();
   }).catch(function(){renderHome([]);renderTrainings([]);});
 }
 

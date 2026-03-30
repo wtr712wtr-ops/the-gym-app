@@ -231,7 +231,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
         </div>
         <div style="background:var(--bg3);border-radius:10px;padding:10px;text-align:center">
           <div style="font-size:22px;font-weight:800;color:#FF6B00;letter-spacing:-1px;line-height:1" id="cal-stat-streak">-</div>
-          <div style="font-size:10px;color:var(--text2);margin-top:4px">継続中🔥</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:4px">継続月数</div>
         </div>
         <div style="background:var(--bg3);border-radius:10px;padding:10px;text-align:center">
           <div style="font-size:22px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1" id="cal-stat-total">-</div>
@@ -588,13 +588,19 @@ function renderCalendar(){
   var ymPrefix=y+'/'+(m+1)+'/';
   var monCount=new Set(_trainings.filter(function(t){return t.date&&String(t.date).indexOf(ymPrefix)===0;}).map(function(t){return String(t.date).substring(0,10);})).size;
   var totalCount=visitSet.size;
-  var streak=0;var d=new Date(today);
-  while(true){var ds=d.toISOString().split('T')[0];if(visitSet.has(ds)){streak++;d.setDate(d.getDate()-1);}else{break;}}
+  var streak=0;
+  var checkDate=new Date();
+  for(var mm2=0;mm2<24;mm2++){
+    var sy=checkDate.getFullYear(),sm=checkDate.getMonth(),hasVisit=false;
+    visitSet.forEach(function(ds){var dv=new Date(ds);if(dv.getFullYear()===sy&&dv.getMonth()===sm){hasVisit=true;}});
+    if(hasVisit){streak++;}else if(mm2>0){break;}
+    checkDate.setMonth(checkDate.getMonth()-1);
+  }
   document.getElementById('cal-stat-month').textContent=monCount;
   document.getElementById('cal-stat-streak').textContent=streak;
   document.getElementById('cal-stat-total').textContent=totalCount;
   var sub=document.getElementById('calendar-menu-sub');
-  if(sub)sub.textContent='継続中🔥'+streak+' / 累計'+totalCount+'回';
+  if(sub)sub.textContent=streak+'ヶ月継続 / 累計'+totalCount+'回';
   var firstDay=new Date(y,m,1).getDay();
   var daysInMonth=new Date(y,m+1,0).getDate();
   var startOffset=(firstDay===0)?6:(firstDay-1);
@@ -654,11 +660,16 @@ function checkMilestoneAchievement(total){
 function updateCalendarMenuSub(){
   var visitSet=new Set(_trainings.map(function(t){return String(t.date).substring(0,10);}));
   var total=visitSet.size;
-  var today=new Date().toISOString().split('T')[0];
-  var streak=0;var d=new Date(today);
-  while(true){var ds=d.toISOString().split('T')[0];if(visitSet.has(ds)){streak++;d.setDate(d.getDate()-1);}else{break;}}
+  var streak=0;
+  var checkDate2=new Date();
+  for(var m2=0;m2<24;m2++){
+    var y2=checkDate2.getFullYear(),mo2=checkDate2.getMonth(),has2=false;
+    visitSet.forEach(function(ds){var d2=new Date(ds);if(d2.getFullYear()===y2&&d2.getMonth()===mo2){has2=true;}});
+    if(has2){streak++;}else if(m2>0){break;}
+    checkDate2.setMonth(checkDate2.getMonth()-1);
+  }
   var sub=document.getElementById('calendar-menu-sub');
-  if(sub)sub.textContent='継続中🔥'+streak+' / 累計'+total+'回';
+  if(sub)sub.textContent=streak+'ヶ月継続 / 累計'+total+'回';
   checkMilestoneAchievement(total);
 }
 var STATUS_RANKS=[
@@ -679,7 +690,7 @@ function renderStatus(){
   var totalVisits=new Set(_trainings.map(function(t){return String(t.date||'').substring(0,10);})).size;
   var totalSets=_trainings.reduce(function(s,t){return s+(parseInt(t.sets)||0);},0);
   var totalReps=_trainings.reduce(function(s,t){return s+(parseInt(t.reps)||0);},0);
-  var continuity=Math.min(100,Math.round(Math.sqrt(totalVisits/100)*100));
+  var continuity=Math.min(100,Math.round(Math.sqrt(totalVisits/300)*100));
   var volume=Math.min(100,Math.round(Math.sqrt(totalSets/500)*100));
   var level=Math.round((continuity+volume)/2);
   var rankIdx=0;
@@ -707,7 +718,7 @@ function renderStatus(){
   document.getElementById('st-rank-current').textContent=rank.name;
   document.getElementById('st-continuity').textContent=continuity;
   document.getElementById('st-continuity-bar').style.width=continuity+'%';
-  document.getElementById('st-continuity-desc').textContent='累計来店数: '+totalVisits+'回';
+  document.getElementById('st-continuity-desc').textContent='累計来店数: '+totalVisits+'回（300回で満点）';
   document.getElementById('st-volume').textContent=volume;
   document.getElementById('st-volume-bar').style.width=volume+'%';
   document.getElementById('st-volume-desc').textContent='総セット数: '+totalSets+' / 総レップ数: '+totalReps;
@@ -734,7 +745,7 @@ function renderStatusMenuSub(){
   for(var i=0;i<STATUS_RANKS.length;i++){if(totalVisits>=STATUS_RANKS[i].min)rankIdx=i;}
   var rank=STATUS_RANKS[rankIdx];
   var totalSets=_trainings.reduce(function(s,t){return s+(parseInt(t.sets)||0);},0);
-  var continuity=Math.min(100,Math.round(Math.sqrt(totalVisits/100)*100));
+  var continuity=Math.min(100,Math.round(Math.sqrt(totalVisits/300)*100));
   var volume=Math.min(100,Math.round(Math.sqrt(totalSets/500)*100));
   var level=Math.round((continuity+volume)/2);
   var sub=document.getElementById('status-menu-sub');

@@ -175,6 +175,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
       </div>
 
       <div class="stitle" style="margin-bottom:12px">メニュー</div>
+      <div class="mi" onclick="showStatusPage()" style="cursor:pointer">
+        <div class="ml">
+          <div>
+            <div style="font-size:15px;font-weight:600;color:var(--text)">ステータス</div>
+            <div id="status-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">読み込み中...</div>
+          </div>
+        </div>
+        <span style="color:var(--text2)">&rsaquo;</span>
+      </div>
       <div class="mi" onclick="showCalendarPage()" style="cursor:pointer">
         <div class="ml"><span style="font-size:15px;font-weight:600;color:var(--text)">来店カレンダー・特典</span><div id="calendar-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">継続中🔥- / 累計-回</div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
@@ -267,6 +276,75 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px" id="detail-history-card">
       <div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">重量の推移</div>
       <div id="detail-history"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ステータスオーバーレイ -->
+<div id="status-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <button onclick="hideStatusPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
+    <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">ステータス</div>
+  </div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
+    <div style="background:#111;border-radius:14px;padding:16px;color:#fff">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:44px;height:44px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800" id="st-avatar">?</div>
+        <div>
+          <div style="font-size:17px;font-weight:800;letter-spacing:-0.5px" id="st-name">-</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px" id="st-rank-label">-</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-size:10px;color:rgba(255,255,255,0.4)">総合Lv.</div>
+          <div style="font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1" id="st-level">-</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:5px" id="st-next-label">次のランクまで</div>
+      <div style="background:rgba(255,255,255,0.1);border-radius:4px;height:6px;margin-bottom:4px">
+        <div style="height:6px;border-radius:4px;background:#fff;transition:width 0.5s ease" id="st-level-bar"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.3)">
+        <span id="st-rank-current"></span><span id="st-rank-progress"></span>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">ステータス</div>
+      <div style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:22px;height:22px;border-radius:6px;background:#fff3e0;display:flex;align-items:center;justify-content:center;font-size:12px">🔥</div>
+            <span style="font-size:14px;font-weight:700;color:var(--text)">継続力</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:3px">
+            <span style="font-size:22px;font-weight:800;color:#e65100;letter-spacing:-0.5px" id="st-continuity">0</span>
+            <span style="font-size:11px;color:var(--text2)">/ 100</span>
+          </div>
+        </div>
+        <div style="background:var(--bg3);border-radius:4px;height:10px;margin-bottom:5px">
+          <div style="height:10px;border-radius:4px;background:#FF6B00;transition:width 0.5s ease" id="st-continuity-bar"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text2)" id="st-continuity-desc"></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:22px;height:22px;border-radius:6px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;font-size:12px">💪</div>
+            <span style="font-size:14px;font-weight:700;color:var(--text)">運動量</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:3px">
+            <span style="font-size:22px;font-weight:800;color:#2e7d32;letter-spacing:-0.5px" id="st-volume">0</span>
+            <span style="font-size:11px;color:var(--text2)">/ 100</span>
+          </div>
+        </div>
+        <div style="background:var(--bg3);border-radius:4px;height:10px;margin-bottom:5px">
+          <div style="height:10px;border-radius:4px;background:#27ae60;transition:width 0.5s ease" id="st-volume-bar"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text2)" id="st-volume-desc"></div>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">ランク</div>
+      <div id="st-rank-list" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
   </div>
 </div>
@@ -483,6 +561,7 @@ function loadData(){
     renderHome(_trainings);
     renderTrainings(_trainings);
     updateCalendarMenuSub();
+    renderStatusMenuSub();
     checkNewRecord();
   }).catch(function(){renderHome([]);renderTrainings([]);});
 }
@@ -582,6 +661,85 @@ function updateCalendarMenuSub(){
   if(sub)sub.textContent='継続中🔥'+streak+' / 累計'+total+'回';
   checkMilestoneAchievement(total);
 }
+var STATUS_RANKS=[
+  {name:'ビギナー',min:0,max:9},
+  {name:'チャレンジャー',min:10,max:29},
+  {name:'トレーニー',min:30,max:49},
+  {name:'アスリート',min:50,max:99},
+  {name:'エキスパート',min:100,max:999}
+];
+function showStatusPage(){
+  document.getElementById('status-overlay').style.display='block';
+  renderStatus();
+}
+function hideStatusPage(){
+  document.getElementById('status-overlay').style.display='none';
+}
+function renderStatus(){
+  var totalVisits=new Set(_trainings.map(function(t){return String(t.date||'').substring(0,10);})).size;
+  var totalSets=_trainings.reduce(function(s,t){return s+(parseInt(t.sets)||0);},0);
+  var totalReps=_trainings.reduce(function(s,t){return s+(parseInt(t.reps)||0);},0);
+  var continuity=Math.min(100,Math.round(Math.sqrt(totalVisits/100)*100));
+  var volume=Math.min(100,Math.round(Math.sqrt(totalSets/500)*100));
+  var level=Math.round((continuity+volume)/2);
+  var rankIdx=0;
+  for(var i=0;i<STATUS_RANKS.length;i++){if(totalVisits>=STATUS_RANKS[i].min)rankIdx=i;}
+  var rank=STATUS_RANKS[rankIdx];
+  var nextRank=STATUS_RANKS[rankIdx+1];
+  var name=user?user.displayName||'Guest':'Guest';
+  document.getElementById('st-avatar').textContent=name.charAt(0);
+  document.getElementById('st-name').textContent=name+'様';
+  document.getElementById('st-rank-label').textContent=rank.name;
+  document.getElementById('st-level').textContent=level;
+  var rankProgress=0;
+  if(nextRank){
+    var rangeSize=rank.max-rank.min+1;
+    var inRank=totalVisits-rank.min;
+    rankProgress=Math.round(inRank/rangeSize*100);
+    document.getElementById('st-next-label').textContent='次のランクまで';
+    document.getElementById('st-rank-progress').textContent=nextRank.name+' まで '+(rank.max+1-totalVisits)+'回';
+  } else {
+    rankProgress=100;
+    document.getElementById('st-next-label').textContent='最高ランク達成！';
+    document.getElementById('st-rank-progress').textContent='';
+  }
+  document.getElementById('st-level-bar').style.width=rankProgress+'%';
+  document.getElementById('st-rank-current').textContent=rank.name;
+  document.getElementById('st-continuity').textContent=continuity;
+  document.getElementById('st-continuity-bar').style.width=continuity+'%';
+  document.getElementById('st-continuity-desc').textContent='累計来店数: '+totalVisits+'回';
+  document.getElementById('st-volume').textContent=volume;
+  document.getElementById('st-volume-bar').style.width=volume+'%';
+  document.getElementById('st-volume-desc').textContent='総セット数: '+totalSets+' / 総レップ数: '+totalReps;
+  var rl=document.getElementById('st-rank-list');
+  rl.innerHTML=STATUS_RANKS.map(function(r,i){
+    var isCurrent=(i===rankIdx);
+    var isDone=(i<rankIdx);
+    var opacity=isDone?0.4:isCurrent?1:0.35;
+    var dotColor=isCurrent?'#FF6B00':isDone?'#111':'#ccc';
+    var label=r.max>=999?r.min+'回〜':r.min+'〜'+r.max+'回';
+    return '<div style="display:flex;align-items:center;gap:10px;opacity:'+opacity+'">'
+      +'<div style="width:10px;height:10px;border-radius:50%;background:'+dotColor+';flex-shrink:0"></div>'
+      +'<span style="font-size:13px;font-weight:'+(isCurrent?'800':'400')+';color:var(--text)">'
+      +r.name+(isCurrent?' ← 現在':'')+'</span>'
+      +'<span style="font-size:11px;color:var(--text2);margin-left:auto">'+label+'</span>'
+      +'</div>';
+  }).join('');
+  var sub=document.getElementById('status-menu-sub');
+  if(sub)sub.textContent=rank.name+' / Lv.'+level;
+}
+function renderStatusMenuSub(){
+  var totalVisits=new Set(_trainings.map(function(t){return String(t.date||'').substring(0,10);})).size;
+  var rankIdx=0;
+  for(var i=0;i<STATUS_RANKS.length;i++){if(totalVisits>=STATUS_RANKS[i].min)rankIdx=i;}
+  var rank=STATUS_RANKS[rankIdx];
+  var totalSets=_trainings.reduce(function(s,t){return s+(parseInt(t.sets)||0);},0);
+  var continuity=Math.min(100,Math.round(Math.sqrt(totalVisits/100)*100));
+  var volume=Math.min(100,Math.round(Math.sqrt(totalSets/500)*100));
+  var level=Math.round((continuity+volume)/2);
+  var sub=document.getElementById('status-menu-sub');
+  if(sub)sub.textContent=rank.name+' / Lv.'+level;
+}
 function showCaloriePage(){
   var el=document.getElementById('calorie-overlay');
   el.style.display='block';
@@ -605,6 +763,7 @@ function hideCaloriePage(){
   document.getElementById('calorie-overlay').style.display='none';
 }
 function renderProfile(){
+  renderStatusMenuSub();
   // ホームの数値をそのまま同期（常に同じデータソース）
   var tot=document.getElementById('tot');
   var mon=document.getElementById('mon');

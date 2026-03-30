@@ -190,10 +190,12 @@ function loadClients() {
         return;
       }
       list.innerHTML = '<div class="client-list">' + clients.map(function(c) {
-        return '<div class="client-card" onclick="selectClient(\'' + c.id + '\',\'' + escHtml(c.name) + '\')">'
-          + '<div><div class="client-name">' + escHtml(c.name) + '</div>'
-          + '<div class="client-id">' + c.id + '</div></div>'
-          + '<span style="color:var(--text2);font-size:18px">›</span></div>';
+        return '<div class="client-card">'
+          + '<div onclick="selectClient(\'' + c.id + '\',\'' + escHtml(c.name) + '\')" style="flex:1;display:flex;align-items:center;justify-content:space-between">'
+          + '<div><div class="client-name">' + escHtml(c.name) + '</div><div class="client-id">' + c.id + '</div></div>'
+          + '<span style="color:var(--text2);font-size:18px">›</span></div>'
+          + '<button onclick="deleteClient(\'' + c.id + '\',\'' + escHtml(c.name) + '\')" style="margin-left:8px;background:none;border:1px solid #e44;color:#e44;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer">削除</button>'
+          + '</div>';
       }).join('') + '</div>';
     })
     .catch(function(){ document.getElementById('clist').innerHTML = '<div class="empty">読み込みエラー</div>'; });
@@ -220,6 +222,22 @@ function switchClientTab(tab) {
   if (tab === 'training') { initTrainingPane(); loadTrainings(); }
 }
 
+function deleteClient(id, name) {
+  if (!confirm(name + 'を削除しますか？\nメモ・記録データも全て削除されます。')) return;
+  fetch('/api/memo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adminId: adminId, action: 'deleteClient', clientId: id })
+  }).then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data.ok) {
+      showMsg('add-msg', 'ok', name + 'を削除しました');
+      loadClients();
+    } else {
+      alert('削除に失敗しました: ' + (data.error || 'エラー'));
+    }
+  }).catch(function(){ alert('通信エラー'); });
+}
 function backToList() {
   document.getElementById('memo-view').style.display = 'none';
   document.getElementById('client-view').style.display = 'block';
@@ -237,13 +255,61 @@ function loadMemos() {
         list.innerHTML = '<div class="empty">メモがまだありません</div>';
         return;
       }
-      list.innerHTML = '<div class="memo-list">' + memos.map(function(m){
-        return '<div class="memo-item">' + escHtml(m) + '</div>';
+      list.innerHTML = '<div class="memo-list">' + memos.map(function(m, i){
+        return '<div class="memo-item" style="position:relative">'
+          + '<div style="padding-right:80px">' + escHtml(m) + '</div>'
+          + '<div style="position:absolute;top:8px;right:8px;display:flex;gap:4px">'
+          + '<button onclick="editMemo(' + i + ',this)" style="background:none;border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer">編集</button>'
+          + '<button onclick="deleteMemo(' + i + ')" style="background:none;border:1px solid #e44;color:#e44;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer">削除</button>'
+          + '</div></div>';
       }).join('') + '</div>';
     })
     .catch(function(){ list.innerHTML = '<div class="empty">読み込みエラー</div>'; });
 }
 
+function editMemo(idx, btn) {
+  var item = btn.closest('.memo-item');
+  var textDiv = item.querySelector('div');
+  var currentText = textDiv.textContent.trim();
+  var input = document.createElement('textarea');
+  input.value = currentText;
+  input.style.cssText = 'width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:14px;resize:none;min-height:60px;margin-bottom:6px';
+  var saveBtn = document.createElement('button');
+  saveBtn.textContent = '保存';
+  saveBtn.style.cssText = 'background:var(--accent);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;margin-right:6px';
+  var cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'キャンセル';
+  cancelBtn.style.cssText = 'background:none;border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:6px 14px;font-size:13px;cursor:pointer';
+  textDiv.style.display = 'none';
+  item.querySelector('div:last-child').style.display = 'none';
+  item.appendChild(input);
+  var btnWrap = document.createElement('div');
+  btnWrap.appendChild(saveBtn);
+  btnWrap.appendChild(cancelBtn);
+  item.appendChild(btnWrap);
+  cancelBtn.onclick = function() { loadMemos(); };
+  saveBtn.onclick = function() {
+    var newText = input.value.trim();
+    if (!newText) return;
+    fetch('/api/memo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminId: adminId, action: 'editMemo', clientId: selectedClient.id, index: idx, memo: newText })
+    }).then(function(r){ return r.json(); })
+    .then(function(data){ if (data.ok) { showMsg('memo-msg', 'ok', '更新しました'); loadMemos(); } })
+    .catch(function(){ showMsg('memo-msg', 'err', '通信エラー'); });
+  };
+}
+function deleteMemo(idx) {
+  if (!confirm('このメモを削除しますか？')) return;
+  fetch('/api/memo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adminId: adminId, action: 'deleteMemo', clientId: selectedClient.id, index: idx })
+  }).then(function(r){ return r.json(); })
+  .then(function(data){ if (data.ok) { showMsg('memo-msg', 'ok', '削除しました'); loadMemos(); } })
+  .catch(function(){ showMsg('memo-msg', 'err', '通信エラー'); });
+}
 function addMemo() {
   var memo = document.getElementById('memo-input').value.trim();
   if (!memo) return;

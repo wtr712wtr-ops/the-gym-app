@@ -69,7 +69,35 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true });
     }
 
-    if (action === 'saveProfile') {
+    if (action === 'deleteClient') {
+    if (!clientId) return res.status(400).json({ error: 'clientId required' });
+    const allClients = await redis.smembers('clients');
+    const toRemove = allClients.filter(c => c && c.id === clientId);
+    if (toRemove.length > 0) await redis.srem('clients', ...toRemove);
+    await redis.del('memo:' + clientId);
+    await redis.del('training:' + clientId);
+    await redis.del('nextDate:' + clientId);
+    await redis.del('nextTime:' + clientId);
+    await redis.del('profile:' + clientId);
+    return res.status(200).json({ ok: true });
+  }
+  if (action === 'editMemo') {
+    const { index, memo: editedMemo } = req.body;
+    const memos = await redis.lrange('memo:' + clientId, 0, -1);
+    if (index < 0 || index >= memos.length) return res.status(400).json({ error: 'invalid index' });
+    await redis.lset('memo:' + clientId, index, editedMemo);
+    return res.status(200).json({ ok: true });
+  }
+  if (action === 'deleteMemo') {
+    const { index } = req.body;
+    const memos = await redis.lrange('memo:' + clientId, 0, -1);
+    if (index < 0 || index >= memos.length) return res.status(400).json({ error: 'invalid index' });
+    const placeholder = '__deleted__' + Date.now();
+    await redis.lset('memo:' + clientId, index, placeholder);
+    await redis.lrem('memo:' + clientId, 1, placeholder);
+    return res.status(200).json({ ok: true });
+  }
+  if (action === 'saveProfile') {
     if (!clientId) return res.status(400).json({ error: 'clientId required' });
     const { height, weight, age, gender, activity } = req.body;
     await redis.set('profile:' + clientId, JSON.stringify({ height, weight, age, gender, activity }));

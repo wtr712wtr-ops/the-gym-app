@@ -433,6 +433,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 </div>
 
 <script>
+function parseJpDate(str) {
+  if (!str) return null;
+  var m = String(str).match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})/);
+  if (m) str = m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+  var dt = new Date(str);
+  return isNaN(dt.getTime()) ? null : dt;
+}
+
 var LINE_URL='https://lin.ee/X2yQksR';
 var user=null;
 var _trainings=[];

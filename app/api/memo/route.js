@@ -37,7 +37,7 @@ export async function POST(request) {
   if (action === 'addMemo') {
         const entry = JSON.stringify({
                 text: memo,
-                date: new Date().toLocaleDateString('ja-JP')
+                date: new Date().toISOString().split('T')[0]
         });
         await redis.lpush(`memo:${clientId}`, entry);
         return Response.json({ ok: true });

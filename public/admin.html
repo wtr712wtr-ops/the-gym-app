@@ -381,9 +381,11 @@ function loadTrainings() {
 }
 
 var exRowCounter = 0;
+var setRowCounters = {};
 
 function initTrainingPane() {
   exRowCounter = 0;
+  setRowCounters = {};
   document.getElementById('tr-rows').innerHTML = '';
   addExRow();
 }
@@ -401,12 +403,31 @@ function addExRow() {
     + (i > 1 ? '<button class="del-row-btn" onclick="removeExRow(' + i + ')">削除</button>' : '')
     + '</div>'
     + '<div class="form-group"><label>種目名</label><input type="text" id="ex-exercise-' + i + '" placeholder="例: スクワット"></div>'
-    + '<div class="ex-grid">'
-    + '<div class="form-group"><label>重量</label><div class="input-row"><input type="number" id="ex-weight-' + i + '" placeholder="0" min="0" step="0.5"><span class="input-unit">kg</span></div></div>'
-    + '<div class="form-group"><label>回数</label><div class="input-row"><input type="number" id="ex-reps-' + i + '" placeholder="0" min="0"><span class="input-unit">回</span></div></div>'
-    + '<div class="form-group"><label>セット</label><div class="input-row"><input type="number" id="ex-sets-' + i + '" placeholder="0" min="0"><span class="input-unit">セット</span></div></div>'
-    + '</div>';
+    + '<div id="ex-sets-rows-' + i + '" style="margin-top:8px"></div>'
+    + '<button type="button" onclick="addSetRow(' + i + ')" style="width:100%;padding:8px;background:var(--bg);color:var(--accent);border:1px dashed var(--border);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px">＋ セットを追加</button>';
   document.getElementById('tr-rows').appendChild(div);
+  addSetRow(i);
+}
+
+function addSetRow(exIdx) {
+  if (!setRowCounters[exIdx]) setRowCounters[exIdx] = 0;
+  setRowCounters[exIdx]++;
+  var s = setRowCounters[exIdx];
+  var container = document.getElementById('ex-sets-rows-' + exIdx);
+  var row = document.createElement('div');
+  row.id = 'set-row-' + exIdx + '-' + s;
+  row.style.cssText = 'display:grid;grid-template-columns:auto 1fr 1fr auto;gap:6px;align-items:center;margin-bottom:6px;background:var(--bg3);border-radius:8px;padding:8px 10px';
+  row.innerHTML =
+    '<span style="font-size:11px;font-weight:700;color:var(--text2);min-width:30px">Set' + s + '</span>'
+    + '<div class="input-row"><input type="number" id="ex-weight-' + exIdx + '-' + s + '" placeholder="重量" min="0" step="0.5" style="width:100%"><span class="input-unit" style="font-size:11px">kg</span></div>'
+    + '<div class="input-row"><input type="number" id="ex-reps-' + exIdx + '-' + s + '" placeholder="回数" min="0" style="width:100%"><span class="input-unit" style="font-size:11px">回</span></div>'
+    + (s > 1 ? '<button type="button" onclick="removeSetRow(' + exIdx + ',' + s + ')" style="background:none;border:1px solid #e0a0a0;color:#c62828;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer">×</button>' : '<span style="min-width:28px"></span>');
+  container.appendChild(row);
+}
+
+function removeSetRow(exIdx, s) {
+  var row = document.getElementById('set-row-' + exIdx + '-' + s);
+  if (row) row.parentNode.removeChild(row);
 }
 
 function removeExRow(i) {
@@ -416,33 +437,41 @@ function removeExRow(i) {
 
 function saveTrainings() {
   var rows = document.querySelectorAll('#tr-rows .ex-row');
-  var date = new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
+  var date = new Date().toISOString().split('T')[0];
   var entries = [];
   for (var r = 0; r < rows.length; r++) {
-    var rowId = rows[r].id.replace('ex-row-', '');
-    var exercise = document.getElementById('ex-exercise-' + rowId).value.trim();
+    var exIdx = rows[r].id.replace('ex-row-', '');
+    var exercise = document.getElementById('ex-exercise-' + exIdx).value.trim();
     if (!exercise) { showMsg('tr-msg', 'err', '種目名が空の行があります'); return; }
-    entries.push({
-      exercise: exercise,
-      weight: document.getElementById('ex-weight-' + rowId).value || '',
-      reps: document.getElementById('ex-reps-' + rowId).value || '',
-      sets: document.getElementById('ex-sets-' + rowId).value || '',
-      date: date
-    });
+    var sc = setRowCounters[exIdx] || 1;
+    var setCount = 0;
+    for (var s = 1; s <= sc; s++) {
+      var wEl = document.getElementById('ex-weight-' + exIdx + '-' + s);
+      var rEl = document.getElementById('ex-reps-' + exIdx + '-' + s);
+      if (!wEl) continue;
+      var w = wEl.value.trim();
+      var rep = rEl ? rEl.value.trim() : '';
+      if (!w && !rep) continue;
+      setCount++;
+      entries.push({ exercise: exercise, weight: w, reps: rep, sets: String(s), date: date, memo: '' });
+    }
+    if (setCount === 0) {
+      entries.push({ exercise: exercise, weight: '', reps: '', sets: '', date: date, memo: '' });
+    }
   }
   if (!entries.length) { showMsg('tr-msg', 'err', '種目を1つ以上入力してください'); return; }
   var promises = entries.map(function(entry) {
     return fetch('/api/memo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminId: adminId, action: 'addTraining', clientId: selectedClient.id, exercise: entry.exercise, weight: entry.weight, reps: entry.reps, sets: entry.sets, date: entry.date, memo: '' })
+      body: JSON.stringify({ adminId: adminId, action: 'addTraining', clientId: selectedClient.id, exercise: entry.exercise, weight: entry.weight, reps: entry.reps, sets: entry.sets, date: entry.date, memo: entry.memo })
     }).then(function(r){ return r.json(); });
   });
   Promise.all(promises)
     .then(function(results) {
       var allOk = results.every(function(d){ return d.ok; });
       if (allOk) {
-        showMsg('tr-msg', 'ok', entries.length + '種目を記録しました');
+        showMsg('tr-msg', 'ok', entries.length + 'セットを記録しました');
         initTrainingPane();
         loadTrainings();
       } else {

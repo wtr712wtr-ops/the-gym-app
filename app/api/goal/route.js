@@ -2,21 +2,39 @@ import { Redis } from '@upstash/redis';
 
 const redis = Redis.fromEnv();
 
-export async function GET(request) {
-  const { searchParams } = new URL(request.url);
-  const userId = searchParams.get('userId');
-  if (!userId) return Response.json({ error: 'userId required' }, { status: 400 });
+function parseRedis(raw) {
+  if (raw == null) return null;
+  if (typeof raw === 'string') { try { return JSON.parse(raw); } catch { return raw; } }
+  return raw;
+}
 
-  const raw = await redis.get(`goal:${userId}`);
-  const goal = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : null;
-  return Response.json({ goal });
+export async function GET(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get('userId');
+    if (!userId) return Response.json({ error: 'userId required' }, { status: 400 });
+
+    const raw = await redis.get(`goal:${userId}`);
+    const goal = parseRedis(raw) || null;
+    return Response.json({ goal });
+  } catch (e) {
+    return Response.json({ error: e.message }, { status: 500 });
+  }
 }
 
 export async function POST(request) {
-  const body = await request.json();
-  const { userId, targetWeight, targetDate, memo } = body;
-  if (!userId) return Response.json({ error: 'userId required' }, { status: 400 });
+  try {
+    const body = await request.json();
+    const { userId, targetWeight, targetDate, memo } = body;
+    if (!userId) return Response.json({ error: 'userId required' }, { status: 400 });
 
-  await redis.set(`goal:${userId}`, JSON.stringify({ targetWeight, targetDate, memo: memo || '' }));
-  return Response.json({ ok: true });
+    await redis.set(`goal:${userId}`, JSON.stringify({
+      targetWeight: targetWeight || null,
+      targetDate: targetDate || null,
+      memo: memo || ''
+    }));
+    return Response.json({ ok: true });
+  } catch (e) {
+    return Response.json({ error: e.message }, { status: 500 });
+  }
 }

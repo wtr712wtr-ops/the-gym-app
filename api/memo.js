@@ -9,7 +9,7 @@ const redis = new Redis({
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -119,6 +119,33 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ ok: true });
   }
   return res.status(400).json({ error: 'Unknown action' });
+  }
+
+  if (req.method === 'PUT') {
+    const { adminId, clientId, index, date, exercise, weight, reps, sets, memo: tmemo } = req.body;
+    if (adminId !== ADMIN_ID) return res.status(403).json({ error: 'Forbidden' });
+    if (!clientId || index == null) return res.status(400).json({ error: 'clientId and index required' });
+    const entry = { date: date || '', exercise: exercise || '', weight: weight || '', reps: reps || '', sets: sets || '', memo: tmemo || '' };
+    try {
+      await redis.lset('training:' + clientId, index, entry);
+      return res.status(200).json({ ok: true });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  if (req.method === 'DELETE') {
+    const { adminId, clientId, index } = req.body;
+    if (adminId !== ADMIN_ID) return res.status(403).json({ error: 'Forbidden' });
+    if (!clientId || index == null) return res.status(400).json({ error: 'clientId and index required' });
+    try {
+      const placeholder = '__deleted__' + Date.now();
+      await redis.lset('training:' + clientId, index, placeholder);
+      await redis.lrem('training:' + clientId, 1, placeholder);
+      return res.status(200).json({ ok: true });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
   }
 
   return res.status(405).json({ error: 'Method not allowed' });

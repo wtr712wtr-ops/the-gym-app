@@ -241,7 +241,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <!-- グラフ -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
       <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px">過去30日の推移</div>
-      <canvas id="weight-chart" height="180"></canvas>
+      <div style="position:relative;height:250px;">
+        <canvas id="weight-chart"></canvas>
+      </div>
       <div id="weight-empty" style="display:none;font-size:13px;color:var(--text2);text-align:center;padding:20px">まだ記録がありません</div>
     </div>
     <!-- 目標設定 -->

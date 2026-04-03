@@ -1085,7 +1085,7 @@ function loadWeightData() {
   fetch('/api/weight?userId='+uid)
     .then(function(r){ return r.json(); })
     .then(function(data){
-      _weightData = (data.weights || []).slice(0, 30).reverse();
+      _weightData = data.weights || [];  // APIが既にoldest-first順で返す
       renderWeightChart();
       updateGoalDiff();
     }).catch(function(){});
@@ -1181,10 +1181,12 @@ function updateGoalDiff() {
   var goalW = _currentGoal ? parseFloat(_currentGoal.targetWeight) : null;
   if (latestW && goalW) {
     var diff = Math.round((goalW - latestW) * 10) / 10;
+    var absDiff = Math.abs(diff);
+    var diffStr = diff === 0 ? '目標達成！' : diff < 0 ? ('あと ' + absDiff + 'kg減') : ('あと +' + absDiff + 'kg');
     el.style.display = 'block';
-    el.style.background = diff < 0 ? '#fff3e0' : '#f0f9f4';
-    el.style.color = diff < 0 ? '#e65100' : '#0a7a3e';
-    el.textContent = '現在 ' + latestW + 'kg → 目標 ' + goalW + 'kg（' + (diff > 0 ? 'あと+' : 'あと') + diff + 'kg）';
+    el.style.background = diff <= 0 ? '#fff3e0' : '#f0f9f4';
+    el.style.color = diff <= 0 ? '#e65100' : '#0a7a3e';
+    el.textContent = '現在 ' + latestW + 'kg → 目標 ' + goalW + 'kg（' + diffStr + '）';
   } else {
     el.style.display = 'none';
   }

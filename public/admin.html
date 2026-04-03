@@ -143,24 +143,12 @@ textarea{resize:vertical;min-height:80px}
             <label>種目名</label>
             <input type="text" id="edit-tr-exercise" placeholder="例: スクワット">
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
-            <div class="form-group" style="margin-bottom:0">
-              <label>重量 (kg)</label>
-              <input type="number" id="edit-tr-weight" placeholder="60" min="0" step="0.5">
-            </div>
-            <div class="form-group" style="margin-bottom:0">
-              <label>回数</label>
-              <input type="number" id="edit-tr-reps" placeholder="10" min="0">
-            </div>
-            <div class="form-group" style="margin-bottom:0">
-              <label>セット</label>
-              <input type="text" id="edit-tr-sets" placeholder="1">
-            </div>
-          </div>
+          <div id="edit-tr-sets-container" style="margin-bottom:8px"></div>
+          <button type="button" onclick="addEditSetRow()" style="width:100%;padding:8px;background:var(--bg);color:var(--accent);border:1px dashed var(--border);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px">＋ セット追加</button>
           <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
             <button class="btn" onclick="saveEditTraining()">保存する</button>
             <button onclick="cancelEditTraining()" type="button" style="width:100%;padding:13px;background:none;color:var(--text2);border:1px solid var(--border);border-radius:8px;font-size:15px;font-weight:700;cursor:pointer">キャンセル</button>
-            <button onclick="deleteTrainingEntry()" type="button" style="width:100%;padding:13px;background:none;color:#c62828;border:1px solid #e0a0a0;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer">この記録を削除</button>
+            <button onclick="deleteTrainingGroup()" type="button" style="width:100%;padding:13px;background:none;color:#c62828;border:1px solid #e0a0a0;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer">この種目の記録を全て削除</button>
           </div>
           <div id="edit-tr-msg"></div>
         </div>
@@ -388,7 +376,32 @@ function addClient() {
 }
 
 var _currentTrainings = [];
-var _editingIdx = null;
+var _currentGroups = [];
+var _editingGroupIdx = null;
+var _editSetCounter = 0;
+var _editSetRows = [];
+
+function normTrainingDate(dateStr) {
+  if (!dateStr) return '';
+  var m = String(dateStr).match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})/);
+  if (m) return m[1] + '-' + m[2].padStart(2,'0') + '-' + m[3].padStart(2,'0');
+  return String(dateStr).substring(0, 10);
+}
+
+function buildGroups(trainings) {
+  var groups = [];
+  var keyMap = {};
+  trainings.forEach(function(t, idx) {
+    var dateKey = normTrainingDate(t.date);
+    var key = dateKey + '|' + (t.exercise || '');
+    if (keyMap[key] === undefined) {
+      keyMap[key] = groups.length;
+      groups.push({ key: key, dateStr: t.date || '', dateKey: dateKey, exercise: t.exercise || '', entries: [] });
+    }
+    groups[keyMap[key]].entries.push({ idx: idx, weight: t.weight || '', reps: t.reps || '', setNum: t.sets || '' });
+  });
+  return groups;
+}
 
 function loadTrainings() {
   var list = document.getElementById('trlist');
@@ -397,25 +410,29 @@ function loadTrainings() {
     .then(function(r){ return r.json(); })
     .then(function(data) {
       _currentTrainings = data.trainings || [];
-      if (!_currentTrainings.length) {
+      _currentGroups = buildGroups(_currentTrainings);
+      if (!_currentGroups.length) {
         list.innerHTML = '<div class="empty">記録がまだありません</div>';
         return;
       }
-      list.innerHTML = _currentTrainings.map(function(t, idx) {
-        var stats = [];
-        if (t.weight) stats.push('<div class="tr-stat"><span>' + escHtml(String(t.weight)) + '</span> kg</div>');
-        if (t.reps)   stats.push('<div class="tr-stat"><span>' + escHtml(String(t.reps)) + '</span> 回</div>');
-        if (t.sets)   stats.push('<div class="tr-stat">Set<span>' + escHtml(String(t.sets)) + '</span></div>');
+      list.innerHTML = _currentGroups.map(function(g, gi) {
+        var setRows = g.entries.map(function(e, si) {
+          return '<div style="display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--bg3)">'
+            + '<span style="font-size:11px;font-weight:700;color:var(--text2);min-width:34px">Set' + (si+1) + '</span>'
+            + '<span style="font-size:13px;font-weight:600;color:var(--text)">'
+            + (e.weight ? escHtml(String(e.weight)) + ' kg' : '—')
+            + ' × '
+            + (e.reps ? escHtml(String(e.reps)) + ' 回' : '—')
+            + '</span>'
+            + '</div>';
+        }).join('');
         return '<div class="tr-card">'
-          + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">'
-          + '<div style="flex:1;min-width:0">'
-          + '<div class="tr-date">' + escHtml(t.date || '') + '</div>'
-          + '<div class="tr-exercise">' + escHtml(t.exercise || '') + '</div>'
-          + (stats.length ? '<div class="tr-stats">' + stats.join('') + '</div>' : '')
-          + (t.memo ? '<div class="tr-memo">' + escHtml(t.memo) + '</div>' : '')
+          + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">'
+          + '<div><div class="tr-date">' + escHtml(g.dateStr) + '</div>'
+          + '<div class="tr-exercise">' + escHtml(g.exercise) + '</div></div>'
+          + '<button onclick="openEditGroup(' + gi + ')" style="flex-shrink:0;background:none;border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">編集</button>'
           + '</div>'
-          + '<button onclick="openEditTraining(' + idx + ')" style="flex-shrink:0;background:none;border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">編集</button>'
-          + '</div>'
+          + setRows
           + '</div>';
       }).join('');
     })
@@ -564,71 +581,121 @@ function clearNextDate(){
       setTimeout(function(){msg.textContent='';},2000);
     }).catch(function(){});
 }
-function openEditTraining(idx) {
-  _editingIdx = idx;
-  var t = _currentTrainings[idx];
-  if (!t) return;
-  var dateStr = '';
-  if (t.date) {
-    var m = String(t.date).match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})/);
-    dateStr = m ? m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0') : String(t.date).substring(0,10);
-  }
-  document.getElementById('edit-tr-date').value = dateStr;
-  document.getElementById('edit-tr-exercise').value = t.exercise || '';
-  document.getElementById('edit-tr-weight').value = t.weight || '';
-  document.getElementById('edit-tr-reps').value = t.reps || '';
-  document.getElementById('edit-tr-sets').value = t.sets || '';
+function openEditGroup(gi) {
+  _editingGroupIdx = gi;
+  var g = _currentGroups[gi];
+  if (!g) return;
+  document.getElementById('edit-tr-date').value = g.dateKey;
+  document.getElementById('edit-tr-exercise').value = g.exercise;
   document.getElementById('edit-tr-msg').innerHTML = '';
+  _editSetCounter = 0;
+  _editSetRows = [];
+  document.getElementById('edit-tr-sets-container').innerHTML = '';
+  g.entries.forEach(function(e) {
+    addEditSetRow(e.weight, e.reps, e.idx);
+  });
   document.getElementById('training-input-section').style.display = 'none';
   document.getElementById('training-edit-panel').style.display = 'block';
   document.getElementById('trlist').style.display = 'none';
 }
+function addEditSetRow(weight, reps, origIdx) {
+  _editSetCounter++;
+  var cnt = _editSetCounter;
+  var rowId = 'edit-set-row-' + cnt;
+  _editSetRows.push({ cnt: cnt, rowId: rowId, origIdx: (origIdx !== undefined ? origIdx : -1) });
+  var container = document.getElementById('edit-tr-sets-container');
+  var row = document.createElement('div');
+  row.id = rowId;
+  row.style.cssText = 'display:grid;grid-template-columns:auto 1fr 1fr auto;gap:6px;align-items:center;margin-bottom:6px;background:var(--bg3);border-radius:8px;padding:8px 10px';
+  row.innerHTML =
+    '<span style="font-size:11px;font-weight:700;color:var(--text2);min-width:30px">Set' + cnt + '</span>'
+    + '<div class="input-row"><input type="number" id="edit-w-' + cnt + '" value="' + escHtml(String(weight||'')) + '" placeholder="重量" min="0" step="0.5" style="width:100%"><span class="input-unit" style="font-size:11px">kg</span></div>'
+    + '<div class="input-row"><input type="number" id="edit-r-' + cnt + '" value="' + escHtml(String(reps||'')) + '" placeholder="回数" min="0" style="width:100%"><span class="input-unit" style="font-size:11px">回</span></div>'
+    + '<button type="button" onclick="removeEditSetRow(\'' + rowId + '\')" style="background:none;border:1px solid #e0a0a0;color:#c62828;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer">×</button>';
+  container.appendChild(row);
+}
+function removeEditSetRow(rowId) {
+  var row = document.getElementById(rowId);
+  if (row) row.parentNode.removeChild(row);
+  _editSetRows = _editSetRows.filter(function(r){ return r.rowId !== rowId; });
+}
 function cancelEditTraining() {
-  _editingIdx = null;
+  _editingGroupIdx = null;
+  _editSetRows = [];
   document.getElementById('training-edit-panel').style.display = 'none';
   document.getElementById('training-input-section').style.display = 'block';
   document.getElementById('trlist').style.display = 'block';
 }
 function saveEditTraining() {
-  if (_editingIdx === null) return;
+  if (_editingGroupIdx === null) return;
   var date = document.getElementById('edit-tr-date').value;
   var exercise = document.getElementById('edit-tr-exercise').value.trim();
-  var weight = document.getElementById('edit-tr-weight').value;
-  var reps = document.getElementById('edit-tr-reps').value;
-  var sets = document.getElementById('edit-tr-sets').value;
   var msg = document.getElementById('edit-tr-msg');
   if (!exercise) { msg.innerHTML = '<div class="msg err">種目名を入力してください</div>'; return; }
-  fetch('/api/memo', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ adminId: adminId, clientId: selectedClient.id, index: _editingIdx, date: date, exercise: exercise, weight: weight, reps: reps, sets: sets, memo: '' })
-  }).then(function(r){ return r.json(); })
-    .then(function(data){
-      if (data.ok) {
-        msg.innerHTML = '<div class="msg ok">保存しました</div>';
-        setTimeout(function(){ cancelEditTraining(); loadTrainings(); }, 800);
-      } else {
-        msg.innerHTML = '<div class="msg err">保存に失敗しました: ' + escHtml(data.error || '') + '</div>';
-      }
-    }).catch(function(){ msg.innerHTML = '<div class="msg err">通信エラー</div>'; });
+  var liveRows = _editSetRows.filter(function(r){ return !!document.getElementById(r.rowId); });
+  if (!liveRows.length) { msg.innerHTML = '<div class="msg err">セットを1つ以上入力してください</div>'; return; }
+  var g = _currentGroups[_editingGroupIdx];
+  var liveOrigIndices = liveRows.filter(function(r){ return r.origIdx >= 0; }).map(function(r){ return r.origIdx; });
+  var removedIndices = g.entries.map(function(e){ return e.idx; })
+    .filter(function(i){ return liveOrigIndices.indexOf(i) < 0; })
+    .sort(function(a,b){ return b - a; });
+  var setsData = liveRows.map(function(r, si) {
+    return {
+      cnt: r.cnt,
+      origIdx: r.origIdx,
+      setNum: String(si + 1),
+      weight: (document.getElementById('edit-w-' + r.cnt) || {}).value || '',
+      reps: (document.getElementById('edit-r-' + r.cnt) || {}).value || ''
+    };
+  });
+  // Step1: PUT existing entries
+  var chain = Promise.resolve();
+  setsData.filter(function(s){ return s.origIdx >= 0; }).forEach(function(s) {
+    chain = chain.then(function() {
+      return fetch('/api/memo', { method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({adminId:adminId, clientId:selectedClient.id, index:s.origIdx, date:date, exercise:exercise, weight:s.weight, reps:s.reps, sets:s.setNum, memo:''})
+      }).then(function(r){ return r.json(); });
+    });
+  });
+  // Step2: DELETE removed entries (descending order)
+  removedIndices.forEach(function(origIdx) {
+    chain = chain.then(function() {
+      return fetch('/api/memo', { method: 'DELETE', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({adminId:adminId, clientId:selectedClient.id, index:origIdx})
+      }).then(function(r){ return r.json(); });
+    });
+  });
+  // Step3: POST new entries
+  setsData.filter(function(s){ return s.origIdx < 0; }).forEach(function(s) {
+    chain = chain.then(function() {
+      return fetch('/api/memo', { method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({adminId:adminId, action:'addTraining', clientId:selectedClient.id, exercise:exercise, weight:s.weight, reps:s.reps, sets:s.setNum, date:date, memo:''})
+      }).then(function(r){ return r.json(); });
+    });
+  });
+  chain.then(function() {
+    msg.innerHTML = '<div class="msg ok">保存しました</div>';
+    setTimeout(function(){ cancelEditTraining(); loadTrainings(); }, 800);
+  }).catch(function(){ msg.innerHTML = '<div class="msg err">通信エラー</div>'; });
 }
-function deleteTrainingEntry() {
-  if (_editingIdx === null) return;
-  if (!confirm('この記録を削除しますか？')) return;
+function deleteTrainingGroup() {
+  if (_editingGroupIdx === null) return;
+  if (!confirm('この種目の全セットを削除しますか？')) return;
   var msg = document.getElementById('edit-tr-msg');
-  fetch('/api/memo', {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ adminId: adminId, clientId: selectedClient.id, index: _editingIdx })
-  }).then(function(r){ return r.json(); })
-    .then(function(data){
-      if (data.ok) {
-        msg.innerHTML = '<div class="msg ok">削除しました</div>';
-        setTimeout(function(){ cancelEditTraining(); loadTrainings(); }, 500);
-      } else {
-        msg.innerHTML = '<div class="msg err">削除に失敗しました: ' + escHtml(data.error || '') + '</div>';
-      }
-    }).catch(function(){ msg.innerHTML = '<div class="msg err">通信エラー</div>'; });
+  var g = _currentGroups[_editingGroupIdx];
+  var indices = g.entries.map(function(e){ return e.idx; }).sort(function(a,b){ return b - a; });
+  var chain = Promise.resolve();
+  indices.forEach(function(origIdx) {
+    chain = chain.then(function() {
+      return fetch('/api/memo', { method: 'DELETE', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({adminId:adminId, clientId:selectedClient.id, index:origIdx})
+      }).then(function(r){ return r.json(); });
+    });
+  });
+  chain.then(function() {
+    msg.innerHTML = '<div class="msg ok">削除しました</div>';
+    setTimeout(function(){ cancelEditTraining(); loadTrainings(); }, 500);
+  }).catch(function(){ msg.innerHTML = '<div class="msg err">通信エラー</div>'; });
 }
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');

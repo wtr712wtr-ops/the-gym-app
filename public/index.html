@@ -186,7 +186,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
         <span style="color:var(--text2)">&rsaquo;</span>
       </div>
 
-      <div class="stitle" style="margin-bottom:12px;margin-top:20px">メニュー</div>
+      <div class="stitle" style="margin-bottom:8px;margin-top:20px">種目別ベスト</div>
+      <div id="best-records" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+        <div style="font-size:13px;color:var(--text2);text-align:center">読み込み中...</div>
+      </div>
+
+      <div class="stitle" style="margin-bottom:12px;margin-top:4px">メニュー</div>
       <div class="mi" onclick="showStatusPage()" style="cursor:pointer">
         <div class="ml">
           <div>
@@ -225,14 +230,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <!-- 体重記録フォーム -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
       <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px">体重を記録</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
         <div>
           <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">日付</div>
-          <input type="date" id="weight-date-input" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg2);color:var(--text)">
+          <input type="date" id="weight-date-input" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg2);color:var(--text)">
         </div>
         <div>
           <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">体重 (kg)</div>
-          <input type="number" id="weight-value-input" placeholder="65.0" min="20" max="300" step="0.1" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg2);color:var(--text)">
+          <input type="number" id="weight-value-input" placeholder="65.0" min="20" max="300" step="0.1" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg2);color:var(--text)">
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">体脂肪率 (%)</div>
+          <input type="number" id="bodyfat-value-input" placeholder="20.0" min="1" max="60" step="0.1" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg2);color:var(--text)">
         </div>
       </div>
       <button onclick="saveWeightEntry()" type="button" style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer">記録する</button>
@@ -859,6 +868,7 @@ function renderProfile(){
   var mon=document.getElementById('mon');
   if(tot) document.getElementById('prof-total').textContent=tot.textContent;
   if(mon) document.getElementById('prof-month').textContent=mon.textContent;
+  renderBestRecords();
   var uid=user?user.userId:'';
   if(!uid)return;
   fetch('/api/memo?clientId='+uid+'&userId='+uid+'&profile')
@@ -1058,6 +1068,31 @@ function showPage(n){
   var main=document.querySelector('.main');if(main)main.scrollTop=0;
   if(n==='profile') renderProfile();
 }
+// ===== 種目別ベスト =====
+function renderBestRecords() {
+  var el = document.getElementById('best-records');
+  if (!el) return;
+  var bests = {};
+  _trainings.forEach(function(t) {
+    var ex = (t.exercise || '').trim();
+    var w = parseFloat(t.weight);
+    if (!ex || !w || isNaN(w)) return;
+    if (!bests[ex] || w > bests[ex]) bests[ex] = w;
+  });
+  var keys = Object.keys(bests).sort(function(a, b){ return bests[b] - bests[a]; });
+  if (!keys.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--text2);text-align:center">重量記録がありません</div>';
+    return;
+  }
+  el.innerHTML = keys.map(function(ex, i) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;'
+      + (i < keys.length - 1 ? 'border-bottom:1px solid var(--bg3)' : '') + '">'
+      + '<span style="font-size:14px;color:var(--text)">' + escH(ex) + '</span>'
+      + '<span style="font-size:14px;font-weight:800;color:var(--text)">' + bests[ex] + ' kg</span>'
+      + '</div>';
+  }).join('');
+}
+
 // ===== 種目フィルター =====
 function filterTrainings() {
   var q = (document.getElementById('exercise-filter').value || '').trim().toLowerCase();
@@ -1108,28 +1143,49 @@ function renderWeightChart() {
     return d ? (d.getMonth()+1)+'/'+(d.getDate()) : w.date;
   });
   var values = _weightData.map(function(w){ return parseFloat(w.weight); });
+  var bfValues = _weightData.map(function(w){ return (w.bodyFat != null && w.bodyFat !== '') ? parseFloat(w.bodyFat) : null; });
+  var hasBodyFat = bfValues.some(function(v){ return v != null; });
   if (_weightChart) { _weightChart.destroy(); _weightChart = null; }
+  var datasets = [{
+    label: '体重(kg)',
+    data: values,
+    borderColor: '#111',
+    backgroundColor: 'rgba(0,0,0,0.04)',
+    borderWidth: 2,
+    pointRadius: 3,
+    pointBackgroundColor: '#111',
+    tension: 0.3,
+    fill: true,
+    yAxisID: 'y'
+  }];
+  if (hasBodyFat) {
+    datasets.push({
+      label: '体脂肪(%)',
+      data: bfValues,
+      borderColor: '#bbb',
+      backgroundColor: 'rgba(0,0,0,0)',
+      borderWidth: 1.5,
+      pointRadius: 2,
+      pointBackgroundColor: '#bbb',
+      tension: 0.3,
+      fill: false,
+      spanGaps: false,
+      yAxisID: 'y2'
+    });
+  }
+  var scales = {
+    y: { position: 'left', ticks: { font: { size: 10 } } },
+    x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } }
+  };
+  if (hasBodyFat) {
+    scales.y2 = { position: 'right', grid: { drawOnChartArea: false }, ticks: { font: { size: 10 } } };
+  }
   _weightChart = new Chart(canvas, {
     type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: values,
-        borderColor: '#111',
-        backgroundColor: 'rgba(0,0,0,0.04)',
-        borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: '#111',
-        tension: 0.3,
-        fill: true
-      }]
-    },
+    data: { labels: labels, datasets: datasets },
     options: {
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { ticks: { font: { size: 10 } } },
-        x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } }
-      },
+      plugins: { legend: { display: hasBodyFat, labels: { font: { size: 10 }, boxWidth: 16, padding: 8 } } },
+      scales: scales,
       responsive: true,
       maintainAspectRatio: false
     }
@@ -1140,17 +1196,21 @@ function saveWeightEntry() {
   if (!uid) return;
   var date = document.getElementById('weight-date-input').value;
   var weight = parseFloat(document.getElementById('weight-value-input').value);
+  var bodyFatEl = document.getElementById('bodyfat-value-input');
+  var bodyFat = bodyFatEl && bodyFatEl.value ? parseFloat(bodyFatEl.value) : null;
   var msg = document.getElementById('weight-save-msg');
   if (!date || isNaN(weight)) { msg.style.color='#c62828'; msg.textContent='日付と体重を入力してください'; return; }
+  if (bodyFat !== null && isNaN(bodyFat)) bodyFat = null;
   fetch('/api/weight', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId: uid, date: date, weight: weight })
+    body: JSON.stringify({ userId: uid, date: date, weight: weight, bodyFat: bodyFat })
   }).then(function(r){ return r.json(); })
     .then(function(data){
       if (data.ok) {
         msg.style.color='#2e7d32'; msg.textContent='記録しました';
         document.getElementById('weight-value-input').value = '';
+        if (bodyFatEl) bodyFatEl.value = '';
         loadWeightData();
         var sub = document.getElementById('weight-menu-sub');
         if (sub) sub.textContent = weight + 'kg（' + date + '）';

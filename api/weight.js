@@ -26,7 +26,7 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const { userId, date, weight } = req.body;
+    const { userId, date, weight, bodyFat } = req.body;
     if (!userId || !date || weight == null) {
       return res.status(400).json({ error: 'userId, date, weight required' });
     }
@@ -36,8 +36,12 @@ module.exports = async function handler(req, res) {
       const weights = raw ? (Array.isArray(raw) ? raw : JSON.parse(raw)) : [];
 
       const idx = weights.findIndex(function(w) { return w.date === date; });
-      if (idx >= 0) weights[idx].weight = weight;
-      else weights.push({ date: date, weight: weight });
+      if (idx >= 0) {
+        weights[idx].weight = weight;
+        if (bodyFat != null) weights[idx].bodyFat = bodyFat;
+      } else {
+        weights.push({ date: date, weight: weight, bodyFat: bodyFat != null ? bodyFat : null });
+      }
 
       weights.sort(function(a, b) { return b.date.localeCompare(a.date); });
       const trimmed = weights.slice(0, 90);

@@ -447,6 +447,12 @@ function initTrainingPane() {
   setRowCounters = {};
   document.getElementById('tr-rows').innerHTML = '';
   addExRow();
+  // 編集パネル状態をリセット（タブ切り替え時も正しく初期化）
+  _editingGroupIdx = null;
+  _editSetRows = [];
+  document.getElementById('training-edit-panel').style.display = 'none';
+  document.getElementById('training-input-section').style.display = 'block';
+  document.getElementById('trlist').style.display = 'block';
 }
 
 function addExRow() {
@@ -597,6 +603,7 @@ function openEditGroup(gi) {
   document.getElementById('training-input-section').style.display = 'none';
   document.getElementById('training-edit-panel').style.display = 'block';
   document.getElementById('trlist').style.display = 'none';
+  window.scrollTo(0, 0);
 }
 function addEditSetRow(weight, reps, origIdx) {
   _editSetCounter++;

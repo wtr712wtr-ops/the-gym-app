@@ -205,6 +205,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
         <div class="ml"><span style="font-size:15px;font-weight:600;color:var(--text)">来店カレンダー・特典</span><div id="calendar-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">継続中🔥- / 累計-回</div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
       </div>
+      <div class="mi" onclick="showMonthlyPage()" style="cursor:pointer">
+        <div class="ml"><span style="font-size:15px;font-weight:600;color:var(--text)">今月のまとめ</span><div style="font-size:11px;color:var(--text2);margin-top:2px">月次レポート・自己ベスト</div></div>
+        <span style="color:var(--text2)">&rsaquo;</span>
+      </div>
       <div class="mi" onclick="showCaloriePage()" style="cursor:pointer">
         <div class="ml"><span style="font-size:15px;font-weight:600;color:var(--text)">カロリー計算</span><div style="font-size:11px;color:var(--text2);margin-top:2px">基本情報・目安カロリー確認</div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
@@ -334,6 +338,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     </div>
     <div style="font-size:11px;color:#aaa;margin-bottom:16px" id="ms-next"></div>
     <button onclick="document.getElementById('milestone-overlay').style.display='none'" type="button" style="background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%">やった！続けるぞ！</button>
+  </div>
+</div>
+
+<!-- 月次サマリーオーバーレイ -->
+<div id="monthly-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <button onclick="hideMonthlyPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
+    <div id="monthly-title" style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">○月のまとめ</div>
+  </div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
+    <div id="monthly-stats"></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div id="monthly-volume"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div id="monthly-bests"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:15px;font-weight:600;color:var(--text);text-align:center;line-height:1.6" id="monthly-message"></div>
   </div>
 </div>
 
@@ -660,6 +682,111 @@ var MILESTONES=[
   {count:50,reward:'セッション5分延長',emoji:'⏱️'},
   {count:100,reward:'???（お楽しみ）',emoji:'🎁'}
 ];
+// ===== 月次サマリー =====
+function showMonthlyPage(){
+  document.getElementById('monthly-overlay').style.display='block';
+  renderMonthly();
+}
+function hideMonthlyPage(){
+  document.getElementById('monthly-overlay').style.display='none';
+}
+function statCard(label, value, sub, positive){
+  var subColor=sub.indexOf('↑')>=0?'#2e7d32':sub.indexOf('↓')>=0?'#c62828':'#888888';
+  return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">'
+    +'<div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+label+'</div>'
+    +'<div style="font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1">'+value+'</div>'
+    +'<div style="font-size:11px;color:'+subColor+';margin-top:4px">'+escH(String(sub))+'</div>'
+    +'</div>';
+}
+function renderMonthly(){
+  var now=new Date();
+  var y=now.getFullYear(),m=now.getMonth();
+  var prevY=m===0?y-1:y, prevM=m===0?11:m-1;
+  document.getElementById('monthly-title').textContent=(m+1)+'月のまとめ';
+
+  // 今月・先月のトレーニング
+  var thisMonth=_trainings.filter(function(t){var d=parseJpDate(t.date);return d&&d.getFullYear()===y&&d.getMonth()===m;});
+  var lastMonth=_trainings.filter(function(t){var d=parseJpDate(t.date);return d&&d.getFullYear()===prevY&&d.getMonth()===prevM;});
+  var thisVisits=new Set(thisMonth.map(function(t){return normDateKey(t.date);})).size;
+  var lastVisits=new Set(lastMonth.map(function(t){return normDateKey(t.date);})).size;
+  var thisSets=thisMonth.length;
+  var lastSets=lastMonth.length;
+
+  // 体重変化（_weightDataはoldest-first）
+  var monthW=_weightData.filter(function(w){var d=parseJpDate(w.date);return d&&d.getFullYear()===y&&d.getMonth()===m;});
+  var wStart=monthW.length?parseFloat(monthW[0].weight):null;
+  var wEnd=monthW.length?parseFloat(monthW[monthW.length-1].weight):null;
+  var wChangeStr=wStart!=null&&wEnd!=null&&monthW.length>1
+    ?(Math.round((wEnd-wStart)*10)/10>0?'+':'')+Math.round((wEnd-wStart)*10)/10+'kg'
+    :wEnd!=null?wEnd+'kg':'—';
+  var wSubStr=wStart!=null&&wEnd!=null&&monthW.length>1?wStart+'→'+wEnd+'kg':wEnd!=null?wEnd+'kg':'データなし';
+
+  // 継続月数
+  var visitSet=new Set(_trainings.map(function(t){return normDateKey(t.date);}));
+  var streak=0,checkDate=new Date();
+  for(var mm2=0;mm2<24;mm2++){
+    var sy=checkDate.getFullYear(),sm2=checkDate.getMonth(),hasV=false;
+    visitSet.forEach(function(ds){var dv=parseJpDate(ds);if(dv&&dv.getFullYear()===sy&&dv.getMonth()===sm2)hasV=true;});
+    if(hasV)streak++;else if(mm2>0)break;
+    checkDate.setMonth(checkDate.getMonth()-1);
+  }
+
+  // セクション1: 実績グリッド
+  var vDiff=thisVisits-lastVisits,sDiff=thisSets-lastSets;
+  var vSub=vDiff>0?'↑'+vDiff+' 先月比':vDiff<0?'↓'+Math.abs(vDiff)+' 先月比':'先月と同じ';
+  var sSub=sDiff>0?'↑'+sDiff+' 先月比':sDiff<0?'↓'+Math.abs(sDiff)+' 先月比':'先月と同じ';
+  document.getElementById('monthly-stats').innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+    +statCard('来店数',thisVisits+'回',vSub,vDiff>0)
+    +statCard('総セット数',thisSets+'回',sSub,sDiff>0)
+    +statCard('体重変化',wChangeStr,wSubStr,wEnd<wStart)
+    +statCard('継続月数',streak+'ヶ月','継続中',streak>0)
+    +'</div>';
+
+  // セクション2: 種目別ボリューム TOP5
+  var exVol={};
+  thisMonth.forEach(function(t){var ex=(t.exercise||'').trim();if(ex)exVol[ex]=(exVol[ex]||0)+1;});
+  var exKeys=Object.keys(exVol).sort(function(a,b){return exVol[b]-exVol[a];}).slice(0,5);
+  var maxVol=exKeys.length?exVol[exKeys[0]]:1;
+  var volHtml=exKeys.length?exKeys.map(function(ex){
+    var pct=Math.round(exVol[ex]/maxVol*100);
+    return '<div style="margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;margin-bottom:4px">'
+      +'<span style="font-size:12px;font-weight:600;color:var(--text)">'+escH(ex)+'</span>'
+      +'<span style="font-size:12px;color:var(--text2)">'+exVol[ex]+'セット</span>'
+      +'</div>'
+      +'<div style="background:var(--bg3);border-radius:4px;height:8px;overflow:hidden">'
+      +'<div style="background:#111;height:100%;width:'+pct+'%;border-radius:4px"></div>'
+      +'</div></div>';
+  }).join(''):'<div style="font-size:13px;color:var(--text2);text-align:center">今月の記録がありません</div>';
+  document.getElementById('monthly-volume').innerHTML='<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px">種目別ボリューム（TOP5）</div>'+volHtml;
+
+  // セクション3: 自己ベスト更新
+  var beforeMonth=_trainings.filter(function(t){var d=parseJpDate(t.date);return d&&(d.getFullYear()<y||(d.getFullYear()===y&&d.getMonth()<m));});
+  var prevBests={};
+  beforeMonth.forEach(function(t){var ex=(t.exercise||'').trim(),w=parseFloat(t.weight);if(ex&&w&&!isNaN(w)&&(!prevBests[ex]||w>prevBests[ex]))prevBests[ex]=w;});
+  var curBests={};
+  thisMonth.forEach(function(t){var ex=(t.exercise||'').trim(),w=parseFloat(t.weight);if(ex&&w&&!isNaN(w)&&(!curBests[ex]||w>curBests[ex]))curBests[ex]=w;});
+  var updates=[];
+  Object.keys(curBests).forEach(function(ex){var cur=curBests[ex],prev=prevBests[ex];if(!prev||cur>prev)updates.push({ex:ex,cur:cur,prev:prev,diff:prev?Math.round((cur-prev)*10)/10:null});});
+  var bestsHtml=updates.length?updates.map(function(u,i){
+    var badge=u.prev?'+'+u.diff+'kg 🏆':'初記録 🏆';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;'+(i<updates.length-1?'border-bottom:1px solid var(--bg3)':'')+'">'
+      +'<span style="font-size:13px;color:var(--text)">'+escH(u.ex)+'</span>'
+      +'<span style="font-size:13px;font-weight:800;color:#e65c00">'+u.cur+'kg '+badge+'</span>'
+      +'</div>';
+  }).join(''):'<div style="font-size:13px;color:var(--text2);text-align:center">今月は記録更新なし</div>';
+  document.getElementById('monthly-bests').innerHTML='<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px">自己ベスト更新</div>'+bestsHtml;
+
+  // セクション4: ひとこと
+  var msg='';
+  if(vDiff>0)msg='先月より'+vDiff+'回増えました！この調子で！💪';
+  else if(vDiff<0)msg='来月は'+(lastVisits+1)+'回を目指そう！🔥';
+  else if(thisVisits>0)msg='安定して継続中！素晴らしい！🎯';
+  else msg='記録をつけて目標に向かおう！💪';
+  document.getElementById('monthly-message').textContent=msg;
+}
+
 function showCalendarPage(){
   document.getElementById('calendar-overlay').style.display='block';
   renderCalendar();

@@ -12,8 +12,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#f7f7f7;--bg2:#ffffff;--bg3:#f0f0f0;--border:#e5e5e5;--text:#111111;--text2:#888888;--accent:#1c1c1c;--line:#06C755;--c-green:#9FE1CB;--c-green-bg:#EAF3DE;--c-green-text:#27500A;--c-green-dark:#3B6D11;--c-blue:#B5D4F4;--c-blue-bg:#E6F1FB;--c-blue-text:#185FA5;--c-amber:#FAC775;--c-amber-bg:#FAEEDA;--c-amber-text:#854F0B;--c-amber-dark:#633806}
-body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:#f7f7f7;color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
+:root{--bg:#faf8f5;--bg2:#ffffff;--bg3:#f0ede8;--bg-green:#e8f4e8;--bg-blue:#e8eef8;--bg-amber:#f8f0e8;--border:#ede9e3;--border-green:#c8e8c8;--border-blue:#c8d8f0;--text:#3a3a3a;--text2:#b0a898;--text3:#c0b8b0;--text-green:#2d5c2d;--text-green2:#4a7c4a;--text-blue:#2d4a7c;--text-blue2:#4a6a9c;--text-amber:#9c6a2a;--accent:#4a7c4a;--radius:12px;--radius-sm:8px;--line:#06C755;--c-green:#9FE1CB;--c-green-bg:#e8f4e8;--c-green-text:#2d5c2d;--c-green-dark:#4a7c4a;--c-blue:#B5D4F4;--c-blue-bg:#e8eef8;--c-blue-text:#4a6a9c;--c-amber:#FAC775;--c-amber-bg:#f8f0e8;--c-amber-text:#9c6a2a;--c-amber-dark:#9c6a2a}
+body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
 #login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;gap:48px;background:#ffffff}
 .logo{font-size:36px;font-weight:800;letter-spacing:-1px;text-align:center;color:var(--text)}
 .sub{font-size:10px;letter-spacing:4px;color:var(--text2);margin-top:6px;text-align:center;text-transform:uppercase}
@@ -22,17 +22,17 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 .card-desc{font-size:13px;color:var(--text2);line-height:1.6}
 .btn-line{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--line);color:#fff;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .btn-line:active{opacity:0.85}
-#app{display:none;flex-direction:column;min-height:100vh;background:#f7f7f7}
-.header{position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center}
+#app{display:none;flex-direction:column;min-height:100vh;background:var(--bg)}
+.header{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center}
 .hlogo{font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111111}
 .av{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;color:#111111;overflow:hidden;position:absolute;right:20px}
 .av img{width:100%;height:100%;object-fit:cover}
 .main{flex:1;padding:0;position:relative;overflow-y:auto;overflow-x:hidden}
-.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;color:var(--text2);cursor:pointer;font-size:10px;font-weight:600;border:none;background:none}
-.ni.on{color:var(--accent)}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--bg2);border-top:1px solid var(--border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;color:var(--text3);cursor:pointer;font-size:10px;font-weight:600;border:none;background:none}
+.ni.on{color:var(--text)}
 .ni svg{width:22px;height:22px}
-.pg{display:none;padding:20px;padding-bottom:80px;width:100%;background:#f7f7f7}
+.pg{display:none;padding:20px;padding-bottom:80px;width:100%;background:var(--bg)}
 .pg.on{display:block}
 .gname{display:none}
 .gsub{font-size:15px;color:var(--text2);margin-bottom:20px;font-weight:600}
@@ -46,7 +46,7 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 .rtitle{font-size:16px;font-weight:800;margin-bottom:10px;letter-spacing:-0.5px}
 .rtags{display:flex;gap:6px;flex-wrap:wrap}
 .tag{font-size:11px;background:var(--bg3);color:var(--text2);padding:4px 10px;border-radius:20px;border:1px solid var(--border);font-weight:600}
-.lbtn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--line);color:#fff;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:12px}
+.lbtn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--line);color:#fff;border:none;border-radius:var(--radius);padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:12px}
 .lbtn:active{opacity:0.85}
 .empty{text-align:center;padding:48px 20px;color:var(--text2)}
 .ei{font-size:40px;margin-bottom:12px}
@@ -87,11 +87,11 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 .stamp-label{font-size:9px;color:#aaa;margin-top:2px;font-weight:600;text-align:center}
 .bonus-close{background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .bonus-close:active{opacity:0.85}
-.home-card{background:var(--bg2);border:1.5px solid var(--c-green);border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.home-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
 .home-card-label{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text2);text-transform:uppercase;margin-bottom:8px}
 .home-card-value{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
 .home-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.home-stat{background:var(--bg2);border:1.5px solid var(--c-green);border-radius:12px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.home-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
 .home-stat-num{font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--text);line-height:1}
 .home-stat-label{font-size:11px;color:var(--text2);margin-top:6px;font-weight:500}
 .day-group{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
@@ -101,7 +101,7 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 .day-count{font-size:10px;color:var(--text2)}
 .day-arrow{font-size:11px;color:var(--text2);transition:transform 0.2s}
 .day-arrow.open{transform:rotate(180deg)}
-.day-body{display:none;border-top:1px solid var(--border)}
+.day-body{display:none;border-top:1px solid var(--bg3)}
 .day-body.open{display:block}
 .ex-row-item{padding:10px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-bottom:1px solid var(--bg3)}
 .ex-row-item:last-child{border-bottom:none}
@@ -109,8 +109,8 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 .ex-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
 .ex-tags{display:flex;gap:4px;flex-wrap:wrap}
 @media (prefers-color-scheme: dark) {
-  :root{--bg:#f7f7f7 !important;--bg2:#ffffff !important;--bg3:#eeeeee !important;--text:#111111 !important;--text2:#888888 !important;--border:#e5e5e5 !important}
-  body{background:#ffffff !important;color:#111111 !important}
+  :root{--bg:#faf8f5 !important;--bg2:#ffffff !important;--bg3:#f0ede8 !important;--text:#3a3a3a !important;--text2:#b0a898 !important;--border:#ede9e3 !important}
+  body{background:#faf8f5 !important;color:#3a3a3a !important}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
@@ -141,8 +141,8 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
           </div>
         </div>
         <div class="home-stat-grid">
-          <div class="home-stat"><div class="home-stat-num" id="tot">0</div><div class="home-stat-label">累計来店数</div></div>
-          <div class="home-stat"><div class="home-stat-num" id="mon">0</div><div class="home-stat-label">今月の来店数</div></div>
+          <div class="home-stat" style="background:var(--bg-green);border:1px solid var(--border-green)"><div class="home-stat-num" id="tot" style="color:var(--text-green)">0</div><div class="home-stat-label" style="color:var(--text-green2)">累計来店数</div></div>
+          <div class="home-stat" style="background:var(--bg-blue);border:1px solid var(--border-blue)"><div class="home-stat-num" id="mon" style="color:var(--text-blue)">0</div><div class="home-stat-label" style="color:var(--text-blue2)">今月の来店数</div></div>
         </div>
         <div class="home-card">
           <div class="home-card-label">最終来店日</div>
@@ -151,14 +151,14 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
             <div id="last-visit-ago" style="font-size:12px;color:var(--text2)"></div>
           </div>
         </div>
-        <div class="home-card-label" style="margin-bottom:8px">最新のトレーニング</div>
-        <div id="latest" onclick="showPage('records')" style="cursor:pointer;margin-bottom:12px;background:var(--bg2);border:1.5px solid #9FE1CB;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04)"><div class="spin"><div class="sp"></div></div></div>
+        <div class="home-card-label" style="margin-bottom:8px;color:var(--text-green2)">最新のトレーニング</div>
+        <div id="latest" onclick="showPage('records')" style="cursor:pointer;margin-bottom:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px"><div class="spin"><div class="sp"></div></div></div>
         <a class="lbtn" id="lineBtn" href="https://lin.ee/X2yQksR" rel="noopener" style="text-decoration:none">公式LINEへ連絡・予約</a>
     </div>
     <div class="pg" id="pg-records">
       <div class="stitle" style="margin-bottom:12px">トレーニング記録</div>
       <div style="position:relative;margin-bottom:12px">
-        <input type="text" id="exercise-filter" placeholder="種目名で絞り込み..." oninput="filterTrainings()" autocomplete="off" style="width:100%;padding:10px 14px 10px 36px;border:0.5px solid #f0f0f0;border-radius:10px;font-size:14px;background:#fff;color:var(--text)">
+        <input type="text" id="exercise-filter" placeholder="種目名で絞り込み..." oninput="filterTrainings()" autocomplete="off" style="width:100%;padding:10px 14px 10px 36px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;background:var(--bg2);color:var(--text)">
         <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:14px">🔍</span>
         <datalist id="exercise-suggestions"></datalist>
       </div>
@@ -168,27 +168,25 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
       <div class="ph"><div class="pa" id="pav"><span id="pavi">?</span></div><div><div class="pn" id="pname">-</div><div class="pi" id="pid">-</div></div></div>
 
       <div class="stitle" style="margin-bottom:12px">来店実績</div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <div style="text-align:center">
-            <div style="font-size:28px;font-weight:800;color:var(--text);letter-spacing:-1px" id="prof-total">-</div>
-            <div style="font-size:11px;color:var(--text2);margin-top:4px;font-weight:500">累計来店数</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:28px;font-weight:800;color:var(--text);letter-spacing:-1px" id="prof-month">-</div>
-            <div style="font-size:11px;color:var(--text2);margin-top:4px;font-weight:500">今月の来店数</div>
-          </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+        <div style="background:var(--bg-green);border:1px solid var(--border-green);border-radius:var(--radius);padding:16px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:var(--text-green);letter-spacing:-1px" id="prof-total">-</div>
+          <div style="font-size:11px;color:var(--text-green2);margin-top:4px;font-weight:600">累計来店数</div>
+        </div>
+        <div style="background:var(--bg-blue);border:1px solid var(--border-blue);border-radius:var(--radius);padding:16px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:var(--text-blue);letter-spacing:-1px" id="prof-month">-</div>
+          <div style="font-size:11px;color:var(--text-blue2);margin-top:4px;font-weight:600">今月の来店数</div>
         </div>
       </div>
 
       <div class="stitle" style="margin-bottom:12px">体重・目標</div>
       <div class="mi" onclick="showWeightPage()" style="cursor:pointer">
-        <div class="ml"><span style="width:7px;height:7px;border-radius:50%;background:var(--c-blue);display:inline-block;flex-shrink:0"></span><div><span style="font-size:15px;font-weight:600;color:var(--text)">体重を記録・グラフ</span><div id="weight-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">タップして記録</div></div></div>
+        <div class="ml"><span style="width:7px;height:7px;border-radius:50%;background:#9FE1CB;display:inline-block;flex-shrink:0"></span><div><span style="font-size:15px;font-weight:600;color:var(--text)">体重を記録・グラフ</span><div id="weight-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">タップして記録</div></div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
       </div>
 
       <div class="stitle" style="margin-bottom:8px;margin-top:20px">種目別ベスト</div>
-      <div id="best-records" style="background:var(--bg2);border:1.5px solid var(--c-green);border-radius:12px;padding:14px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+      <div id="best-records" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:20px">
         <div style="font-size:13px;color:var(--text2);text-align:center">読み込み中...</div>
       </div>
 
@@ -226,8 +224,8 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 </div>
 
 <!-- 体重・目標オーバーレイ -->
-<div id="weight-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<div id="weight-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <button onclick="hideWeightPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">体重・目標管理</div>
   </div>
@@ -285,8 +283,8 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 </div>
 
 <!-- 来店カレンダー・特典オーバーレイ -->
-<div id="calendar-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<div id="calendar-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <button onclick="hideCalendarPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">来店カレンダー</div>
   </div>
@@ -343,29 +341,29 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 </div>
 
 <!-- 月次サマリーオーバーレイ -->
-<div id="monthly-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<div id="monthly-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <button onclick="hideMonthlyPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div id="monthly-title" style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">○月のまとめ</div>
   </div>
   <div style="padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
     <div id="monthly-stats"></div>
-    <div style="background:var(--bg2);border:1.5px solid var(--c-green);border-radius:10px;padding:16px">
+    <div style="background:var(--bg2);border:1px solid var(--border-green);border-radius:var(--radius);padding:16px">
       <div id="monthly-volume"></div>
     </div>
-    <div style="background:var(--bg2);border:1.5px solid var(--c-blue);border-radius:10px;padding:16px">
+    <div style="background:var(--bg2);border:1px solid var(--border-blue);border-radius:var(--radius);padding:16px">
       <div id="monthly-weight"></div>
     </div>
-    <div style="background:var(--bg2);border:1.5px solid var(--c-amber);border-radius:10px;padding:16px">
+    <div style="background:var(--bg2);border:1px solid #e8d0b0;border-radius:var(--radius);padding:16px">
       <div id="monthly-bests"></div>
     </div>
-    <div style="background:#f8f8f8;border-left:3px solid #639922;border-radius:10px;padding:10px 13px;font-size:15px;font-weight:600;color:var(--text);line-height:1.6" id="monthly-message"></div>
+    <div style="background:var(--bg-green);border-left:3px solid var(--accent);border-radius:var(--radius);padding:10px 13px;font-size:15px;font-weight:600;color:var(--text);line-height:1.6" id="monthly-message"></div>
   </div>
 </div>
 
 <!-- 種目詳細オーバーレイ -->
-<div id="detail-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<div id="detail-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <button onclick="hideDetailPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div style="font-size:20px;font-weight:800;letter-spacing:-0.5px;color:#111" id="detail-title">種目名</div>
   </div>
@@ -383,8 +381,8 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 </div>
 
 <!-- ステータスオーバーレイ -->
-<div id="status-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<div id="status-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <button onclick="hideStatusPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">ステータス</div>
   </div>
@@ -452,8 +450,8 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 </div>
 
 <!-- カロリー計算オーバーレイ -->
-<div id="calorie-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f7f7;z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:#e5e5e5;height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<div id="calorie-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <button onclick="hideCaloriePage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">カロリー計算</div>
   </div>
@@ -642,7 +640,7 @@ function renderHome(trainings){
   if(!trainings.length){c.innerHTML='<div style="color:var(--text2);font-size:13px;text-align:center;padding:8px 0">まだ記録がありません</div>';return;}
   var t=trainings[0];
   var stats=[];
-  var tagStyle='font-size:11px;background:#EAF3DE;color:#27500A;padding:4px 10px;border-radius:20px;border:1px solid #9FE1CB;font-weight:700';
+  var tagStyle='font-size:11px;background:var(--bg-green);color:var(--text-green);padding:4px 10px;border-radius:20px;border:1px solid var(--border-green);font-weight:700';
   if(t.weight)stats.push('<span style="'+tagStyle+'">'+escH(String(t.weight))+'kg</span>');
   if(t.reps)stats.push('<span style="'+tagStyle+'">'+escH(String(t.reps))+'回</span>');
   if(t.sets)stats.push('<span style="'+tagStyle+'">'+escH(String(t.sets))+'セット</span>');
@@ -698,10 +696,10 @@ function hideMonthlyPage(){
 function statCard(label, value, sub, color){
   // color: 'green'|'blue'|'amber'
   var bg=color==='green'?'var(--c-green-bg)':color==='blue'?'var(--c-blue-bg)':'var(--c-amber-bg)';
-  var border=color==='green'?'var(--c-green)':color==='blue'?'var(--c-blue)':'var(--c-amber)';
-  var tc=color==='green'?'var(--c-green-text)':color==='blue'?'var(--c-blue-text)':'var(--c-amber-text)';
+  var border=color==='green'?'var(--border-green)':color==='blue'?'var(--border-blue)':'#e8d0b0';
+  var tc=color==='green'?'var(--text-green2)':color==='blue'?'var(--text-blue2)':'var(--text-amber)';
   var subColor=sub.indexOf('↑')>=0?'#2e7d32':sub.indexOf('↓')>=0?'#c62828':'#888888';
-  return '<div style="background:'+bg+';border:1.5px solid '+border+';border-radius:12px;padding:14px">'
+  return '<div style="background:'+bg+';border:1px solid '+border+';border-radius:var(--radius);padding:14px">'
     +'<div style="font-size:10px;font-weight:700;color:'+tc+';letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+label+'</div>'
     +'<div style="font-size:26px;font-weight:900;color:var(--text);letter-spacing:-0.5px;line-height:1">'+value+'</div>'
     +'<div style="font-size:11px;color:'+subColor+';margin-top:4px">'+escH(String(sub))+'</div>'
@@ -761,7 +759,7 @@ function renderMonthly(){
       +'<span style="font-size:12px;color:var(--c-green-text)">'+exVol[ex]+'セット</span>'
       +'</div>'
       +'<div style="background:var(--c-green-bg);border-radius:4px;height:8px;overflow:hidden">'
-      +'<div style="background:#C0DD97;height:100%;width:'+pct+'%;border-radius:4px"></div>'
+      +'<div style="background:#9FE1CB;height:100%;width:'+pct+'%;border-radius:4px"></div>'
       +'</div></div>';
   }).join(''):'<div style="font-size:13px;color:var(--text2);text-align:center">今月の記録がありません</div>';
   document.getElementById('monthly-volume').innerHTML=
@@ -1119,8 +1117,8 @@ function renderTrainings(list){
       var sets=g.exGroups[ex];
       var setRows=sets.map(function(t,si){
         var tags=[];
-        if(t.weight)tags.push('<span class="tag">'+escH(String(t.weight))+'kg</span>');
-        if(t.reps)tags.push('<span class="tag">'+escH(String(t.reps))+'回</span>');
+        if(t.weight)tags.push('<span style="font-size:11px;background:var(--bg-green);color:var(--text-green);padding:3px 8px;border-radius:8px;border:0.5px solid var(--border-green);font-weight:600">'+escH(String(t.weight))+'kg</span>');
+        if(t.reps)tags.push('<span style="font-size:11px;background:var(--bg-green);color:var(--text-green);padding:3px 8px;border-radius:8px;border:0.5px solid var(--border-green);font-weight:600">'+escH(String(t.reps))+'回</span>');
         return '<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin-top:'+(si>0?3:0)+'px">'
           +(sets.length>1?'<span style="font-size:10px;font-weight:700;color:var(--text2);min-width:24px">S'+(si+1)+'</span>':'')
           +tags.join('')+'</div>';

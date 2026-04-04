@@ -152,7 +152,7 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
           </div>
         </div>
         <div class="home-card-label" style="margin-bottom:8px">最新のトレーニング</div>
-        <div id="latest" onclick="showPage('records')" style="cursor:pointer;margin-bottom:12px"><div class="spin"><div class="sp"></div></div></div>
+        <div id="latest" onclick="showPage('records')" style="cursor:pointer;margin-bottom:12px;background:var(--bg2);border:1.5px solid #9FE1CB;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04)"><div class="spin"><div class="sp"></div></div></div>
         <a class="lbtn" id="lineBtn" href="https://lin.ee/X2yQksR" rel="noopener" style="text-decoration:none">公式LINEへ連絡・予約</a>
     </div>
     <div class="pg" id="pg-records">
@@ -639,13 +639,14 @@ function renderHome(trainings){
     document.getElementById('last-visit-ago').textContent=diff===0?'今日':diff+'日前';}
   }
   var c=document.getElementById('latest');
-  if(!trainings.length){c.innerHTML='<div class="home-card" style="color:var(--text2);font-size:13px;text-align:center;padding:24px">まだ記録がありません</div>';return;}
+  if(!trainings.length){c.innerHTML='<div style="color:var(--text2);font-size:13px;text-align:center;padding:8px 0">まだ記録がありません</div>';return;}
   var t=trainings[0];
   var stats=[];
-  if(t.weight)stats.push('<span class="tag">'+escH(String(t.weight))+'kg</span>');
-  if(t.reps)stats.push('<span class="tag">'+escH(String(t.reps))+'回</span>');
-  if(t.sets)stats.push('<span class="tag">'+escH(String(t.sets))+'セット</span>');
-  c.innerHTML='<div class="home-card"><div class="rdate">'+escH(t.date||'')+'</div><div class="rtitle" style="margin:6px 0 10px">'+escH(t.exercise||'トレーニング')+'</div><div class="rtags">'+stats.join('')+'</div><div style="font-size:11px;color:#bbb;margin-top:10px;font-weight:600">詳細・他の記録を見る ›</div></div>';
+  var tagStyle='font-size:11px;background:#EAF3DE;color:#27500A;padding:4px 10px;border-radius:20px;border:1px solid #9FE1CB;font-weight:700';
+  if(t.weight)stats.push('<span style="'+tagStyle+'">'+escH(String(t.weight))+'kg</span>');
+  if(t.reps)stats.push('<span style="'+tagStyle+'">'+escH(String(t.reps))+'回</span>');
+  if(t.sets)stats.push('<span style="'+tagStyle+'">'+escH(String(t.sets))+'セット</span>');
+  c.innerHTML='<div class="rdate">'+escH(t.date||'')+'</div><div class="rtitle" style="margin:6px 0 10px">'+escH(t.exercise||'トレーニング')+'</div><div class="rtags">'+stats.join('')+'</div><div style="font-size:11px;color:#bbb;margin-top:10px;font-weight:600">詳細・他の記録を見る ›</div>';
 }
 function loadData(){
   var uid=user.userId||'';

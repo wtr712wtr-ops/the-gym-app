@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#faf8f5;--bg2:#ffffff;--bg3:#f0ede8;--bg-green:#e8f4e8;--bg-blue:#e8eef8;--bg-amber:#f8f0e8;--border:#ede9e3;--border-green:#c8e8c8;--border-blue:#c8d8f0;--text:#3a3a3a;--text2:#b0a898;--text3:#c0b8b0;--text-green:#2d5c2d;--text-green2:#4a7c4a;--text-blue:#2d4a7c;--text-blue2:#4a6a9c;--text-amber:#9c6a2a;--accent:#4a7c4a;--radius:12px;--radius-sm:8px;--line:#06C755;--c-green:#9FE1CB;--c-green-bg:#e8f4e8;--c-green-text:#2d5c2d;--c-green-dark:#4a7c4a;--c-blue:#B5D4F4;--c-blue-bg:#e8eef8;--c-blue-text:#4a6a9c;--c-amber:#FAC775;--c-amber-bg:#f8f0e8;--c-amber-text:#9c6a2a;--c-amber-dark:#9c6a2a}
+:root{--bg:#faf8f5;--bg2:#ffffff;--bg3:#f0ede8;--bg-green:#e8f4e8;--bg-blue:#e8eef8;--bg-amber:#f8f0e8;--border:#ede9e3;--border-green:#c8e8c8;--border-blue:#c8d8f0;--text:#3a3a3a;--text2:#7a7068;--text3:#9a9088;--text-green:#2d5c2d;--text-green2:#4a7c4a;--text-blue:#2d4a7c;--text-blue2:#4a6a9c;--text-amber:#9c6a2a;--accent:#4a7c4a;--radius:12px;--radius-sm:8px;--line:#06C755;--c-green:#9FE1CB;--c-green-bg:#e8f4e8;--c-green-text:#2d5c2d;--c-green-dark:#4a7c4a;--c-blue:#B5D4F4;--c-blue-bg:#e8eef8;--c-blue-text:#4a6a9c;--c-amber:#FAC775;--c-amber-bg:#f8f0e8;--c-amber-text:#9c6a2a;--c-amber-dark:#9c6a2a}
 body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
 #login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;gap:48px;background:#ffffff}
 .logo{font-size:36px;font-weight:800;letter-spacing:-1px;text-align:center;color:var(--text)}
@@ -109,7 +109,7 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 .ex-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
 .ex-tags{display:flex;gap:4px;flex-wrap:wrap}
 @media (prefers-color-scheme: dark) {
-  :root{--bg:#faf8f5 !important;--bg2:#ffffff !important;--bg3:#f0ede8 !important;--text:#3a3a3a !important;--text2:#b0a898 !important;--border:#ede9e3 !important}
+  :root{--bg:#faf8f5 !important;--bg2:#ffffff !important;--bg3:#f0ede8 !important;--text:#3a3a3a !important;--text2:#7a7068 !important;--border:#ede9e3 !important}
   body{background:#faf8f5 !important;color:#3a3a3a !important}
 }
 </style>
@@ -1144,7 +1144,7 @@ function toggleDay(id){
   var arrow=document.getElementById('da-'+gi);
   if(!body)return;
   var isOpen=body.classList.contains('open');
-  body.classList.toggle('open',!isOpen);
+  body.classList.toggle('open',!isOpen);body.style.display=isOpen?'none':'block';
   if(arrow)arrow.classList.toggle('open',!isOpen);
 }
 function showDetailPage(key){

@@ -84,7 +84,7 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 .stamp{width:36px;height:36px;border-radius:50%;border:2px solid #e5e5e5;display:flex;align-items:center;justify-content:center;font-size:16px;background:#f7f7f7}
 .stamp.filled{background:#FF6B00;border-color:#FF6B00;font-size:14px;color:#fff}
 .stamp.today{background:#111;border-color:#111;font-size:14px;color:#fff;box-shadow:0 0 0 3px rgba(17,17,17,0.2)}
-.stamp-label{font-size:9px;color:#aaa;margin-top:2px;font-weight:600;text-align:center}
+.stamp-label{font-size:9px;color:#7a7068;margin-top:2px;font-weight:600;text-align:center}
 .bonus-close{background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .bonus-close:active{opacity:0.85}
 .home-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
@@ -335,7 +335,7 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
       <div style="font-size:10px;font-weight:700;color:#FF6B00;letter-spacing:1px;margin-bottom:6px">MILESTONE UNLOCKED</div>
       <div style="font-size:15px;font-weight:800;color:#111" id="ms-reward"></div>
     </div>
-    <div style="font-size:11px;color:#aaa;margin-bottom:16px" id="ms-next"></div>
+    <div style="font-size:11px;color:#7a7068;margin-bottom:16px" id="ms-next"></div>
     <button onclick="document.getElementById('milestone-overlay').style.display='none'" type="button" style="background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%">やった！続けるぞ！</button>
   </div>
 </div>
@@ -644,7 +644,7 @@ function renderHome(trainings){
   if(t.weight)stats.push('<span style="'+tagStyle+'">'+escH(String(t.weight))+'kg</span>');
   if(t.reps)stats.push('<span style="'+tagStyle+'">'+escH(String(t.reps))+'回</span>');
   if(t.sets)stats.push('<span style="'+tagStyle+'">'+escH(String(t.sets))+'セット</span>');
-  c.innerHTML='<div class="rdate">'+escH(t.date||'')+'</div><div class="rtitle" style="margin:6px 0 10px">'+escH(t.exercise||'トレーニング')+'</div><div class="rtags">'+stats.join('')+'</div><div style="font-size:11px;color:#bbb;margin-top:10px;font-weight:600">詳細・他の記録を見る ›</div>';
+  c.innerHTML='<div class="rdate">'+escH(t.date||'')+'</div><div class="rtitle" style="margin:6px 0 10px">'+escH(t.exercise||'トレーニング')+'</div><div class="rtags">'+stats.join('')+'</div><div style="font-size:11px;color:#7a7068;margin-top:10px;font-weight:600">詳細・他の記録を見る ›</div>';
 }
 function loadData(){
   var uid=user.userId||'';
@@ -877,11 +877,11 @@ function renderCalendar(){
     if(isNext)nextShown=true;
     var remaining=ms.count-totalCount;
     if(done){
-      ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0">✓</div><div style="flex:1;font-size:13px;color:#bbb;text-decoration:line-through">'+ms.count+'回 '+ms.reward+'</div><div style="font-size:11px;color:#bbb;font-weight:600">達成！</div></div>';
+      ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0">✓</div><div style="flex:1;font-size:13px;color:#7a7068;text-decoration:line-through">'+ms.count+'回 '+ms.reward+'</div><div style="font-size:11px;color:#7a7068;font-weight:600">達成！</div></div>';
     } else if(isNext){
       ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px;background:#fff8f0;border-radius:10px;padding:10px;border:1px solid #ffe0b2"><div style="width:32px;height:32px;border-radius:50%;background:#f0f0f0;border:2px dashed #FF6B00;display:flex;align-items:center;justify-content:center;font-size:11px;color:#FF6B00;font-weight:800;flex-shrink:0">'+ms.count+'</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:#111">'+ms.reward+'</div><div style="font-size:11px;color:#FF6B00;margin-top:2px;font-weight:600">あと'+remaining+'回！</div></div></div>';
     } else {
-      ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px;opacity:0.35"><div style="width:32px;height:32px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#bbb;flex-shrink:0">'+ms.count+'</div><div style="font-size:13px;color:#bbb">'+ms.count+'回 '+ms.reward+'</div></div>';
+      ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px;opacity:0.35"><div style="width:32px;height:32px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#7a7068;flex-shrink:0">'+ms.count+'</div><div style="font-size:13px;color:#7a7068">'+ms.count+'回 '+ms.reward+'</div></div>';
     }
   });
   checkMilestoneAchievement(totalCount);
@@ -1136,7 +1136,7 @@ function renderTrainings(list){
       +'<div class="day-body" id="dg-'+gi+'">'+rowsHtml+'</div>'
       +'</div>';
   }).join('');
-  if(order.length){toggleDay('dg-0');}
+  if(order.length){var _dg0=document.getElementById('dg-0');if(!_dg0||!_dg0.classList.contains('open'))toggleDay('dg-0');}
 }
 function toggleDay(id){
   var body=document.getElementById(id);
@@ -1310,11 +1310,11 @@ function renderWeightChart() {
   var datasets = [{
     label: '体重(kg)',
     data: values,
-    borderColor: '#111',
-    backgroundColor: 'rgba(0,0,0,0.04)',
+    borderColor: '#4a7c4a',
+    backgroundColor: 'rgba(74,124,74,0.08)',
     borderWidth: 2,
     pointRadius: 3,
-    pointBackgroundColor: '#111',
+    pointBackgroundColor: '#4a7c4a',
     tension: 0.3,
     fill: true,
     yAxisID: 'y'
@@ -1323,11 +1323,11 @@ function renderWeightChart() {
     datasets.push({
       label: '体脂肪(%)',
       data: bfValues,
-      borderColor: '#bbb',
-      backgroundColor: 'rgba(0,0,0,0)',
+      borderColor: '#4a6a9c',
+      backgroundColor: 'rgba(74,106,156,0.08)',
       borderWidth: 1.5,
       pointRadius: 2,
-      pointBackgroundColor: '#bbb',
+      pointBackgroundColor: '#4a6a9c',
       tension: 0.3,
       fill: false,
       spanGaps: false,
@@ -1335,8 +1335,8 @@ function renderWeightChart() {
     });
   }
   var scales = {
-    y: { position: 'left', ticks: { font: { size: 10 } } },
-    x: { ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } }
+    y: { position: 'left', ticks: { font: { size: 10 }, color: '#7a7068' } },
+    x: { ticks: { font: { size: 10 }, color: '#7a7068', maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } }
   };
   if (hasBodyFat) {
     scales.y2 = { position: 'right', grid: { drawOnChartArea: false }, ticks: { font: { size: 10 } } };

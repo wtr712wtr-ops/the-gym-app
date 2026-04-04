@@ -9,10 +9,11 @@
 <meta name="apple-mobile-web-app-title" content="THE GYM">
 <title>THE GYM</title>
 <link rel="manifest" href="/manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#f7f7f7;--bg2:#ffffff;--bg3:#f0f0f0;--border:#e5e5e5;--text:#111111;--text2:#888888;--accent:#1c1c1c;--line:#06C755}
-body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:#f7f7f7;color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
+:root{--bg:#f7f7f7;--bg2:#ffffff;--bg3:#f0f0f0;--border:#e5e5e5;--text:#111111;--text2:#888888;--accent:#1c1c1c;--line:#06C755;--c-green:#9FE1CB;--c-green-bg:#EAF3DE;--c-green-text:#27500A;--c-green-dark:#3B6D11;--c-blue:#B5D4F4;--c-blue-bg:#E6F1FB;--c-blue-text:#185FA5;--c-amber:#FAC775;--c-amber-bg:#FAEEDA;--c-amber-text:#854F0B;--c-amber-dark:#633806}
+body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:#f7f7f7;color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
 #login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;gap:48px;background:#ffffff}
 .logo{font-size:36px;font-weight:800;letter-spacing:-1px;text-align:center;color:var(--text)}
 .sub{font-size:10px;letter-spacing:4px;color:var(--text2);margin-top:6px;text-align:center;text-transform:uppercase}
@@ -86,17 +87,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .stamp-label{font-size:9px;color:#aaa;margin-top:2px;font-weight:600;text-align:center}
 .bonus-close{background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .bonus-close:active{opacity:0.85}
-.home-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.home-card{background:var(--bg2);border:1.5px solid var(--c-green);border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
 .home-card-label{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text2);text-transform:uppercase;margin-bottom:8px}
 .home-card-value{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
 .home-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.home-stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.home-stat{background:var(--bg2);border:1.5px solid var(--c-green);border-radius:12px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
 .home-stat-num{font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--text);line-height:1}
 .home-stat-label{font-size:11px;color:var(--text2);margin-top:6px;font-weight:500}
 .day-group{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
 .day-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
 .day-header-left{display:flex;flex-direction:column;gap:2px}
-.day-title{font-size:13px;font-weight:800;color:var(--text);letter-spacing:-0.3px}
+.day-title{font-size:13px;font-weight:900;color:var(--text);letter-spacing:-0.3px}
 .day-count{font-size:10px;color:var(--text2)}
 .day-arrow{font-size:11px;color:var(--text2);transition:transform 0.2s}
 .day-arrow.open{transform:rotate(180deg)}
@@ -157,7 +158,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
     <div class="pg" id="pg-records">
       <div class="stitle" style="margin-bottom:12px">トレーニング記録</div>
       <div style="position:relative;margin-bottom:12px">
-        <input type="text" id="exercise-filter" placeholder="種目名で絞り込み..." oninput="filterTrainings()" autocomplete="off" style="width:100%;padding:10px 14px 10px 36px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:var(--bg2);color:var(--text)">
+        <input type="text" id="exercise-filter" placeholder="種目名で絞り込み..." oninput="filterTrainings()" autocomplete="off" style="width:100%;padding:10px 14px 10px 36px;border:0.5px solid #f0f0f0;border-radius:10px;font-size:14px;background:#fff;color:var(--text)">
         <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:14px">🔍</span>
         <datalist id="exercise-suggestions"></datalist>
       </div>
@@ -182,18 +183,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 
       <div class="stitle" style="margin-bottom:12px">体重・目標</div>
       <div class="mi" onclick="showWeightPage()" style="cursor:pointer">
-        <div class="ml"><span style="font-size:15px;font-weight:600;color:var(--text)">体重を記録・グラフ</span><div id="weight-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">タップして記録</div></div>
+        <div class="ml"><span style="width:7px;height:7px;border-radius:50%;background:var(--c-blue);display:inline-block;flex-shrink:0"></span><div><span style="font-size:15px;font-weight:600;color:var(--text)">体重を記録・グラフ</span><div id="weight-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">タップして記録</div></div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
       </div>
 
       <div class="stitle" style="margin-bottom:8px;margin-top:20px">種目別ベスト</div>
-      <div id="best-records" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+      <div id="best-records" style="background:var(--bg2);border:1.5px solid var(--c-green);border-radius:12px;padding:14px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
         <div style="font-size:13px;color:var(--text2);text-align:center">読み込み中...</div>
       </div>
 
       <div class="stitle" style="margin-bottom:12px;margin-top:4px">メニュー</div>
       <div class="mi" onclick="showStatusPage()" style="cursor:pointer">
-        <div class="ml">
+        <div class="ml"><span style="width:7px;height:7px;border-radius:50%;background:var(--c-blue);display:inline-block;flex-shrink:0"></span>
           <div>
             <div style="font-size:15px;font-weight:600;color:var(--text)">ステータス</div>
             <div id="status-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">読み込み中...</div>
@@ -202,15 +203,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
         <span style="color:var(--text2)">&rsaquo;</span>
       </div>
       <div class="mi" onclick="showCalendarPage()" style="cursor:pointer">
-        <div class="ml"><span style="font-size:15px;font-weight:600;color:var(--text)">来店カレンダー・特典</span><div id="calendar-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">継続中🔥- / 累計-回</div></div>
+        <div class="ml"><span style="width:7px;height:7px;border-radius:50%;background:#ddd;display:inline-block;flex-shrink:0"></span><div><span style="font-size:15px;font-weight:600;color:var(--text)">来店カレンダー・特典</span><div id="calendar-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">継続中🔥- / 累計-回</div></div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
       </div>
       <div class="mi" onclick="showMonthlyPage()" style="cursor:pointer">
-        <div class="ml"><span style="font-size:15px;font-weight:600;color:var(--text)">今月のまとめ</span><div style="font-size:11px;color:var(--text2);margin-top:2px">月次レポート・自己ベスト</div></div>
+        <div class="ml"><span style="width:7px;height:7px;border-radius:50%;background:var(--c-amber);display:inline-block;flex-shrink:0"></span><div><span style="font-size:15px;font-weight:600;color:var(--text)">今月のまとめ</span><div style="font-size:11px;color:var(--text2);margin-top:2px">月次レポート・自己ベスト</div></div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
       </div>
       <div class="mi" onclick="showCaloriePage()" style="cursor:pointer">
-        <div class="ml"><span style="font-size:15px;font-weight:600;color:var(--text)">カロリー計算</span><div style="font-size:11px;color:var(--text2);margin-top:2px">基本情報・目安カロリー確認</div></div>
+        <div class="ml"><span style="width:7px;height:7px;border-radius:50%;background:#ddd;display:inline-block;flex-shrink:0"></span><div><span style="font-size:15px;font-weight:600;color:var(--text)">カロリー計算</span><div style="font-size:11px;color:var(--text2);margin-top:2px">基本情報・目安カロリー確認</div></div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
       </div>
       <a class="mi" id="line-menu" href="https://lin.ee/X2yQksR" target="_blank" rel="noopener" style="background:#06C755;border:none;text-decoration:none"><div class="ml"><span style="font-size:15px;font-weight:600;color:#fff">公式LINEへ</span></div><span style="color:rgba(255,255,255,0.8)">&rsaquo;</span></a>
@@ -349,13 +350,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
   </div>
   <div style="padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
     <div id="monthly-stats"></div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+    <div style="background:var(--bg2);border:1.5px solid var(--c-green);border-radius:10px;padding:16px">
       <div id="monthly-volume"></div>
     </div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+    <div style="background:var(--bg2);border:1.5px solid var(--c-blue);border-radius:10px;padding:16px">
+      <div id="monthly-weight"></div>
+    </div>
+    <div style="background:var(--bg2);border:1.5px solid var(--c-amber);border-radius:10px;padding:16px">
       <div id="monthly-bests"></div>
     </div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:15px;font-weight:600;color:var(--text);text-align:center;line-height:1.6" id="monthly-message"></div>
+    <div style="background:#f8f8f8;border-left:3px solid #639922;border-radius:10px;padding:10px 13px;font-size:15px;font-weight:600;color:var(--text);line-height:1.6" id="monthly-message"></div>
   </div>
 </div>
 
@@ -690,11 +694,15 @@ function showMonthlyPage(){
 function hideMonthlyPage(){
   document.getElementById('monthly-overlay').style.display='none';
 }
-function statCard(label, value, sub, positive){
+function statCard(label, value, sub, color){
+  // color: 'green'|'blue'|'amber'
+  var bg=color==='green'?'var(--c-green-bg)':color==='blue'?'var(--c-blue-bg)':'var(--c-amber-bg)';
+  var border=color==='green'?'var(--c-green)':color==='blue'?'var(--c-blue)':'var(--c-amber)';
+  var tc=color==='green'?'var(--c-green-text)':color==='blue'?'var(--c-blue-text)':'var(--c-amber-text)';
   var subColor=sub.indexOf('↑')>=0?'#2e7d32':sub.indexOf('↓')>=0?'#c62828':'#888888';
-  return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">'
-    +'<div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+label+'</div>'
-    +'<div style="font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.5px;line-height:1">'+value+'</div>'
+  return '<div style="background:'+bg+';border:1.5px solid '+border+';border-radius:12px;padding:14px">'
+    +'<div style="font-size:10px;font-weight:700;color:'+tc+';letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px">'+label+'</div>'
+    +'<div style="font-size:26px;font-weight:900;color:var(--text);letter-spacing:-0.5px;line-height:1">'+value+'</div>'
     +'<div style="font-size:11px;color:'+subColor+';margin-top:4px">'+escH(String(sub))+'</div>'
     +'</div>';
 }
@@ -710,16 +718,13 @@ function renderMonthly(){
   var thisVisits=new Set(thisMonth.map(function(t){return normDateKey(t.date);})).size;
   var lastVisits=new Set(lastMonth.map(function(t){return normDateKey(t.date);})).size;
   var thisSets=thisMonth.length;
-  var lastSets=lastMonth.length;
 
   // 体重変化（_weightDataはoldest-first）
   var monthW=_weightData.filter(function(w){var d=parseJpDate(w.date);return d&&d.getFullYear()===y&&d.getMonth()===m;});
   var wStart=monthW.length?parseFloat(monthW[0].weight):null;
   var wEnd=monthW.length?parseFloat(monthW[monthW.length-1].weight):null;
-  var wChangeStr=wStart!=null&&wEnd!=null&&monthW.length>1
-    ?(Math.round((wEnd-wStart)*10)/10>0?'+':'')+Math.round((wEnd-wStart)*10)/10+'kg'
-    :wEnd!=null?wEnd+'kg':'—';
-  var wSubStr=wStart!=null&&wEnd!=null&&monthW.length>1?wStart+'→'+wEnd+'kg':wEnd!=null?wEnd+'kg':'データなし';
+  var wChange=wStart!=null&&wEnd!=null&&monthW.length>1?Math.round((wEnd-wStart)*10)/10:null;
+  var wChangeStr=wChange!=null?(wChange>0?'+':'')+wChange+'kg':wEnd!=null?wEnd+'kg':'—';
 
   // 継続月数
   var visitSet=new Set(_trainings.map(function(t){return normDateKey(t.date);}));
@@ -731,19 +736,18 @@ function renderMonthly(){
     checkDate.setMonth(checkDate.getMonth()-1);
   }
 
-  // セクション1: 実績グリッド
-  var vDiff=thisVisits-lastVisits,sDiff=thisSets-lastSets;
+  // ① 3列ステータスカード
+  var vDiff=thisVisits-lastVisits;
   var vSub=vDiff>0?'↑'+vDiff+' 先月比':vDiff<0?'↓'+Math.abs(vDiff)+' 先月比':'先月と同じ';
-  var sSub=sDiff>0?'↑'+sDiff+' 先月比':sDiff<0?'↓'+Math.abs(sDiff)+' 先月比':'先月と同じ';
+  var wSub=wChange!=null?(wChange<=0?'↓ 減量':'↑ 増量'):'今月のデータ';
   document.getElementById('monthly-stats').innerHTML=
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
-    +statCard('来店数',thisVisits+'回',vSub,vDiff>0)
-    +statCard('総セット数',thisSets+'回',sSub,sDiff>0)
-    +statCard('体重変化',wChangeStr,wSubStr,wEnd<wStart)
-    +statCard('継続月数',streak+'ヶ月','継続中',streak>0)
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
+    +statCard('来店数',thisVisits+'回',vSub,'green')
+    +statCard('体重変化',wChangeStr,wSub,'blue')
+    +statCard('継続月数',streak+'ヶ月','継続中','amber')
     +'</div>';
 
-  // セクション2: 種目別ボリューム TOP5
+  // ② トレーニングセクション（緑）
   var exVol={};
   thisMonth.forEach(function(t){var ex=(t.exercise||'').trim();if(ex)exVol[ex]=(exVol[ex]||0)+1;});
   var exKeys=Object.keys(exVol).sort(function(a,b){return exVol[b]-exVol[a];}).slice(0,5);
@@ -752,16 +756,46 @@ function renderMonthly(){
     var pct=Math.round(exVol[ex]/maxVol*100);
     return '<div style="margin-bottom:10px">'
       +'<div style="display:flex;justify-content:space-between;margin-bottom:4px">'
-      +'<span style="font-size:12px;font-weight:600;color:var(--text)">'+escH(ex)+'</span>'
-      +'<span style="font-size:12px;color:var(--text2)">'+exVol[ex]+'セット</span>'
+      +'<span style="font-size:12px;font-weight:700;color:var(--text)">'+escH(ex)+'</span>'
+      +'<span style="font-size:12px;color:var(--c-green-text)">'+exVol[ex]+'セット</span>'
       +'</div>'
-      +'<div style="background:var(--bg3);border-radius:4px;height:8px;overflow:hidden">'
-      +'<div style="background:#111;height:100%;width:'+pct+'%;border-radius:4px"></div>'
+      +'<div style="background:var(--c-green-bg);border-radius:4px;height:8px;overflow:hidden">'
+      +'<div style="background:#C0DD97;height:100%;width:'+pct+'%;border-radius:4px"></div>'
       +'</div></div>';
   }).join(''):'<div style="font-size:13px;color:var(--text2);text-align:center">今月の記録がありません</div>';
-  document.getElementById('monthly-volume').innerHTML='<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px">種目別ボリューム（TOP5）</div>'+volHtml;
+  document.getElementById('monthly-volume').innerHTML=
+    '<div style="font-size:13px;font-weight:800;color:var(--c-green-dark);margin-bottom:12px">種目別ボリューム（TOP5）</div>'
+    +'<div style="font-size:11px;color:var(--text2);margin-bottom:10px">今月'+thisSets+'セット記録</div>'
+    +volHtml;
 
-  // セクション3: 自己ベスト更新
+  // ③ 体重変化セクション（青）
+  var weightHtml='';
+  if(wStart!=null&&wEnd!=null&&monthW.length>1){
+    var diffColor=wChange<=0?'#185FA5':'#c62828';
+    weightHtml='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">'
+      +'<div style="background:var(--c-blue-bg);border-radius:8px;padding:10px">'
+      +'<div style="font-size:10px;font-weight:700;color:var(--c-blue-text);margin-bottom:4px">月初</div>'
+      +'<div style="font-size:18px;font-weight:800;color:var(--text)">'+wStart+'<span style="font-size:11px">kg</span></div>'
+      +'</div>'
+      +'<div style="background:var(--c-blue-bg);border-radius:8px;padding:10px">'
+      +'<div style="font-size:10px;font-weight:700;color:var(--c-blue-text);margin-bottom:4px">月末</div>'
+      +'<div style="font-size:18px;font-weight:800;color:var(--text)">'+wEnd+'<span style="font-size:11px">kg</span></div>'
+      +'</div>'
+      +'<div style="background:var(--c-blue-bg);border-radius:8px;padding:10px">'
+      +'<div style="font-size:10px;font-weight:700;color:var(--c-blue-text);margin-bottom:4px">変化</div>'
+      +'<div style="font-size:18px;font-weight:800;color:'+diffColor+'">'+wChangeStr+'</div>'
+      +'</div></div>';
+  } else if(wEnd!=null){
+    weightHtml='<div style="text-align:center;padding:8px">'
+      +'<div style="font-size:26px;font-weight:900;color:var(--text)">'+wEnd+'kg</div>'
+      +'<div style="font-size:12px;color:var(--text2);margin-top:4px">今月の記録</div></div>';
+  } else {
+    weightHtml='<div style="font-size:13px;color:var(--text2);text-align:center">今月の体重データなし</div>';
+  }
+  document.getElementById('monthly-weight').innerHTML=
+    '<div style="font-size:13px;font-weight:800;color:var(--c-blue-text);margin-bottom:12px">体重変化</div>'+weightHtml;
+
+  // ④ 自己ベスト更新（アンバー）
   var beforeMonth=_trainings.filter(function(t){var d=parseJpDate(t.date);return d&&(d.getFullYear()<y||(d.getFullYear()===y&&d.getMonth()<m));});
   var prevBests={};
   beforeMonth.forEach(function(t){var ex=(t.exercise||'').trim(),w=parseFloat(t.weight);if(ex&&w&&!isNaN(w)&&(!prevBests[ex]||w>prevBests[ex]))prevBests[ex]=w;});
@@ -770,15 +804,16 @@ function renderMonthly(){
   var updates=[];
   Object.keys(curBests).forEach(function(ex){var cur=curBests[ex],prev=prevBests[ex];if(!prev||cur>prev)updates.push({ex:ex,cur:cur,prev:prev,diff:prev?Math.round((cur-prev)*10)/10:null});});
   var bestsHtml=updates.length?updates.map(function(u,i){
-    var badge=u.prev?'+'+u.diff+'kg 🏆':'初記録 🏆';
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;'+(i<updates.length-1?'border-bottom:1px solid var(--bg3)':'')+'">'
-      +'<span style="font-size:13px;color:var(--text)">'+escH(u.ex)+'</span>'
-      +'<span style="font-size:13px;font-weight:800;color:#e65c00">'+u.cur+'kg '+badge+'</span>'
+    var badge=u.prev?'+'+u.diff+'kg':'初記録';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;'+(i<updates.length-1?'border-bottom:1px solid var(--c-amber-bg)':'')+'">'
+      +'<span style="font-size:13px;font-weight:600;color:var(--text)">'+escH(u.ex)+'</span>'
+      +'<span style="font-size:13px;font-weight:800;color:#e65c00">'+u.cur+'kg <span style="font-size:11px;background:var(--c-amber-bg);color:var(--c-amber-text);padding:2px 6px;border-radius:10px">'+badge+'</span></span>'
       +'</div>';
   }).join(''):'<div style="font-size:13px;color:var(--text2);text-align:center">今月は記録更新なし</div>';
-  document.getElementById('monthly-bests').innerHTML='<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px">自己ベスト更新</div>'+bestsHtml;
+  document.getElementById('monthly-bests').innerHTML=
+    '<div style="font-size:13px;font-weight:800;color:var(--c-amber-dark);margin-bottom:12px">自己ベスト更新 🏆</div>'+bestsHtml;
 
-  // セクション4: ひとこと
+  // ⑤ ひとこと
   var msg='';
   if(vDiff>0)msg='先月より'+vDiff+'回増えました！この調子で！💪';
   else if(vDiff<0)msg='来月は'+(lastVisits+1)+'回を目指そう！🔥';

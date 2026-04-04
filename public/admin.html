@@ -96,7 +96,14 @@ textarea{resize:vertical;min-height:80px}
     <div id="memo-view" style="display:none">
       <button class="back-btn" onclick="backToList()">← 一覧に戻る</button>
       <div id="selected-client-name" style="font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px"></div>
-      <div id="selected-client-id" style="font-size:11px;color:var(--text2);margin-bottom:20px;font-family:monospace"></div>
+      <div id="selected-client-id" style="font-size:11px;color:var(--text2);margin-bottom:16px;font-family:monospace"></div>
+      <div style="background:#fff;border:1px solid #ede9e3;border-radius:12px;padding:14px 16px;margin-bottom:16px">
+        <div style="font-size:11px;color:#7a7068;font-weight:700;letter-spacing:.04em;margin-bottom:10px">プッシュ通知を送る</div>
+        <input id="notify-title" type="text" placeholder="タイトル（例: お知らせ）" style="width:100%;border:1px solid #ede9e3;border-radius:8px;padding:8px 10px;font-size:13px;margin-bottom:8px;box-sizing:border-box">
+        <input id="notify-body" type="text" placeholder="本文（例: 次回予約をお忘れなく！）" style="width:100%;border:1px solid #ede9e3;border-radius:8px;padding:8px 10px;font-size:13px;margin-bottom:10px;box-sizing:border-box">
+        <button onclick="sendNotifyToClient()" style="background:#4a7c4a;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;width:100%">通知を送る</button>
+        <div id="notify-msg" style="font-size:12px;margin-top:8px;text-align:center"></div>
+      </div>
       <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px">
         <div style="font-size:11px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">次回予約日</div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -709,6 +716,31 @@ function escHtml(s) {
 }
 
 init();
+
+function sendNotifyToClient(){
+  var title = document.getElementById('notify-title').value.trim();
+  var body = document.getElementById('notify-body').value.trim();
+  var msg = document.getElementById('notify-msg');
+  if(!title){msg.style.color='#c0392b';msg.textContent='タイトルを入力してください';return;}
+  if(!selectedClient){msg.style.color='#c0392b';msg.textContent='クライアントが選択されていません';return;}
+  msg.style.color='#7a7068';msg.textContent='送信中...';
+  fetch('/api/notify',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({adminId:adminId,userId:selectedClient.id,title:title,body:body})
+  }).then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok){
+      msg.style.color='#2e7d32';msg.textContent='送信しました！';
+      document.getElementById('notify-title').value='';
+      document.getElementById('notify-body').value='';
+    } else {
+      msg.style.color='#c0392b';
+      msg.textContent=d.error==='no subscription'?'このクライアントは通知を許可していません':('エラー: '+d.error);
+    }
+    setTimeout(function(){msg.textContent='';},3000);
+  }).catch(function(){msg.style.color='#c0392b';msg.textContent='通信エラー';});
+}
 </script>
 </body>
 </html>

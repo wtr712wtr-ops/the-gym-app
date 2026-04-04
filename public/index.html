@@ -598,11 +598,11 @@ function init(){
     showApp();
     loadData();
   }
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){});
+  if('serviceWorker'in navigator){navigator.serviceWorker.register('/sw.js').then(function(reg){window._swReg=reg;if(Notification.permission==='granted')subscribePush(reg);}).catch(function(){});}
 }
 function showApp(){
   document.getElementById('login').style.display='none';
-  document.getElementById('app').style.display='flex';
+  document.getElementById('app').style.display='flex';setTimeout(function(){requestNotificationPermission();},2000);
   var n=user.displayName||'Guest';
   var h=new Date().getHours();
   var g=h<11?'おはようございます！':h<18?'こんにちは！':'こんばんは！';
@@ -1436,6 +1436,45 @@ function saveGoal() {
 }
 
 init();
+
+function urlBase64ToUint8Array(base64String){
+  var padding='='.repeat((4-base64String.length%4)%4);
+  var base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
+  var rawData=window.atob(base64);
+  var out=new Uint8Array(rawData.length);
+  for(var i=0;i<rawData.length;++i){out[i]=rawData.charCodeAt(i);}
+  return out;
+}
+function subscribePush(reg){
+  if(!user||!user.userId)return;
+  var VAPID_PUBLIC='BGbmdkzLrJwbzDfmGa8GeZJT1X2jYrpt7uXBc4PW47U9IXlCpllVSdiUDf3114enHfszfaJ5UEw1X20Z3Dn5cxo';
+  reg.pushManager.getSubscription().then(function(existing){
+    if(existing)return saveSubscription(existing);
+    return reg.pushManager.subscribe({
+      userVisibleOnly:true,
+      applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC)
+    }).then(function(sub){saveSubscription(sub);});
+  }).catch(function(e){console.error('push subscribe error',e);});
+}
+function saveSubscription(sub){
+  if(!user||!user.userId)return;
+  fetch('/api/subscribe',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({userId:user.userId,subscription:sub.toJSON()})
+  }).catch(function(){});
+}
+function requestNotificationPermission(){
+  if(!('Notification'in window))return;
+  if(Notification.permission==='granted'){
+    if(window._swReg)subscribePush(window._swReg);
+    return;
+  }
+  if(Notification.permission==='denied')return;
+  Notification.requestPermission().then(function(perm){
+    if(perm==='granted'&&window._swReg)subscribePush(window._swReg);
+  });
+}
 </script>
 </body>
 </html>

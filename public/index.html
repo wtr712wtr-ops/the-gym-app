@@ -286,6 +286,28 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
   </div>
 </div>
 
+<!-- 月次サマリーオーバーレイ -->
+<div id="monthly-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
+  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <button onclick="hideMonthlyPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
+    <div id="monthly-title" style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">今月のまとめ</div>
+  </div>
+  <div style="padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
+    <!-- 3列ステータスカード -->
+    <div id="monthly-stats" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px"></div>
+    <!-- 種目ボリューム -->
+    <div id="monthly-volume" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px"></div>
+    <!-- 体重変化 -->
+    <div id="monthly-weight" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px"></div>
+    <!-- 自己ベスト -->
+    <div id="monthly-bests" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px"></div>
+    <!-- ひとこと -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center">
+      <div id="monthly-message" style="font-size:14px;font-weight:600;color:var(--text);line-height:1.6"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ステータスオーバーレイ -->
 <div id="status-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
   <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -732,104 +754,9 @@ function renderMonthly(){
   document.getElementById('monthly-message').textContent=msg;
 }
 
-function showCalendarPage(){
-  document.getElementById('calendar-overlay').style.display='block';
-  renderCalendar();
-}
-function hideCalendarPage(){
-  document.getElementById('calendar-overlay').style.display='none';
-}
-function renderCalendar(){
-  var now=new Date();
-  var y=now.getFullYear(),m=now.getMonth();
-  document.getElementById('cal-month-title').textContent=y+'年'+(m+1)+'月';
-  var visitSet=new Set(_trainings.map(function(t){return normDateKey(t.date);}));
-  var today=now.toISOString().split('T')[0];
-  var ymPrefix=y+'/'+(m+1)+'/';
-  var monCount=new Set(_trainings.filter(function(t){var d=parseJpDate(t.date);return d&&d.getFullYear()===y&&d.getMonth()===m;}).map(function(t){return normDateKey(t.date);})).size;
-  var totalCount=visitSet.size;
-  var streak=0;
-  var checkDate=new Date();
-  for(var mm2=0;mm2<24;mm2++){
-    var sy=checkDate.getFullYear(),sm=checkDate.getMonth(),hasVisit=false;
-    visitSet.forEach(function(ds){var dv=parseJpDate(ds);if(dv&&dv.getFullYear()===sy&&dv.getMonth()===sm){hasVisit=true;}});
-    if(hasVisit){streak++;}else if(mm2>0){break;}
-    checkDate.setMonth(checkDate.getMonth()-1);
-  }
-  document.getElementById('cal-stat-month').textContent=monCount;
-  document.getElementById('cal-stat-streak').textContent=streak;
-  document.getElementById('cal-stat-total').textContent=totalCount;
-  var sub=document.getElementById('calendar-menu-sub');
-  if(sub)sub.textContent=streak+'ヶ月継続 / 累計'+totalCount+'回';
-  var firstDay=new Date(y,m,1).getDay();
-  var daysInMonth=new Date(y,m+1,0).getDate();
-  var startOffset=(firstDay===0)?6:(firstDay-1);
-  var grid=document.getElementById('cal-grid');
-  grid.innerHTML='';
-  for(var i=0;i<startOffset;i++){grid.innerHTML+='<div></div>';}
-  for(var day=1;day<=daysInMonth;day++){
-    var mm=String(m+1).padStart(2,'0');
-    var dd2=String(day).padStart(2,'0');
-    var dateSlash=y+'/'+(m+1)+'/'+day;
-    var dateISO=y+'-'+mm+'-'+dd2;
-    var isToday=(dateISO===today);
-    var isVisit=visitSet.has(dateISO);
-    var bg=isToday?'#FF6B00':(isVisit?'#111':'transparent');
-    var color=isToday||isVisit?'#fff':'var(--text2)';
-    var fw=isToday||isVisit?'800':'400';
-    grid.innerHTML+='<div style="aspect-ratio:1;border-radius:50%;background:'+bg+';display:flex;align-items:center;justify-content:center;font-size:11px;color:'+color+';font-weight:'+fw+'">'+day+'</div>';
-  }
-  var ml=document.getElementById('milestone-list');
-  ml.innerHTML='';
-  var nextShown=false;
-  MILESTONES.forEach(function(ms){
-    var done=totalCount>=ms.count;
-    var isNext=!done&&!nextShown;
-    if(isNext)nextShown=true;
-    var remaining=ms.count-totalCount;
-    if(done){
-      ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0">✓</div><div style="flex:1;font-size:13px;color:#7a7068;text-decoration:line-through">'+ms.count+'回 '+ms.reward+'</div><div style="font-size:11px;color:#7a7068;font-weight:600">達成！</div></div>';
-    } else if(isNext){
-      ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px;background:#fff8f0;border-radius:10px;padding:10px;border:1px solid #ffe0b2"><div style="width:32px;height:32px;border-radius:50%;background:#f0f0f0;border:2px dashed #FF6B00;display:flex;align-items:center;justify-content:center;font-size:11px;color:#FF6B00;font-weight:800;flex-shrink:0">'+ms.count+'</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:#111">'+ms.reward+'</div><div style="font-size:11px;color:#FF6B00;margin-top:2px;font-weight:600">あと'+remaining+'回！</div></div></div>';
-    } else {
-      ml.innerHTML+='<div style="display:flex;align-items:center;gap:10px;opacity:0.35"><div style="width:32px;height:32px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#7a7068;flex-shrink:0">'+ms.count+'</div><div style="font-size:13px;color:#7a7068">'+ms.count+'回 '+ms.reward+'</div></div>';
-    }
-  });
-  checkMilestoneAchievement(totalCount);
-}
-function checkMilestoneAchievement(total){
-  var key='gym_ms_shown';
-  var raw=localStorage.getItem(key);
-  var shown=raw?JSON.parse(raw):[];
-  for(var i=0;i<MILESTONES.length;i++){
-    var ms=MILESTONES[i];
-    if(total>=ms.count&&shown.indexOf(ms.count)===-1){
-      shown.push(ms.count);
-      localStorage.setItem(key,JSON.stringify(shown));
-      var next=MILESTONES[i+1];
-      document.getElementById('ms-emoji').textContent=ms.emoji;
-      document.getElementById('ms-title').textContent=ms.count+'回来店達成！';
-      document.getElementById('ms-msg').textContent='おめでとうございます！\nトレーナーにお声がけください。';
-      document.getElementById('ms-reward').textContent=ms.reward;
-      document.getElementById('ms-next').textContent=next?'次は'+next.count+'回！お楽しみに 👀':'';
-      document.getElementById('milestone-overlay').style.display='flex';
-      break;
-    }
-  }
-}
 function updateCalendarMenuSub(){
   var visitSet=new Set(_trainings.map(function(t){return normDateKey(t.date);}));
   var total=visitSet.size;
-  var streak=0;
-  var checkDate2=new Date();
-  for(var m2=0;m2<24;m2++){
-    var y2=checkDate2.getFullYear(),mo2=checkDate2.getMonth(),has2=false;
-    visitSet.forEach(function(ds){var d2=parseJpDate(ds);if(d2&&d2.getFullYear()===y2&&d2.getMonth()===mo2){has2=true;}});
-    if(has2){streak++;}else if(m2>0){break;}
-    checkDate2.setMonth(checkDate2.getMonth()-1);
-  }
-  var sub=document.getElementById('calendar-menu-sub');
-  if(sub)sub.textContent=streak+'ヶ月継続 / 累計'+total+'回';
   checkMilestoneAchievement(total);
 }
 var STATUS_RANKS=[

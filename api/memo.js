@@ -59,6 +59,21 @@ module.exports = async function handler(req, res) {
       if (!exercise) return res.status(400).json({ error: 'exercise required' });
       const entry = { date: date || new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }), exercise, weight, reps, sets, memo: tmemo || '' };
       await redis.lpush('training:' + clientId, entry);
+      // トレーニング記録をクライアントに通知
+      try {
+        const webpush = require('web-push');
+        if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+          webpush.setVapidDetails('mailto:thegym@example.com', process.env.VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
+          const subRaw = await redis.get('push_sub:' + clientId);
+          if (subRaw) {
+            const sub = typeof subRaw === 'string' ? JSON.parse(subRaw) : subRaw;
+            await webpush.sendNotification(sub, JSON.stringify({
+              title: 'トレーニング記録が追加されました',
+              body: (exercise || 'トレーニング') + 'の記録をチェックしてみてください💪'
+            }));
+          }
+        }
+      } catch(e) {}
       return res.status(200).json({ ok: true });
     }
 

@@ -200,10 +200,6 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
         </div>
         <span style="color:var(--text2)">&rsaquo;</span>
       </div>
-      <div class="mi" onclick="showCalendarPage()" style="cursor:pointer">
-        <div class="ml"><span style="width:7px;height:7px;border-radius:50%;background:#ddd;display:inline-block;flex-shrink:0"></span><div><span style="font-size:15px;font-weight:600;color:var(--text)">来店カレンダー・特典</span><div id="calendar-menu-sub" style="font-size:11px;color:var(--text2);margin-top:2px">継続中🔥- / 累計-回</div></div></div>
-        <span style="color:var(--text2)">&rsaquo;</span>
-      </div>
       <div class="mi" onclick="showMonthlyPage()" style="cursor:pointer">
         <div class="ml"><span style="width:7px;height:7px;border-radius:50%;background:var(--c-amber);display:inline-block;flex-shrink:0"></span><div><span style="font-size:15px;font-weight:600;color:var(--text)">今月のまとめ</span><div style="font-size:11px;color:var(--text2);margin-top:2px">月次レポート・自己ベスト</div></div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
@@ -211,6 +207,11 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
       <div class="mi" onclick="showCaloriePage()" style="cursor:pointer">
         <div class="ml"><span style="width:7px;height:7px;border-radius:50%;background:#ddd;display:inline-block;flex-shrink:0"></span><div><span style="font-size:15px;font-weight:600;color:var(--text)">カロリー計算</span><div style="font-size:11px;color:var(--text2);margin-top:2px">基本情報・目安カロリー確認</div></div></div>
         <span style="color:var(--text2)">&rsaquo;</span>
+      </div>
+      <div id="ios-install-guide" style="display:none;background:#e8eef8;border-radius:12px;padding:11px 14px;margin-bottom:8px;border:1px solid #c8d8f0;">
+        <div style="font-size:11px;font-weight:700;color:#2d4a7c;margin-bottom:4px;">iPhoneユーザーの方へ</div>
+        <div style="font-size:10px;color:#4a6a9c;line-height:1.6;">通知を受け取るには、Safariの「共有」→「ホーム画面に追加」でアプリをインストールしてください。</div>
+        <button onclick="document.getElementById('ios-install-guide').style.display='none'" style="font-size:10px;color:#4a6a9c;background:none;border:none;cursor:pointer;margin-top:4px;padding:0;font-family:inherit;">閉じる ×</button>
       </div>
       <a class="mi" id="line-menu" href="https://lin.ee/X2yQksR" target="_blank" rel="noopener" style="background:#06C755;border:none;text-decoration:none"><div class="ml"><span style="font-size:15px;font-weight:600;color:#fff">公式LINEへ</span></div><span style="color:rgba(255,255,255,0.8)">&rsaquo;</span></a>
       <button class="lo" id="logoutBtn" type="button">ログアウト</button>
@@ -252,7 +253,10 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
     </div>
     <!-- グラフ -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
-      <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px">過去30日の推移</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:800;color:var(--text)">過去30日の推移</div>
+        <button onclick="resetWeightData()" style="font-size:10px;color:#b0a898;background:none;border:none;cursor:pointer;padding:2px 6px;font-family:inherit;">記録をリセット</button>
+      </div>
       <div style="position:relative;height:250px;">
         <canvas id="weight-chart"></canvas>
       </div>
@@ -278,104 +282,6 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
       </div>
       <button onclick="saveGoal()" type="button" style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer">目標を保存</button>
       <div id="goal-save-msg" style="font-size:12px;margin-top:6px;text-align:center"></div>
-    </div>
-  </div>
-</div>
-
-<!-- 来店カレンダー・特典オーバーレイ -->
-<div id="calendar-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-    <button onclick="hideCalendarPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
-    <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">来店カレンダー</div>
-  </div>
-  <div style="padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-size:15px;font-weight:800;color:var(--text)" id="cal-month-title">-</div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px">
-        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">月</div>
-        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">火</div>
-        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">水</div>
-        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">木</div>
-        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">金</div>
-        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">土</div>
-        <div style="font-size:10px;font-weight:700;color:var(--text2);text-align:center">日</div>
-      </div>
-      <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-        <div style="background:var(--bg3);border-radius:10px;padding:10px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1" id="cal-stat-month">-</div>
-          <div style="font-size:10px;color:var(--text2);margin-top:4px">今月来店</div>
-        </div>
-        <div style="background:var(--bg3);border-radius:10px;padding:10px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#FF6B00;letter-spacing:-1px;line-height:1" id="cal-stat-streak">-</div>
-          <div style="font-size:10px;color:var(--text2);margin-top:4px">継続月数</div>
-        </div>
-        <div style="background:var(--bg3);border-radius:10px;padding:10px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1" id="cal-stat-total">-</div>
-          <div style="font-size:10px;color:var(--text2);margin-top:4px">累計来店</div>
-        </div>
-      </div>
-    </div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
-      <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:14px">来店特典</div>
-      <div id="milestone-list" style="display:flex;flex-direction:column;gap:10px"></div>
-    </div>
-  </div>
-</div>
-
-<!-- マイルストーン達成ポップアップ -->
-<div id="milestone-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center;padding:24px">
-  <div style="background:#fff;border-radius:24px;padding:32px 24px;width:100%;max-width:340px;text-align:center;animation:bonusPop .4s cubic-bezier(0.34,1.56,0.64,1)">
-    <div style="font-size:52px;margin-bottom:8px" id="ms-emoji">🎉</div>
-    <div style="font-size:26px;font-weight:800;color:#111;margin-bottom:6px" id="ms-title">達成！</div>
-    <div style="font-size:13px;color:#888;margin-bottom:20px;line-height:1.7" id="ms-msg"></div>
-    <div style="background:#fff8f0;border:1px solid #ffe0b2;border-radius:12px;padding:14px;margin-bottom:20px">
-      <div style="font-size:10px;font-weight:700;color:#FF6B00;letter-spacing:1px;margin-bottom:6px">MILESTONE UNLOCKED</div>
-      <div style="font-size:15px;font-weight:800;color:#111" id="ms-reward"></div>
-    </div>
-    <div style="font-size:11px;color:#7a7068;margin-bottom:16px" id="ms-next"></div>
-    <button onclick="document.getElementById('milestone-overlay').style.display='none'" type="button" style="background:#111;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%">やった！続けるぞ！</button>
-  </div>
-</div>
-
-<!-- 月次サマリーオーバーレイ -->
-<div id="monthly-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-    <button onclick="hideMonthlyPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
-    <div id="monthly-title" style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">○月のまとめ</div>
-  </div>
-  <div style="padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
-    <div id="monthly-stats"></div>
-    <div style="background:var(--bg2);border:1px solid var(--border-green);border-radius:var(--radius);padding:16px">
-      <div id="monthly-volume"></div>
-    </div>
-    <div style="background:var(--bg2);border:1px solid var(--border-blue);border-radius:var(--radius);padding:16px">
-      <div id="monthly-weight"></div>
-    </div>
-    <div style="background:var(--bg2);border:1px solid #e8d0b0;border-radius:var(--radius);padding:16px">
-      <div id="monthly-bests"></div>
-    </div>
-    <div style="background:var(--bg-green);border-left:3px solid var(--accent);border-radius:var(--radius);padding:10px 13px;font-size:15px;font-weight:600;color:var(--text);line-height:1.6" id="monthly-message"></div>
-  </div>
-</div>
-
-<!-- 種目詳細オーバーレイ -->
-<div id="detail-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-    <button onclick="hideDetailPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
-    <div style="font-size:20px;font-weight:800;letter-spacing:-0.5px;color:#111" id="detail-title">種目名</div>
-  </div>
-  <div style="padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:40px">
-    <div style="font-size:11px;color:var(--text2);font-weight:600" id="detail-date"></div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
-      <div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">今回の記録</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center" id="detail-stats"></div>
-    </div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px" id="detail-history-card">
-      <div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">重量の推移</div>
-      <div id="detail-history"></div>
     </div>
   </div>
 </div>
@@ -620,6 +526,15 @@ function showApp(){
     bar.onclick=function(){location.href='/admin.html';};
     document.body.insertBefore(bar,document.body.firstChild);
   }
+  // iOS非PWA環境でiOS案内を表示
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  var isPWA=window.navigator.standalone;
+  if(isIOS&&!isPWA){
+    setTimeout(function(){
+      var guide=document.getElementById('ios-install-guide');
+      if(guide)guide.style.display='block';
+    },3000);
+  }
 }
 function renderHome(trainings){
   var uniqueDays=new Set(trainings.map(function(t){return normDateKey(t.date);})).size;
@@ -680,10 +595,10 @@ function loadData(){
 }
 
 var MILESTONES=[
-  {count:10,reward:'栄養アドバイスシートプレゼント',emoji:'📋'},
-  {count:30,reward:'オリジナルメニュー作成',emoji:'📝'},
-  {count:50,reward:'セッション5分延長',emoji:'⏱️'},
-  {count:100,reward:'???（お楽しみ）',emoji:'🎁'}
+  {count:10,rank:'チャレンジャー',reward:'オリジナルメニュー作成',emoji:'📝'},
+  {count:30,rank:'トレーニー',reward:'栄養アドバイスシートプレゼント',emoji:'📋'},
+  {count:50,rank:'アスリート',reward:'セッション5分延長',emoji:'⏱️'},
+  {count:100,rank:'エキスパート',reward:'プレミアムコース優待',emoji:'🏆'}
 ];
 // ===== 月次サマリー =====
 function showMonthlyPage(){
@@ -813,11 +728,7 @@ function renderMonthly(){
     '<div style="font-size:13px;font-weight:800;color:var(--c-amber-dark);margin-bottom:12px">自己ベスト更新 🏆</div>'+bestsHtml;
 
   // ⑤ ひとこと
-  var msg='';
-  if(vDiff>0)msg='先月より'+vDiff+'回増えました！この調子で！💪';
-  else if(vDiff<0)msg='来月は'+(lastVisits+1)+'回を目指そう！🔥';
-  else if(thisVisits>0)msg='安定して継続中！素晴らしい！🎯';
-  else msg='記録をつけて目標に向かおう！💪';
+  var msg=getMonthlyMessage(thisVisits,lastVisits);
   document.getElementById('monthly-message').textContent=msg;
 }
 
@@ -1474,6 +1385,54 @@ function requestNotificationPermission(){
   Notification.requestPermission().then(function(perm){
     if(perm==='granted'&&window._swReg)subscribePush(window._swReg);
   });
+}
+function getMonthlyMessage(thisCount,lastCount){
+  var diff=thisCount-lastCount;
+  var msgs;
+  if(diff>0){
+    msgs=[
+      '先月より'+diff+'回多く来られました！この調子で来月も！',
+      '先月を上回る'+thisCount+'回達成！素晴らしい！💪',
+      '来店数アップ！体は確実に変わっています。',
+      '継続は力なり。来月もこのペースで頑張りましょう！'
+    ];
+  }else if(diff<0){
+    msgs=[
+      '来月は'+lastCount+'回を目指しましょう！🔥',
+      '忙しい中でも来てくれてありがとうございます。来月また頑張りましょう！',
+      '少しペースが落ちましたが、続けることが大切です。一緒に頑張りましょう！',
+      '来月は週'+Math.ceil(lastCount/4)+'回ペースを目標にしてみましょう！'
+    ];
+  }else if(thisCount>0){
+    msgs=[
+      '安定した来店、素晴らしいです！来月もこのペースで！',
+      '継続力が光っています。来月もよろしくお願いします！',
+      '先月と同じペース、コツコツ続けることが一番大事です！',
+      '安定感抜群です。来月もお待ちしています！'
+    ];
+  }else{
+    msgs=['記録をつけて目標に向かおう！💪'];
+  }
+  return msgs[Math.floor(Math.random()*msgs.length)];
+}
+function resetWeightData(){
+  if(!confirm('体重の記録を全てリセットしますか？この操作は元に戻せません。'))return;
+  var uid=user?user.userId:'';
+  if(!uid)return;
+  fetch('/api/weight',{
+    method:'DELETE',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({userId:uid})
+  }).then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok){
+      _weightData=[];
+      renderWeightChart();
+      var sub=document.getElementById('weight-menu-sub');
+      if(sub)sub.textContent='';
+      alert('リセットしました');
+    }
+  }).catch(function(){alert('エラーが発生しました');});
 }
 </script>
 </body>

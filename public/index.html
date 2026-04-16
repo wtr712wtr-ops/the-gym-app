@@ -15,7 +15,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#faf8f5;--bg2:#ffffff;--bg3:#f0ede8;--bg-green:#e8f4e8;--bg-blue:#e8eef8;--bg-amber:#f8f0e8;--border:#ede9e3;--border-green:#c8e8c8;--border-blue:#c8d8f0;--text:#3a3a3a;--text2:#7a7068;--text3:#9a9088;--text-green:#2d5c2d;--text-green2:#4a7c4a;--text-blue:#2d4a7c;--text-blue2:#4a6a9c;--text-amber:#9c6a2a;--accent:#4a7c4a;--radius:12px;--radius-sm:8px;--line:#06C755;--c-green:#9FE1CB;--c-green-bg:#e8f4e8;--c-green-text:#2d5c2d;--c-green-dark:#4a7c4a;--c-blue:#B5D4F4;--c-blue-bg:#e8eef8;--c-blue-text:#4a6a9c;--c-amber:#FAC775;--c-amber-bg:#f8f0e8;--c-amber-text:#9c6a2a;--c-amber-dark:#9c6a2a}
-body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
+body{-webkit-text-size-adjust:100%;font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
 #login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;gap:48px;background:#ffffff}
 .logo{font-size:36px;font-weight:800;letter-spacing:-1px;text-align:center;color:var(--text)}
 .sub{font-size:10px;letter-spacing:4px;color:var(--text2);margin-top:6px;text-align:center;text-transform:uppercase}
@@ -25,7 +25,7 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 .btn-line{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--line);color:#fff;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
 .btn-line:active{opacity:0.85}
 #app{display:none;flex-direction:column;min-height:100vh;background:var(--bg)}
-.header{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center}
+.header{position:sticky;top:0;padding-top:env(safe-area-inset-top,0px);z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center}
 .hlogo{font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111111}
 .av{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;color:#111111;overflow:hidden;position:absolute;right:20px}
 .av img{width:100%;height:100%;object-fit:cover}
@@ -115,7 +115,22 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
   body{background:#faf8f5 !important;color:#3a3a3a !important}
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js">
+function refreshTrainings(){
+  if(!user||!user.userId)return;
+  fetch('/api/memo?userId='+user.userId+'&clientId='+user.userId+'&trainings',{cache:'no-store'})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.trainings){
+        _trainings = d.trainings.map(function(t){
+          return typeof t==='string'?JSON.parse(t):t;
+        });
+        renderTrainings();
+      }
+    }).catch(function(){});
+}
+
+</script>
 </head>
 <body>
 <div id="login">
@@ -227,8 +242,8 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 </div>
 
 <!-- 体重・目標オーバーレイ -->
-<div id="weight-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<div id="weight-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;padding-top:env(safe-area-inset-top,0px);">
+  <div style="position:sticky;top:0;padding-top:env(safe-area-inset-top,0px);z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <button onclick="hideWeightPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">体重・目標管理</div>
   </div>
@@ -289,8 +304,8 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 </div>
 
 <!-- 月次サマリーオーバーレイ -->
-<div id="monthly-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<div id="monthly-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;padding-top:env(safe-area-inset-top,0px);">
+  <div style="position:sticky;top:0;padding-top:env(safe-area-inset-top,0px);z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <button onclick="hideMonthlyPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div id="monthly-title" style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">今月のまとめ</div>
   </div>
@@ -311,8 +326,8 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 </div>
 
 <!-- ステータスオーバーレイ -->
-<div id="status-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<div id="status-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;padding-top:env(safe-area-inset-top,0px);">
+  <div style="position:sticky;top:0;padding-top:env(safe-area-inset-top,0px);z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <button onclick="hideStatusPage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">ステータス</div>
   </div>
@@ -381,7 +396,7 @@ body{font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Helvetica Neue
 
 <!-- カロリー計算オーバーレイ -->
 <div id="calorie-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;overflow-y:auto;max-width:430px;margin:0 auto;">
-  <div style="position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+  <div style="position:sticky;top:0;padding-top:env(safe-area-inset-top,0px);z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);height:80px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <button onclick="hideCaloriePage()" type="button" style="position:absolute;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#111">←</button>
     <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#111">カロリー計算</div>
   </div>
@@ -1065,6 +1080,7 @@ function showPage(n){
   document.querySelectorAll('.ni').forEach(function(i){i.classList.remove('on');});
   document.getElementById('pg-'+n).classList.add('on');
   document.getElementById('ni-'+n).classList.add('on');
+  if(n==='records'&&typeof refreshTrainings!=='undefined'){refreshTrainings();}
   var main=document.querySelector('.main');if(main)main.scrollTop=0;
   if(n==='profile') renderProfile();
 }

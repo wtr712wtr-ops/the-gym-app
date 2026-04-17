@@ -118,17 +118,21 @@ body{-webkit-text-size-adjust:100%;font-family:'Noto Sans JP',-apple-system,Blin
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js">
 function refreshTrainings(){
   if(!user||!user.userId)return;
-  fetch('/api/memo?userId='+user.userId+'&clientId='+user.userId+'&trainings',{cache:'no-store'})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.trainings){
-        _trainings = d.trainings.map(function(t){
-          return typeof t==='string'?JSON.parse(t):t;
-        });
-        renderTrainings(_trainings);
-        renderHome(_trainings);
-      }
-    }).catch(function(){});
+  var uid=user.userId;
+  fetch('/api/memo?userId='+uid+'&clientId='+uid+'&trainings',{
+    cache:'no-store',
+    headers:{'Cache-Control':'no-cache','Pragma':'no-cache'}
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.trainings){
+      _trainings=d.trainings.map(function(t){
+        return typeof t==='string'?JSON.parse(t):t;
+      });
+      renderTrainings(_trainings);
+      renderHome(_trainings);
+    }
+  }).catch(function(e){console.error('refreshTrainings error',e);});
 }
 
 </script>

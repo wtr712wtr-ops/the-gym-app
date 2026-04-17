@@ -115,7 +115,8 @@ body{-webkit-text-size-adjust:100%;font-family:'Noto Sans JP',-apple-system,Blin
   body{background:#faf8f5 !important;color:#3a3a3a !important}
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script>
 function refreshTrainings(){
   if(!user||!user.userId)return;
   var uid=user.userId;
@@ -134,7 +135,6 @@ function refreshTrainings(){
     }
   }).catch(function(e){console.error('refreshTrainings error',e);});
 }
-
 </script>
 </head>
 <body>

@@ -125,7 +125,8 @@ function refreshTrainings(){
         _trainings = d.trainings.map(function(t){
           return typeof t==='string'?JSON.parse(t):t;
         });
-        renderTrainings();
+        renderTrainings(_trainings);
+        renderHome(_trainings);
       }
     }).catch(function(){});
 }

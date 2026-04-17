@@ -550,7 +550,28 @@ function init(){
     showApp();
     loadData();
   }
-  if('serviceWorker'in navigator){navigator.serviceWorker.register('/sw.js').then(function(reg){window._swReg=reg;if(Notification.permission==='granted')subscribePush(reg);}).catch(function(){});}
+  if('serviceWorker'in navigator){
+    navigator.serviceWorker.register('/sw.js').then(function(reg){
+      window._swReg=reg;
+      if(Notification.permission==='granted')subscribePush(reg);
+      reg.addEventListener('updatefound',function(){
+        var nw=reg.installing;
+        if(!nw)return;
+        nw.addEventListener('statechange',function(){
+          if(nw.state==='installed'&&navigator.serviceWorker.controller){
+            nw.postMessage({type:'SKIP_WAITING'});
+          }
+        });
+      });
+      setInterval(function(){reg.update();},3600000);
+    }).catch(function(){});
+    var _refreshing=false;
+    navigator.serviceWorker.addEventListener('controllerchange',function(){
+      if(_refreshing)return;
+      _refreshing=true;
+      window.location.reload();
+    });
+  }
 }
 function showApp(){
   document.getElementById('login').style.display='none';

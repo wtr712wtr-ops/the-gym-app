@@ -251,18 +251,20 @@ function refreshTrainings(){
     <!-- 体重記録フォーム -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
       <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:12px">体重を記録</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
         <div>
           <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">日付</div>
-          <input type="date" id="weight-date-input" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg2);color:var(--text)">
+          <input type="date" id="weight-date-input" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg2);color:var(--text)">
         </div>
-        <div>
-          <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">体重 (kg)</div>
-          <input type="number" id="weight-value-input" inputmode="decimal" placeholder="65.0" min="20" max="300" step="0.1" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg2);color:var(--text)">
-        </div>
-        <div>
-          <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">体脂肪率 (%)</div>
-          <input type="number" id="bodyfat-value-input" inputmode="decimal" placeholder="20.0" min="1" max="60" step="0.1" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg2);color:var(--text)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">体重 (kg)</div>
+            <input type="number" id="weight-value-input" inputmode="decimal" placeholder="65.0" min="20" max="300" step="0.1" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg2);color:var(--text)">
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">体脂肪率 (%)</div>
+            <input type="number" id="bodyfat-value-input" inputmode="decimal" placeholder="20.0" min="1" max="60" step="0.1" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg2);color:var(--text)">
+          </div>
         </div>
       </div>
       <button onclick="saveWeightEntry()" type="button" style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer">記録する</button>

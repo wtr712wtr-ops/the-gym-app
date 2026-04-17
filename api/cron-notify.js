@@ -31,11 +31,7 @@ module.exports = async function handler(req, res) {
   const results = [];
 
   // 明日の日付
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowStr = tomorrow.toISOString().split('T')[0];
-
-  // 月末判定（翌日が月初なら月末）
+    // 月末判定（翌日が月初なら月末）
   const nextDay = new Date(now);
   nextDay.setDate(nextDay.getDate() + 1);
   const isLastDayOfMonth = nextDay.getDate() === 1;
@@ -44,15 +40,7 @@ module.exports = async function handler(req, res) {
     const uid = client.id || client;
     if (!uid) continue;
 
-    // ①予約前日通知
-    const nextDate = await redis.get('nextDate:' + uid);
-    if (nextDate && nextDate === tomorrowStr) {
-      const nextTime = await redis.get('nextTime:' + uid) || '';
-      const ok = await sendPush(uid, '明日はトレーニングの日！', '明日' + (nextTime ? nextTime + 'に' : '') + 'THE GYMでお待ちしています💪');
-      results.push({ uid, type: 'reservation', ok });
-    }
-
-    // ②来店から7日以上空いたら
+    // ①来店から7日以上空いたら
     const trainings = await redis.lrange('training:' + uid, 0, 0);
     if (trainings && trainings.length > 0) {
       const last = trainings[0];

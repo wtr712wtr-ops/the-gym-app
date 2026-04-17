@@ -124,16 +124,6 @@ textarea{resize:vertical;min-height:80px}
         <button onclick="sendNotifyToClient()" class="btn" style="font-size:14px;padding:12px">送信する</button>
         <div id="notify-msg" style="font-size:12px;margin-top:8px;text-align:center"></div>
       </div>
-      <div class="section-card">
-        <div class="section-label">次回予約日</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <input type="date" id="next-date-input" style="flex:2;min-width:130px;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);font-family:inherit">
-          <input type="time" id="next-time-input" style="flex:1;min-width:90px;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);font-family:inherit">
-          <button onclick="saveNextDate()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">保存</button>
-          <button onclick="clearNextDate()" style="background:none;color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:13px;font-weight:600;cursor:pointer">クリア</button>
-        </div>
-        <div id="next-date-msg" style="margin-top:6px;font-size:12px"></div>
-      </div>
       <div class="client-tabs">
         <button class="ctab on" id="ctab-memo" onclick="switchClientTab('memo')">メモ</button>
         <button class="ctab" id="ctab-training" onclick="switchClientTab('training')">トレーニング記録</button>
@@ -262,7 +252,6 @@ function selectClient(id, name) {
   if (av) av.textContent = name.charAt(0) || '?';
   document.getElementById('memo-input').value = '';
   document.getElementById('memo-msg').innerHTML = '';
-  loadNextDate();
   switchClientTab('memo');
 }
 
@@ -583,41 +572,6 @@ function showMsg(id, type, text) {
   setTimeout(function(){ el.innerHTML = ''; }, 3000);
 }
 
-function loadNextDate(){
-  document.getElementById('next-date-input').value='';
-  document.getElementById('next-time-input').value='';
-  fetch('/api/memo?adminId='+adminId+'&clientId='+selectedClient.id+'&nextDate')
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if(data.nextDate) document.getElementById('next-date-input').value=data.nextDate;
-      if(data.nextTime) document.getElementById('next-time-input').value=data.nextTime;
-    }).catch(function(){});
-}
-function saveNextDate(){
-  var val=document.getElementById('next-date-input').value;
-  var timeVal=document.getElementById('next-time-input').value;
-  fetch('/api/memo',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({adminId:adminId,action:'setNextDate',clientId:selectedClient.id,nextDate:val||null,nextTime:timeVal||null})})
-    .then(function(r){return r.json();})
-    .then(function(data){
-      var msg=document.getElementById('next-date-msg');
-      msg.style.color=data.ok?'#2e7d32':'#c62828';
-      msg.textContent=data.ok?'保存しました':'エラー';
-      setTimeout(function(){msg.textContent='';},2000);
-    }).catch(function(){});
-}
-function clearNextDate(){
-  document.getElementById('next-date-input').value='';
-  document.getElementById('next-time-input').value='';
-  fetch('/api/memo',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({adminId:adminId,action:'setNextDate',clientId:selectedClient.id,nextDate:null,nextTime:null})})
-    .then(function(r){return r.json();})
-    .then(function(){
-      var msg=document.getElementById('next-date-msg');
-      msg.style.color='#888';msg.textContent='クリアしました';
-      setTimeout(function(){msg.textContent='';},2000);
-    }).catch(function(){});
-}
 function openEditGroup(gi) {
   _editingGroupIdx = gi;
   var g = _currentGroups[gi];

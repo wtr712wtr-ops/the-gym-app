@@ -1,4 +1,4 @@
-const CACHE = 'thegym-v89';
+const CACHE = 'thegym-v90';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', e => {

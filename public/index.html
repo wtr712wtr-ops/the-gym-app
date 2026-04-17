@@ -156,9 +156,9 @@ function refreshTrainings(){
         <div class="gname" id="gname">Hello!</div>
         <div class="gsub" id="gsub">Today's training</div>
         <div class="home-card" id="next-card">
-          <div class="home-card-label">次回予約</div>
+          <div class="home-card-label">前回の来店</div>
           <div style="display:flex;align-items:center;justify-content:space-between">
-            <div class="home-card-value" id="next-date-display">読み込み中...</div>
+            <div class="home-card-value" id="next-date-display">—</div>
             <div id="next-date-badge"></div>
           </div>
         </div>
@@ -614,9 +614,19 @@ function renderHome(trainings){
   var pm=document.getElementById('prof-month');if(pm)pm.textContent=monDays;
   if(trainings.length){
     var lastD=parseJpDate(trainings[0].date);
-    if(lastD){var diff=Math.floor((now-lastD)/(1000*60*60*24));
-    document.getElementById('last-visit').textContent=lastD.getFullYear()+'年'+(lastD.getMonth()+1)+'月'+lastD.getDate()+'日';
-    document.getElementById('last-visit-ago').textContent=diff===0?'今日':diff+'日前';}
+    if(lastD){
+      var diff=Math.floor((now-lastD)/(1000*60*60*24));
+      var days=['日','月','火','水','木','金','土'];
+      var dateStr=lastD.getFullYear()+'年'+(lastD.getMonth()+1)+'月'+lastD.getDate()+'日（'+days[lastD.getDay()]+'）';
+      var agoStr=diff===0?'今日':diff===1?'昨日':diff+'日前';
+      document.getElementById('last-visit').textContent=lastD.getFullYear()+'年'+(lastD.getMonth()+1)+'月'+lastD.getDate()+'日';
+      document.getElementById('last-visit-ago').textContent=agoStr;
+      // 前回の来店カード（旧・次回予約カード）も更新
+      var disp=document.getElementById('next-date-display');
+      var badge=document.getElementById('next-date-badge');
+      if(disp){disp.textContent=dateStr;disp.style.color='var(--text)';}
+      if(badge){badge.innerHTML='<span style="background:#f8f0e8;color:#9c6a2a;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700">'+agoStr+'</span>';}
+    }
   }
   var c=document.getElementById('latest');
   if(!trainings.length){c.innerHTML='<div style="color:var(--text2);font-size:13px;text-align:center;padding:8px 0">まだ記録がありません</div>';return;}
@@ -632,23 +642,6 @@ function loadData(){
   var uid=user.userId||'';
   if(!uid)return;
   var base='/api/memo?clientId='+uid+'&userId='+uid;
-  fetch(base+'&nextDate').then(function(r){return r.json();}).then(function(data){
-    var disp=document.getElementById('next-date-display');
-    var badge=document.getElementById('next-date-badge');
-    if(data.nextDate){
-      var nd=new Date(data.nextDate+'T00:00:00');
-      var days=['日','月','火','水','木','金','土'];
-      var timeStr=data.nextTime?(' '+data.nextTime):''; disp.textContent=nd.getFullYear()+'年'+(nd.getMonth()+1)+'月'+nd.getDate()+'日（'+days[nd.getDay()]+'）'+timeStr;
-      disp.style.color='var(--text)';
-      var diff=Math.ceil((nd-new Date())/(1000*60*60*24));
-      if(diff>0){badge.innerHTML='<span style="background:#f0f9f4;color:#0a7a3e;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700">あと'+diff+'日</span>';}
-      else if(diff===0){badge.innerHTML='<span style="background:#fff3e0;color:#e65100;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700">今日</span>';}
-      else{disp.textContent='未設定';disp.style.color='var(--text2)';badge.innerHTML='';}
-    }else{
-      disp.textContent='未設定';disp.style.color='var(--text2)';
-      badge.innerHTML='<a href="'+LINE_URL+'" target="_blank" style="background:#f0faf4;color:#06C755;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;text-decoration:none">LINEで予約</a>';
-    }
-  }).catch(function(){document.getElementById('next-date-display').textContent='未設定';});
   fetch(base+'&trainings').then(function(r){return r.json();})
   .then(function(data){
     _trainings=data.trainings||[];

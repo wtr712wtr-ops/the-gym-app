@@ -166,13 +166,6 @@ function refreshTrainings(){
           <div class="home-stat" style="background:var(--bg-green);border:1px solid var(--border-green)"><div class="home-stat-num" id="tot" style="color:var(--text-green)">0</div><div class="home-stat-label" style="color:var(--text-green2)">累計来店数</div></div>
           <div class="home-stat" style="background:var(--bg-blue);border:1px solid var(--border-blue)"><div class="home-stat-num" id="mon" style="color:var(--text-blue)">0</div><div class="home-stat-label" style="color:var(--text-blue2)">今月の来店数</div></div>
         </div>
-        <div class="home-card">
-          <div class="home-card-label">最終来店日</div>
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <div class="home-card-value" id="last-visit">—</div>
-            <div id="last-visit-ago" style="font-size:12px;color:var(--text2)"></div>
-          </div>
-        </div>
         <div class="home-card-label" style="margin-bottom:8px;color:var(--text-green2)">最新のトレーニング</div>
         <div id="latest" onclick="showPage('records')" style="cursor:pointer;margin-bottom:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px"><div class="spin"><div class="sp"></div></div></div>
         <a class="lbtn" id="lineBtn" href="https://lin.ee/X2yQksR" rel="noopener" style="text-decoration:none">公式LINEへ連絡・予約</a>
@@ -619,9 +612,7 @@ function renderHome(trainings){
       var days=['日','月','火','水','木','金','土'];
       var dateStr=lastD.getFullYear()+'年'+(lastD.getMonth()+1)+'月'+lastD.getDate()+'日（'+days[lastD.getDay()]+'）';
       var agoStr=diff===0?'今日':diff===1?'昨日':diff+'日前';
-      document.getElementById('last-visit').textContent=lastD.getFullYear()+'年'+(lastD.getMonth()+1)+'月'+lastD.getDate()+'日';
-      document.getElementById('last-visit-ago').textContent=agoStr;
-      // 前回の来店カード（旧・次回予約カード）も更新
+      // 前回の来店カード更新
       var disp=document.getElementById('next-date-display');
       var badge=document.getElementById('next-date-badge');
       if(disp){disp.textContent=dateStr;disp.style.color='var(--text)';}
